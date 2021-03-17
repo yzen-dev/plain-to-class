@@ -1,0 +1,30 @@
+{
+  "name": "yzen.dev/plain-to-class",
+  "version": "0.0.1",
+  "description": "Class-transformer function to transform our object into a typed object",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "license": "MIT",
+  "keywords": [ "php", "object", "class", "transformer", "class-transformer"],
+  "authors": [
+    {
+      "name": "Andey Iatsenko",
+      "email": "yzen.dev@gmail.com"
+    }
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "autoload": {
+    "files": [
+      "plainToClass.php"
+    ]
+  },
+  "require": {
+    "php": "^5.5|^7.0|^8.0"
+  },
+  "support": {
+    "issues": "https://github.com/yzen-dev/plain-to-class/issues",
+    "source": "https://github.com/yzen-dev/plain-to-class"
+  }
+}
