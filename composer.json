@@ -1,6 +1,6 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Class-transformer function to transform our object into a typed object",
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -21,7 +21,7 @@
     ]
   },
   "require": {
-    "php": "^5.5|^7.0|^8.0"
+    "php": "7.4"
   },
   "support": {
     "issues": "https://github.com/yzen-dev/plain-to-class/issues",
