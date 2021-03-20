@@ -21,7 +21,7 @@
     ]
   },
   "require": {
-    "php": "7.4"
+    "php": "^7.4"
   },
   "support": {
     "issues": "https://github.com/yzen-dev/plain-to-class/issues",
