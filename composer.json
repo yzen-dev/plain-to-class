@@ -1,6 +1,6 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Class-transformer function to transform our object into a typed object",
   "minimum-stability": "dev",
   "prefer-stable": true,
