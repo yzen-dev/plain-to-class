@@ -17,11 +17,33 @@
   },
   "autoload": {
     "files": [
-      "plainToClass.php"
+      "src/plainToClass.php"
     ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
   },
   "require": {
     "php": "^7.4"
+  },
+  "scripts": {
+    "phpunit": [
+      "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml"
+    ],
+    "phpstan": [
+      "./vendor/bin/phpstan analyse -c ./phpstan.neon"
+    ],
+    "phpcs": [
+      "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s"
+    ]
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^0.12.82",
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^9.3",
+    "squizlabs/php_codesniffer": "*"
   },
   "support": {
     "issues": "https://github.com/yzen-dev/plain-to-class/issues",

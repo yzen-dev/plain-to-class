@@ -1,1 +1,4 @@
 .idea
+vendor
+public
+/.phpunit.result.cache

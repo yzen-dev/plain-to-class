@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ruleset name="plainToClass">
+    <arg name="tab-width" value="4"/>
+    <!-- Description -->
+    <description>Custom ruleset Based on PSR12</description>
+    <!-- Rule to be referenced (`PSR12`) -->
+    <rule ref="PSR12"/>
+
+    <!-- Specify extensions (.php) -->
+    <arg name="extensions" value="php"/>
+
+    <arg name="report" value="full"/>
+    <arg name="report-junit" value="./public/phpcs-junit.xml"/>
+
+    <!-- Длина строки -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
+    <rule ref="PEAR.Commenting.FunctionComment.Missing">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+    <file>src/</file>
+</ruleset>
