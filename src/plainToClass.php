@@ -5,41 +5,33 @@ if (!function_exists('plainToClass')) {
      * Class-transformer function to transform our object into a typed object
      * @template T
      *
-     * @param T $class
-     * @param   $args
+     * @param class-string<T> $className
+     * @param mixed $args
      *
      * @return T
      * @throws ReflectionException
      */
-    function plainToClass($class, $args)
+    function plainToClass(string $className, $args)
     {
-        $instance = new $class;
+        $instance = new $className();
         if ($args !== null) {
-            if (method_exists($class, 'plainToClass')) {
-                return $class::plainToClass($args);
+            if (method_exists($className, 'plainToClass')) {
+                return $className::plainToClass($args);
             }
-            $refInstance = new ReflectionClass($class);
+            $refInstance = new ReflectionClass($className);
             if (is_object($args)) {
                 $refArgsObject = new ReflectionObject($args);
                 foreach ($refInstance->getProperties() as $item) {
                     if ($refArgsObject->hasProperty($item->name)) {
-                        $scalarTypes = ['int', 'float', 'string', 'bool'];
-
                         $propertyClass = $refInstance->getProperty($item->name);
-                        $propertyClassType = $refInstance->getProperty($item->name)->getType()->getName();
-
-                        $propertyArgs = $refArgsObject->getProperty($item->name);
+                        $propertyClassType = $propertyClass->getType();
+                        $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
                         $propertyArgsType = getType($args->{$item->name});
 
-                        ## if scalar type
-                        if (in_array($propertyClassType, $scalarTypes) && in_array($propertyArgsType, $scalarTypes)) {
-                            $instance->{$item->name} = $args->{$item->name};
-                            continue;
-                        }
-
-                        if ($propertyClassType === 'array' && $propertyArgsType === 'array') {
-                            if ($propertyClass->getDocComment()) {
-                                preg_match('/array<([a-zA-Z\d\\\]+)>/m', $propertyClass->getDocComment(), $docType);
+                        if ($propertyClassTypeName === 'array' && $propertyArgsType === 'array') {
+                            $doc = $propertyClass->getDocComment();
+                            if ($doc) {
+                                preg_match('/array<([a-zA-Z\d\\\]+)>/m', $doc, $docType);
                                 $docType = $docType[1] ?? null;
 
                                 if ($docType && class_exists($docType)) {
@@ -51,8 +43,8 @@ if (!function_exists('plainToClass')) {
                             continue;
                         }
 
-                        if ($propertyClassType && class_exists($propertyClassType)) {
-                            $instance->{$item->name} = plainToClass($propertyClassType, $args->{$item->name});
+                        if ($propertyClassTypeName && class_exists($propertyClassTypeName)) {
+                            $instance->{$item->name} = plainToClass($propertyClassTypeName, $args->{$item->name});
                             continue;
                         }
                         $instance->{$item->name} = $args->{$item->name};
@@ -61,19 +53,14 @@ if (!function_exists('plainToClass')) {
             } else {
                 foreach ($refInstance->getProperties() as $item) {
                     if (array_key_exists($item->name, $args)) {
-                        $scalarTypes = ['int', 'float', 'string', 'bool'];
-
                         $propertyClass = $refInstance->getProperty($item->name);
-                        $propertyClassType = $refInstance->getProperty($item->name)->getType()->getName();
-                        ## if scalar type
-                        if (in_array($propertyClassType, $scalarTypes)) {
-                            $instance->{$item->name} = $args[$item->name];
-                            continue;
-                        }
+                        $propertyClassType = $propertyClass->getType();
+                        $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
 
-                        if ($propertyClassType === 'array') {
-                            if ($propertyClass->getDocComment()) {
-                                preg_match('/array<([a-zA-Z\d\\\]+)>/m', $propertyClass->getDocComment(), $docType);
+                        if ($propertyClassTypeName === 'array') {
+                            $doc = $propertyClass->getDocComment();
+                            if ($doc) {
+                                preg_match('/array<([a-zA-Z\d\\\]+)>/m', $doc, $docType);
                                 $docType = $docType[1] ?? null;
 
                                 if ($docType && class_exists($docType)) {
@@ -85,8 +72,8 @@ if (!function_exists('plainToClass')) {
                             continue;
                         }
 
-                        if ($propertyClassType && class_exists($propertyClassType)) {
-                            $instance->{$item->name} = plainToClass($propertyClassType, $args[$item->name]);
+                        if ($propertyClassTypeName && class_exists($propertyClassTypeName)) {
+                            $instance->{$item->name} = plainToClass($propertyClassTypeName, $args[$item->name]);
                             continue;
                         }
                         $instance->{$item->name} = $args[$item->name];
