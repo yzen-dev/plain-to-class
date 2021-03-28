@@ -1,6 +1,6 @@
-## Class-transformer function plainToClass
+## Class-transformer helper
 
-Class-transformer function to transform our object into a typed object
+Class-transformer to transform your data into a typed object
 
 ## :scroll: **Installation**
 The package can be installed via composer:
@@ -9,36 +9,16 @@ composer require yzen.dev/plain-to-class
 ```
 
 ## :scroll: **Usage**
+> Alas, i do not speak English, and the documentation is compiled via google translate :( 
+
+When writing code, it is very important to separate logic, adhere to the principle of single responsibility, reduce dependence on other services, and much more.
+Therefore, I am trying to implement all business services through DTO.
+
+This approach makes sure that the service will work with the data it needs,full typing, there will be no need to check the existence of keys if it is an array.
+
 Suppose you have a service for authorization. To ensure the reliability of the input data, it would be good to send DTO there:
-```php
-class AuthService {
-    public function register(RegisterDTO $data)
-    {
-        //crete user...
-    }
-}
-```
-```php
-class RegisterDTO
-{
-    /** @var string Email */
-    public string $email;
-    
-    /** @var string Password */
-    public string $password;
-}
-```
-But then we will have to create an object of this DTO each time:
-```php
-    public function register(RegisterUserRequest $request)
-    {
-        $registerDTO = new RegisterDTO();
-        $registerDTO->email= $request->email;
-        $registerDTO->password= $request->password;
-        $this->authService->register($registerDTO);
-    }
-```
-For this, this method was created, which will allow you to create an instance DTO without much difficulty.
+Let's say you have an authorization service. To ensure that the input is valid, it would be nice to send a DTO there. But then we will have to initiate and fill in each time ourselves, and you must admit that this is very inconvenient.
+For this, this helper was created, which will allow you to easily create an instance of a DTO, or just any of your objects.
 ```php
 class AuthController
 {
@@ -48,7 +28,7 @@ class AuthController
     
     public function register(RegisterUserRequest $request)
     {
-        $registerDTO = plainToClass(RegisterDTO::class, $request->toArray());
+        $registerDTO = ClassTransformer::transform(RegisterDTO::class, $request->toArray());
         $this->authService->register($registerDTO);
     }
 ```
@@ -61,7 +41,7 @@ $data = [
     'password' => '123456',
     'fakeField' => 'fake',
 ];
-$dto = plainToClass(LoginDTO::class,$data);
+$dto = ClassTransformer::transform(LoginDTO::class,$data);
 var_dump($dto);
 ```
 Result:
@@ -73,6 +53,10 @@ object(\LoginDTO)[298]
 
 ## :scroll: **Recursive casting**
 
+If you have an array of objects of a specific class, then you must specify the full path to the class in phpdoc `array <\ DTO \ ProductDTO>`.
+
+This is done in order to know exactly which instance you need to create. Since Reflection does not provide out-of-the-box functionality to get the `use *` file. In addition to `use *`, an alias can be specified, and it will be more difficult to trace it.
+Example:
 ```php
 namespace DTO;
 
@@ -92,9 +76,7 @@ class UserDTO
     public string $balance;
 }
 ```
-If you have a DTO array, then you must specify the full path to the class in phpdoc `array<\DTO\ProductDTO>`.
 
-This is done in order to know exactly which instance you need to create. Because Reflection does not provide out-of-the-box functionality for getting a `use *`. In addition to the `use *`, an alias can be prescribed, and this will be more difficult to track.
 ```php
 class PurchaseDTO
 {
@@ -114,7 +96,7 @@ $data = [
     ],
     'user' => ['id' => 1, 'email' => 'test@test.com', 'balance' => 10012.23,],
 ];
-$purcheseDTO = plainToClass(PurchaseDTO::class, $data);
+$purcheseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
 var_dump($purcheseDTO);
 ```
 

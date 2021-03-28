@@ -1,7 +1,7 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "0.1.1",
-  "description": "Class-transformer function to transform our object into a typed object",
+  "version": "0.2.0",
+  "description": "Class-transformer to transform your data into a typed object",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "license": "MIT",
@@ -16,9 +16,9 @@
     "sort-packages": true
   },
   "autoload": {
-    "files": [
-      "src/plainToClass.php"
-    ]
+    "psr-4": {
+      "ClassTransformer\\": "src/"
+    }
   },
   "autoload-dev": {
     "psr-4": {

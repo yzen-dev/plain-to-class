@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use ReflectionException;
 use Tests\DTO\BasketDTO;
 use Tests\DTO\ProductDTO;
 use Tests\DTO\PurchaseDTO;
 use Tests\DTO\UserDTO;
 use PHPUnit\Framework\TestCase;
+use ClassTransformer\ClassTransformer;
 
 /**
  * Class ClassTransformerTest
@@ -17,13 +17,11 @@ use PHPUnit\Framework\TestCase;
 class ClassTransformerTest extends TestCase
 {
     use FakerData;
-    /**
-     * @throws ReflectionException
-     */
+
     public function testBaseArray(): void
     {
         $data = $this->getBaseArrayData();
-        $userDTO = plainToClass(UserDTO::class, $data);
+        $userDTO = ClassTransformer::transform(UserDTO::class, $data);
 
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);
@@ -35,13 +33,11 @@ class ClassTransformerTest extends TestCase
         self::assertIsFloat($userDTO->balance);
     }
 
-    /**
-     * @throws ReflectionException
-     */
+
     public function testRecursiveArray(): void
     {
         $data = $this->getRecursiveArrayData();
-        $purchaseDTO = plainToClass(PurchaseDTO::class, $data);
+        $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
 
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
 
@@ -67,13 +63,11 @@ class ClassTransformerTest extends TestCase
 
     }
 
-    /**
-     * @throws ReflectionException
-     */
+
     public function testTripleRecursiveArray(): void
     {
         $data = $this->getTripleRecursiveArray();
-        $basketDTO = plainToClass(BasketDTO::class, $data);
+        $basketDTO = ClassTransformer::transform(BasketDTO::class, $data);
 
         foreach ($basketDTO->orders as $key => $purchase) {
 
@@ -101,14 +95,12 @@ class ClassTransformerTest extends TestCase
         }
     }
 
-    /**
-     * @throws ReflectionException
-     */
+
     public function testBaseObject(): void
     {
         $data= $this->getBaseObject();
 
-        $userDTO = plainToClass(UserDTO::class, $data);
+        $userDTO = ClassTransformer::transform(UserDTO::class, $data);
 
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data->id, $userDTO->id);
@@ -120,13 +112,11 @@ class ClassTransformerTest extends TestCase
         self::assertIsFloat($userDTO->balance);
     }
 
-    /**
-     * @throws ReflectionException
-     */
+
     public function testRecursiveObject(): void
     {
         $data= $this->getRecursiveObject();
-        $purchaseDTO = plainToClass(PurchaseDTO::class, $data);
+        $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
 
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
 
@@ -152,15 +142,13 @@ class ClassTransformerTest extends TestCase
 
     }
 
-    /**
-     * @throws ReflectionException
-     */
+
     public function testTripleRecursiveObject(): void
     {
 
         $data = $this->getTripleRecursiveObject();
 
-        $basketDTO = plainToClass(BasketDTO::class, $data);
+        $basketDTO = ClassTransformer::transform(BasketDTO::class, $data);
 
         foreach ($basketDTO->orders as $key => $purchase) {
 
