@@ -33,7 +33,7 @@
       "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml"
     ],
     "phpstan": [
-      "./vendor/bin/phpstan analyse -c ./phpstan.neon"
+      "./vendor/bin/phpstan analyse -c ./phpstan.neon src"
     ],
     "phpcs": [
       "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s"
