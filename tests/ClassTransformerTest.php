@@ -50,7 +50,7 @@ class ClassTransformerTest extends TestCase
         self::assertIsString($purchaseDTO->user->email);
         self::assertIsFloat($purchaseDTO->user->balance);
 
-        foreach ($purchaseDTO->products as $key => $product){
+        foreach ($purchaseDTO->products as $key => $product) {
             self::assertInstanceOf(ProductDTO::class, $product);
             self::assertEquals($data['products'][$key]['id'], $product->id);
             self::assertEquals($data['products'][$key]['name'], $product->name);
@@ -82,7 +82,7 @@ class ClassTransformerTest extends TestCase
             self::assertIsString($purchase->user->email);
             self::assertIsFloat($purchase->user->balance);
 
-            foreach ($purchase->products as $productKey => $product){
+            foreach ($purchase->products as $productKey => $product) {
                 self::assertInstanceOf(ProductDTO::class, $product);
                 self::assertEquals($data['orders'][$key]['products'][$productKey]['id'], $product->id);
                 self::assertEquals($data['orders'][$key]['products'][$productKey]['name'], $product->name);
@@ -98,7 +98,7 @@ class ClassTransformerTest extends TestCase
 
     public function testBaseObject(): void
     {
-        $data= $this->getBaseObject();
+        $data = $this->getBaseObject();
 
         $userDTO = ClassTransformer::transform(UserDTO::class, $data);
 
@@ -115,7 +115,7 @@ class ClassTransformerTest extends TestCase
 
     public function testRecursiveObject(): void
     {
-        $data= $this->getRecursiveObject();
+        $data = $this->getRecursiveObject();
         $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
 
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
@@ -129,7 +129,7 @@ class ClassTransformerTest extends TestCase
         self::assertIsString($purchaseDTO->user->email);
         self::assertIsFloat($purchaseDTO->user->balance);
 
-        foreach ($purchaseDTO->products as $key => $product){
+        foreach ($purchaseDTO->products as $key => $product) {
             self::assertInstanceOf(ProductDTO::class, $product);
             self::assertEquals($data->products[$key]->id, $product->id);
             self::assertEquals($data->products[$key]->name, $product->name);
@@ -163,7 +163,7 @@ class ClassTransformerTest extends TestCase
             self::assertIsString($purchase->user->email);
             self::assertIsFloat($purchase->user->balance);
 
-            foreach ($purchase->products as $productKey => $product){
+            foreach ($purchase->products as $productKey => $product) {
                 self::assertInstanceOf(ProductDTO::class, $product);
                 self::assertEquals($data->orders[$key]->products[$productKey]->id, $product->id);
                 self::assertEquals($data->orders[$key]->products[$productKey]->name, $product->name);
