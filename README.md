@@ -51,6 +51,8 @@ object(\LoginDTO)[298]
   public string 'password' => string '123456' (length=6)
 ```
 
+If you need to implement your own transformation, for example, your input parameters have a different name for attributes, then you can implement the static of the transform method in the class.
+
 ## :scroll: **Recursive casting**
 
 If you have an array of objects of a specific class, then you must specify the full path to the class in phpdoc `array <\ DTO \ ProductDTO>`.

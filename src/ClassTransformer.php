@@ -34,7 +34,7 @@ class ClassTransformer
             return new $className();
         }
 
-        if (method_exists($className, 'plainToClass')) {
+        if (method_exists($className, 'transform')) {
             return $className::plainToClass($args);
         }
 
