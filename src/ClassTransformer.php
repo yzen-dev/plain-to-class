@@ -23,18 +23,18 @@ class ClassTransformer
      */
     public static function transform(string $className, $args)
     {
+        try {
+            $refInstance = new ReflectionClass($className);
+        } catch (\ReflectionException $e) {
+            throw new ClassNotFoundException("Class $className not found. Please check the class path you specified.");
+        }
+
         if ($args === null) {
             return new $className();
         }
 
         if (method_exists($className, 'plainToClass')) {
             return $className::plainToClass($args);
-        }
-
-        try {
-            $refInstance = new ReflectionClass($className);
-        } catch (\ReflectionException $e) {
-            throw new ClassNotFoundException("Class $className not found. Please check the class path you specified.");
         }
 
         if (is_object($args)) {
@@ -46,19 +46,25 @@ class ClassTransformer
             if (array_key_exists($item->name, $args)) {
                 $propertyClass = $refInstance->getProperty($item->name);
                 $propertyClassType = $propertyClass->getType();
+
                 $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
 
-                if ($propertyClassTypeName === 'array') {
-                    $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
-                    if ($docType && class_exists($docType)) {
-                        foreach ($args[$item->name] as $el) {
-                            $instance->{$item->name}[] = self::transform($docType, $el);
-                        }
-                    }
+                ## if scalar type
+                if (in_array($propertyClassType, ['int', 'float', 'string', 'bool'])) {
+                    $instance->{$item->name} = $args[$item->name];
                     continue;
                 }
 
-                if ($propertyClassTypeName && class_exists($propertyClassTypeName)) {
+                if ($propertyClassTypeName === 'array') {
+                    $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
+                    if ($docType) {
+                        foreach ($args[$item->name] as $el) {
+                            $instance->{$item->name}[] = self::transform($docType, $el);
+                        }
+                        continue;
+                    }
+                }
+                if ($propertyClassTypeName) {
                     $instance->{$item->name} = self::transform($propertyClassTypeName, $args[$item->name]);
                     continue;
                 }
