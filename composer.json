@@ -1,6 +1,6 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Class-transformer to transform your data into a typed object",
   "minimum-stability": "dev",
   "prefer-stable": true,

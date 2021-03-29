@@ -51,7 +51,7 @@ class ClassTransformer
                 $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
 
                 ## if scalar type
-                if (in_array($propertyClassType, ['int', 'float', 'string', 'bool'])) {
+                if (in_array($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) {
                     $instance->{$item->name} = $args[$item->name];
                     continue;
                 }
