@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         backupGlobals="false"
         backupStaticAttributes="false"
         bootstrap="vendor/autoload.php"
@@ -9,19 +10,16 @@
         convertWarningsToExceptions="true"
         processIsolation="false"
         stopOnFailure="false"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
 >
+    <coverage/>
     <testsuites>
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
     <logging>
-        <log type="testdox-html" target="./public/testing.html"/>
-        <log type="junit" target="./public/phpunit-junit.xml"/>
+        <testdoxHtml outputFile="./public/testing.html"/>
+        <junit outputFile="./public/phpunit-junit.xml"/>
     </logging>
 </phpunit>
