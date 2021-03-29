@@ -4,6 +4,7 @@ namespace ClassTransformer;
 
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class ClassTransformer
@@ -16,10 +17,10 @@ class ClassTransformer
      * @template T
      *
      * @param class-string<T> $className
-     * @param mixed $args
+     * @param array<mixed>|object|null $args
      *
      * @return T
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|ReflectionException
      */
     public static function transform(string $className, $args)
     {
@@ -59,12 +60,14 @@ class ClassTransformer
                     $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
                     if ($docType) {
                         foreach ($args[$item->name] as $el) {
+                            /** @phpstan-ignore-next-line */
                             $instance->{$item->name}[] = self::transform($docType, $el);
                         }
                         continue;
                     }
                 }
                 if ($propertyClassTypeName) {
+                    /** @phpstan-ignore-next-line */
                     $instance->{$item->name} = self::transform($propertyClassTypeName, $args[$item->name]);
                     continue;
                 }
