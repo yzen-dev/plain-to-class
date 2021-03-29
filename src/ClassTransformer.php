@@ -35,7 +35,7 @@ class ClassTransformer
         }
 
         if (method_exists($className, 'transform')) {
-            return $className::plainToClass($args);
+            return $className::transform($args);
         }
 
         if (is_object($args)) {
