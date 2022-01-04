@@ -2,11 +2,11 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class ClassTransformer
@@ -47,30 +47,29 @@ class ClassTransformer
         $instance = new $className();
         foreach ($refInstance->getProperties() as $item) {
             if (array_key_exists($item->name, $args)) {
-                $propertyClass = $refInstance->getProperty($item->name);
-                $propertyClassType = $propertyClass->getType();
+                $property = $refInstance->getProperty($item->name);
+                $propertyType = $property->getType();
 
                 $propertyClassTypeName = [];
-                if ($propertyClassType instanceof ReflectionUnionType) {
+                if ($propertyType instanceof ReflectionUnionType) {
                     $propertyClassTypeName = array_map(
                         static function ($item) {
                             return $item->getName();
                         },
-                        $propertyClassType->getTypes()
+                        $propertyType->getTypes()
                     );
-                } elseif ($propertyClassType instanceof ReflectionNamedType) {
-                    $propertyClassTypeName = [$propertyClassType->getName()];
+                } elseif ($propertyType instanceof ReflectionNamedType) {
+                    $propertyClassTypeName = [$propertyType->getName()];
                 }
 
-                ## if scalar type
-                if (count(array_intersect_key($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
+                if (count(array_intersect($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
                     $instance->{$item->name} = $args[$item->name];
                     continue;
                 }
 
-                if (array_key_exists('array', $propertyClassTypeName)) {
-                    $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
-                    if ($docType) {
+                if (in_array('array', $propertyClassTypeName, true)) {
+                    $docType = self::getClassFromPhpDoc($property->getDocComment());
+                    if (!empty($docType)) {
                         foreach ($args[$item->name] as $el) {
                             /** @phpstan-ignore-next-line */
                             $instance->{$item->name}[] = self::transform($docType, $el);
@@ -78,9 +77,10 @@ class ClassTransformer
                         continue;
                     }
                 }
-                if (!empty($propertyClassTypeName) && $propertyClassType instanceof ReflectionNamedType) {
+
+                if ($propertyType instanceof ReflectionNamedType) {
                     /** @phpstan-ignore-next-line */
-                    $instance->{$item->name} = self::transform($propertyClassTypeName, $args[$item->name]);
+                    $instance->{$item->name} = self::transform($propertyType->getName(), $args[$item->name]);
                     continue;
                 }
                 $instance->{$item->name} = $args[$item->name];
