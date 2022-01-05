@@ -3,11 +3,13 @@
 namespace ClassTransformer;
 
 use _PHPStan_76800bfb5\Nette\Utils\Paginator;
+use ClassTransformer\Attributes\WritingStyle;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
 use ClassTransformer\Exceptions\ClassNotFoundException;
+use Tests\DTO\WritingStyleDTO;
 
 /**
  * Class ClassTransformer
@@ -59,8 +61,28 @@ class ClassTransformer
         }
         $instance = new $className();
         foreach ($refInstance->getProperties() as $item) {
-            if (!array_key_exists($item->name, $inArgs)) {
-                continue;
+            if (array_key_exists($item->name, $inArgs)) {
+                $value = $inArgs[$item->name];
+            } else {
+                $writingStyle = $item->getAttributes(WritingStyle::class);
+                if (empty($writingStyle)) {
+                    continue;
+                }
+                foreach ($writingStyle as $style) {
+                    $styles = $style->getArguments();
+                    if ((in_array(WritingStyle::STYLE_SNAKE_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) && array_key_exists(WritingStyleUtil::strToSnakeCase($item->name), $inArgs)) {
+                        $value = $inArgs[WritingStyleUtil::strToSnakeCase($item->name)];
+                        break;
+                    }
+                    if ((in_array(WritingStyle::STYLE_CAMEL_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) && array_key_exists(WritingStyleUtil::strToCamelCase($item->name), $inArgs)) {
+                        $value = $inArgs[WritingStyleUtil::strToCamelCase($item->name)];
+                        break;
+                    }
+                }
+
+                if (!isset($value)) {
+                    continue;
+                }
             }
 
             $property = $refInstance->getProperty($item->name);
@@ -79,14 +101,14 @@ class ClassTransformer
             }
 
             if (count(array_intersect($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
-                $instance->{$item->name} = $inArgs[$item->name];
+                $instance->{$item->name} = $value;
                 continue;
             }
 
             if (in_array('array', $propertyClassTypeName, true)) {
                 $docType = self::getClassFromPhpDoc($property->getDocComment());
                 if (!empty($docType)) {
-                    foreach ($inArgs[$item->name] as $el) {
+                    foreach ($value as $el) {
                         /** @phpstan-ignore-next-line */
                         $instance->{$item->name}[] = self::transform($docType, $el);
                     }
@@ -96,10 +118,10 @@ class ClassTransformer
 
             if ($propertyType instanceof ReflectionNamedType) {
                 /** @phpstan-ignore-next-line */
-                $instance->{$item->name} = self::transform($propertyType->getName(), $inArgs[$item->name]);
+                $instance->{$item->name} = self::transform($propertyType->getName(), $value);
                 continue;
             }
-            $instance->{$item->name} = $inArgs[$item->name];
+            $instance->{$item->name} = $value;
 
         }
         return $instance;
@@ -109,7 +131,8 @@ class ClassTransformer
      * @param string|false $phpDoc
      * @return string|null
      */
-    private static function getClassFromPhpDoc($phpDoc): ?string
+    private
+    static function getClassFromPhpDoc($phpDoc): ?string
     {
         if ($phpDoc) {
             preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $docType);
