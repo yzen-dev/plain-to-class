@@ -5,6 +5,8 @@ namespace ClassTransformer;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionUnionType;
 
 /**
  * Class ClassTransformer
@@ -48,15 +50,25 @@ class ClassTransformer
                 $propertyClass = $refInstance->getProperty($item->name);
                 $propertyClassType = $propertyClass->getType();
 
-                $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
+                $propertyClassTypeName = [];
+                if ($propertyClassType instanceof ReflectionUnionType) {
+                    $propertyClassTypeName = array_map(
+                        static function ($item) {
+                            return $item->getName();
+                        },
+                        $propertyClassType->getTypes()
+                    );
+                } elseif ($propertyClassType instanceof ReflectionNamedType) {
+                    $propertyClassTypeName = [$propertyClassType->getName()];
+                }
 
                 ## if scalar type
-                if (in_array($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) {
+                if (count(array_intersect_key($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
                     $instance->{$item->name} = $args[$item->name];
                     continue;
                 }
 
-                if ($propertyClassTypeName === 'array') {
+                if (array_key_exists('array', $propertyClassTypeName)) {
                     $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
                     if ($docType) {
                         foreach ($args[$item->name] as $el) {
@@ -66,7 +78,7 @@ class ClassTransformer
                         continue;
                     }
                 }
-                if ($propertyClassTypeName) {
+                if (!empty($propertyClassTypeName) && $propertyClassType instanceof ReflectionNamedType) {
                     /** @phpstan-ignore-next-line */
                     $instance->{$item->name} = self::transform($propertyClassTypeName, $args[$item->name]);
                     continue;
