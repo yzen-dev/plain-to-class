@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Tests;
 
 trait FakerData
 {
-    public function getBaseArrayData()
+    public function getBaseArrayData(): array
     {
         return [
             'id' => 1,
@@ -14,7 +15,7 @@ trait FakerData
         ];
     }
 
-    public function getRecursiveArrayData()
+    public function getRecursiveArrayData(): array
     {
         return [
             'products' => [
@@ -25,10 +26,10 @@ trait FakerData
         ];
     }
 
-    public function getTripleRecursiveArray()
+    public function getTripleRecursiveArray(): array
     {
         return [
-            'orders'=>[
+            'orders' => [
                 [
                     'products' => [
                         ['id' => 47, 'name' => 'phone', 'price' => 43.03,],
@@ -47,86 +48,69 @@ trait FakerData
         ];
     }
 
-    public function getBaseObject()
+    public function getBaseObject(): \stdClass
     {
-        $data= new \stdClass();
+        $data = new \stdClass();
         $data->id = 1;
         $data->email = 'fake@mail.com';
         $data->balance = 128.43;
-
         return $data;
     }
 
-    public function getRecursiveObject()
+    public function getRecursiveObject(): \stdClass
     {
         $productOne = new \stdClass();
         $productOne->id = 1;
         $productOne->name = 'phone';
         $productOne->price = 43.03;
-
         $productTwo = new \stdClass();
         $productTwo->id = 2;
         $productTwo->name = 'bread';
         $productTwo->price = 10.56;
-
         $user = new \stdClass();
         $user->id = 1;
         $user->email = 'fake@mail.com';
         $user->balance = 10012.23;
-
-        $data= new \stdClass();
+        $data = new \stdClass();
         $data->products = [$productOne, $productTwo];
         $data->user = $user;
-
         return $data;
     }
 
-    public function getTripleRecursiveObject()
+    public function getTripleRecursiveObject(): \stdClass
     {
         $productOne = new \stdClass();
         $productOne->id = 47;
         $productOne->name = 'phone';
         $productOne->price = 43.03;
-
         $productTwo = new \stdClass();
         $productTwo->id = 2;
         $productTwo->name = 'bread';
         $productTwo->price = 10.56;
-
         $user = new \stdClass();
         $user->id = 1;
         $user->email = 'fake@mail.com';
         $user->balance = 612.23;
-
-        $orderOne= new \stdClass();
+        $orderOne = new \stdClass();
         $orderOne->products = [$productOne, $productTwo];
         $orderOne->user = $user;
-
-
         $productOne = new \stdClass();
         $productOne->id = 73;
         $productOne->name = 'laptop';
         $productOne->price = 1200.00;
-
         $productTwo = new \stdClass();
         $productTwo->id = 32;
         $productTwo->name = 'tomato';
         $productTwo->price = 10.56;
-
         $user = new \stdClass();
         $user->id = 2;
         $user->email = 'fake2@mail.com';
         $user->balance = 10012.23;
-
-
-        $orderTwo= new \stdClass();
+        $orderTwo = new \stdClass();
         $orderTwo->products = [$productOne, $productTwo];
         $orderTwo->user = $user;
-
-
-        $data= new \stdClass();
+        $data = new \stdClass();
         $data->orders = [$orderOne, $orderTwo];
-
         return $data;
     }
 }
