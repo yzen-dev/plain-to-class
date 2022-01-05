@@ -119,3 +119,34 @@ object(PurchaseDTO)[345]
       public string 'email' => string 'test@test.com' (length=13)
       public float 'balance' => float 10012.23
 ```
+
+### :scroll: **Writing style**
+
+A constant problem with the style of writing, for example, in the database it is snake_case, and in the camelCase code. And they constantly need to be transformed somehow. The package takes care of this, you just need to specify the WritingStyle attribute on the property:
+
+```php
+class WritingStyleSnakeCaseDTO
+{
+    #[WritingStyle(WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_SNAKE_CASE)]
+    public string $contact_fio;
+
+    #[WritingStyle(WritingStyle::STYLE_CAMEL_CASE)]
+    public string $contact_email;
+}
+
+
+ $data = [
+            'contactFio' => 'yzen.dev',
+            'contactEmail' => 'test@mail.com',
+        ];
+$model = ClassTransformer::transform(WritingStyleSnakeCaseDTO::class, $data);
+var_dump($model);
+```
+```php
+RESULT:
+
+object(WritingStyleSnakeCaseDTO) (2) {
+  ["contact_fio"]=> string(8) "yzen.dev"
+  ["contact_email"]=> string(13) "test@mail.com"
+}
+```
