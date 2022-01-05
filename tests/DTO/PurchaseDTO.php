@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\DTO;
 
+use ClassTransformer\Attributes\ConvertArray;
+
 class PurchaseDTO
 {
-    /** @var array<\Tests\DTO\ProductDTO> $products Product list */
+    #[ConvertArray(ProductDTO::class)]
     public array $products;
 
-    /** @var \Tests\DTO\UserDTO $user */
+    /** @var UserDTO $user */
     public UserDTO $user;
 }

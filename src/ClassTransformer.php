@@ -2,14 +2,13 @@
 
 namespace ClassTransformer;
 
-use _PHPStan_76800bfb5\Nette\Utils\Paginator;
-use ClassTransformer\Attributes\WritingStyle;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use ClassTransformer\Attributes\WritingStyle;
+use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use Tests\DTO\WritingStyleDTO;
 
 /**
  * Class ClassTransformer
@@ -29,36 +28,34 @@ class ClassTransformer
      */
     public static function transform(string $className, ...$args)
     {
-        $isPHP8Format = count(func_get_args()) === 1;
+        // arguments transferred as named arguments (for php8)
+        $isNamedArguments = count(func_get_args()) === 1;
 
-        try {
-            $refInstance = new ReflectionClass($className);
-        } catch (\ReflectionException $e) {
+        if (!class_exists($className)) {
             throw new ClassNotFoundException("Class $className not found. Please check the class path you specified.");
         }
+
+        $refInstance = new ReflectionClass($className);
 
         if (empty($args) === null) {
             return new $className();
         }
 
+        // if exist custom transform method
         if (method_exists($className, 'transform')) {
-            if ($isPHP8Format) {
+            if ($isNamedArguments) {
                 return $className::transform(...$args);
             }
             return $className::transform($args[0]);
         }
-        // Если обычный массив, то надо распаковать
-        // Иначе он валидный
 
-        if ($isPHP8Format) {
-            $inArgs = $args;
-        } else {
-            $inArgs = $args[0];
-        }
+        // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
+        $inArgs = $isNamedArguments ? $args : $args[0];
 
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
         }
+
         $instance = new $className();
         foreach ($refInstance->getProperties() as $item) {
             if (array_key_exists($item->name, $inArgs)) {
@@ -87,18 +84,7 @@ class ClassTransformer
 
             $property = $refInstance->getProperty($item->name);
             $propertyType = $property->getType();
-
-            $propertyClassTypeName = [];
-            if ($propertyType instanceof ReflectionUnionType) {
-                $propertyClassTypeName = array_map(
-                    static function ($item) {
-                        return $item->getName();
-                    },
-                    $propertyType->getTypes()
-                );
-            } elseif ($propertyType instanceof ReflectionNamedType) {
-                $propertyClassTypeName = [$propertyType->getName()];
-            }
+            $propertyClassTypeName = self::getPropertyTypes($propertyType);
 
             if (count(array_intersect($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
                 $instance->{$item->name} = $value;
@@ -106,11 +92,17 @@ class ClassTransformer
             }
 
             if (in_array('array', $propertyClassTypeName, true)) {
-                $docType = self::getClassFromPhpDoc($property->getDocComment());
-                if (!empty($docType)) {
+                // ConvertArray
+                $arrayTypeAttr = $item->getAttributes(ConvertArray::class);
+                if (!empty($arrayTypeAttr)) {
+                    $arrayType = $arrayTypeAttr[0]->getArguments()[0];
+                } else {
+                    $arrayType = self::getClassFromPhpDoc($property->getDocComment());
+                }
+                if (!empty($arrayType)) {
                     foreach ($value as $el) {
                         /** @phpstan-ignore-next-line */
-                        $instance->{$item->name}[] = self::transform($docType, $el);
+                        $instance->{$item->name}[] = self::transform($arrayType, $el);
                     }
                     continue;
                 }
@@ -122,7 +114,6 @@ class ClassTransformer
                 continue;
             }
             $instance->{$item->name} = $value;
-
         }
         return $instance;
     }
@@ -131,13 +122,27 @@ class ClassTransformer
      * @param string|false $phpDoc
      * @return string|null
      */
-    private
-    static function getClassFromPhpDoc($phpDoc): ?string
+    private static function getClassFromPhpDoc($phpDoc): ?string
     {
         if ($phpDoc) {
-            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $docType);
-            return $docType[1] ?? null;
+            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $arrayType);
+            return $arrayType[1] ?? null;
         }
         return null;
+    }
+
+    private static function getPropertyTypes($propertyType)
+    {
+        if ($propertyType instanceof ReflectionUnionType) {
+            return array_map(
+                static function ($item) {
+                    return $item->getName();
+                },
+                $propertyType->getTypes()
+            );
+        } elseif ($propertyType instanceof ReflectionNamedType) {
+            return [$propertyType->getName()];
+        }
+        return [];
     }
 }
