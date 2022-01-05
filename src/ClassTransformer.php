@@ -5,6 +5,7 @@ namespace ClassTransformer;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionNamedType;
+use ReflectionType;
 use ReflectionUnionType;
 use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Attributes\ConvertArray;
@@ -37,7 +38,7 @@ class ClassTransformer
 
         $refInstance = new ReflectionClass($className);
 
-        if (empty($args) === null) {
+        if (empty($args)) {
             return new $className();
         }
 
@@ -55,6 +56,7 @@ class ClassTransformer
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
         }
+        $inArgs ??= [];
 
         $instance = new $className();
         foreach ($refInstance->getProperties() as $item) {
@@ -131,7 +133,11 @@ class ClassTransformer
         return null;
     }
 
-    private static function getPropertyTypes($propertyType)
+    /**
+     * @param ReflectionType|null $propertyType
+     * @return array<string>
+     */
+    private static function getPropertyTypes(?ReflectionType $propertyType): array
     {
         if ($propertyType instanceof ReflectionUnionType) {
             return array_map(
@@ -140,7 +146,8 @@ class ClassTransformer
                 },
                 $propertyType->getTypes()
             );
-        } elseif ($propertyType instanceof ReflectionNamedType) {
+        }
+        if ($propertyType instanceof ReflectionNamedType) {
             return [$propertyType->getName()];
         }
         return [];

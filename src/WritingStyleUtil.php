@@ -2,24 +2,27 @@
 
 namespace ClassTransformer;
 
+/**
+ *
+ */
 class WritingStyleUtil
 {
     /**
-     * @param $string
+     * @param string $string
      * @return string
      */
-    public static function strToSnakeCase($string)
+    public static function strToSnakeCase(string $string): string
     {
-        return strtolower(preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '_', $string));
+        $str = preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '_', $string) ?? '';
+        return strtolower($str);
     }
 
     /**
-     * @param $string
+     * @param string $string
      * @return string
      */
-    public static function strToCamelCase($string)
+    public static function strToCamelCase(string $string): string
     {
-        $str = str_replace('_', '', ucwords($string, '_'));
-        return lcfirst($str);
+        return lcfirst(str_replace('_', '', ucwords($string, '_')));
     }
 }
