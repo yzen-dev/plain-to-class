@@ -4,22 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\DTO;
 
-class CustomTransformUserDTO
+class CustomTransformUserDTOArray
 {
     public string $email;
     public string $username;
 
-
     /**
-     * @param $login
-     * @param $fio
      * @return CustomTransformUserDTO
      */
-    public static function transform($login, $fio)
+    public static function transform($args)
     {
         $dto = new self();
-        $dto->email = $login;
-        $dto->username = $fio;
+        $dto->email = $args['login'];
+        $dto->username = $args['fio'];
         return $dto;
     }
 }

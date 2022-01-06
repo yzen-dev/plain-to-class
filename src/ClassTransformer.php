@@ -2,9 +2,14 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionNamedType;
+use ReflectionType;
+use ReflectionUnionType;
+use ClassTransformer\Attributes\WritingStyle;
+use ClassTransformer\Attributes\ConvertArray;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class ClassTransformer
@@ -22,57 +27,95 @@ class ClassTransformer
      * @return T
      * @throws ClassNotFoundException|ReflectionException
      */
-    public static function transform(string $className, $args)
+    public static function transform(string $className, ...$args)
     {
-        try {
-            $refInstance = new ReflectionClass($className);
-        } catch (\ReflectionException $e) {
+        // arguments transferred as named arguments (for php8)
+        $isNamedArguments = count(func_get_args()) === 1;
+
+        if (!class_exists($className)) {
             throw new ClassNotFoundException("Class $className not found. Please check the class path you specified.");
         }
 
-        if ($args === null) {
+        $refInstance = new ReflectionClass($className);
+
+        if (empty($args)) {
             return new $className();
         }
 
+        // if exist custom transform method
         if (method_exists($className, 'transform')) {
-            return $className::transform($args);
+            if ($isNamedArguments) {
+                return $className::transform(...$args);
+            }
+            return $className::transform($args[0]);
         }
 
-        if (is_object($args)) {
-            $args = (array)$args;
+        // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
+        $inArgs = $isNamedArguments ? $args : $args[0];
+
+        if (is_object($inArgs)) {
+            $inArgs = (array)$inArgs;
         }
+        $inArgs ??= [];
 
         $instance = new $className();
         foreach ($refInstance->getProperties() as $item) {
-            if (array_key_exists($item->name, $args)) {
-                $propertyClass = $refInstance->getProperty($item->name);
-                $propertyClassType = $propertyClass->getType();
-
-                $propertyClassTypeName = $propertyClassType !== null ? $propertyClassType->getName() : false;
-
-                ## if scalar type
-                if (in_array($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) {
-                    $instance->{$item->name} = $args[$item->name];
+            if (array_key_exists($item->name, $inArgs)) {
+                $value = $inArgs[$item->name];
+            } else {
+                $writingStyle = $item->getAttributes(WritingStyle::class);
+                if (empty($writingStyle)) {
                     continue;
                 }
-
-                if ($propertyClassTypeName === 'array') {
-                    $docType = self::getClassFromPhpDoc($propertyClass->getDocComment());
-                    if ($docType) {
-                        foreach ($args[$item->name] as $el) {
-                            /** @phpstan-ignore-next-line */
-                            $instance->{$item->name}[] = self::transform($docType, $el);
-                        }
-                        continue;
+                foreach ($writingStyle as $style) {
+                    $styles = $style->getArguments();
+                    if ((in_array(WritingStyle::STYLE_SNAKE_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) && array_key_exists(WritingStyleUtil::strToSnakeCase($item->name), $inArgs)) {
+                        $value = $inArgs[WritingStyleUtil::strToSnakeCase($item->name)];
+                        break;
+                    }
+                    if ((in_array(WritingStyle::STYLE_CAMEL_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) && array_key_exists(WritingStyleUtil::strToCamelCase($item->name), $inArgs)) {
+                        $value = $inArgs[WritingStyleUtil::strToCamelCase($item->name)];
+                        break;
                     }
                 }
-                if ($propertyClassTypeName) {
-                    /** @phpstan-ignore-next-line */
-                    $instance->{$item->name} = self::transform($propertyClassTypeName, $args[$item->name]);
+
+                if (!isset($value)) {
                     continue;
                 }
-                $instance->{$item->name} = $args[$item->name];
             }
+
+            $property = $refInstance->getProperty($item->name);
+            $propertyType = $property->getType();
+            $propertyClassTypeName = self::getPropertyTypes($propertyType);
+
+            if (count(array_intersect($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
+                $instance->{$item->name} = $value;
+                continue;
+            }
+
+            if (in_array('array', $propertyClassTypeName, true)) {
+                // ConvertArray
+                $arrayTypeAttr = $item->getAttributes(ConvertArray::class);
+                if (!empty($arrayTypeAttr)) {
+                    $arrayType = $arrayTypeAttr[0]->getArguments()[0];
+                } else {
+                    $arrayType = self::getClassFromPhpDoc($property->getDocComment());
+                }
+                if (!empty($arrayType)) {
+                    foreach ($value as $el) {
+                        /** @phpstan-ignore-next-line */
+                        $instance->{$item->name}[] = self::transform($arrayType, $el);
+                    }
+                    continue;
+                }
+            }
+
+            if ($propertyType instanceof ReflectionNamedType) {
+                /** @phpstan-ignore-next-line */
+                $instance->{$item->name} = self::transform($propertyType->getName(), $value);
+                continue;
+            }
+            $instance->{$item->name} = $value;
         }
         return $instance;
     }
@@ -84,9 +127,29 @@ class ClassTransformer
     private static function getClassFromPhpDoc($phpDoc): ?string
     {
         if ($phpDoc) {
-            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $docType);
-            return $docType[1] ?? null;
+            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $arrayType);
+            return $arrayType[1] ?? null;
         }
         return null;
+    }
+
+    /**
+     * @param ReflectionType|null $propertyType
+     * @return array<string>
+     */
+    private static function getPropertyTypes(?ReflectionType $propertyType): array
+    {
+        if ($propertyType instanceof ReflectionUnionType) {
+            return array_map(
+                static function ($item) {
+                    return $item->getName();
+                },
+                $propertyType->getTypes()
+            );
+        }
+        if ($propertyType instanceof ReflectionNamedType) {
+            return [$propertyType->getName()];
+        }
+        return [];
     }
 }

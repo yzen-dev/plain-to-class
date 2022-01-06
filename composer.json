@@ -1,11 +1,11 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Class-transformer to transform your data into a typed object",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "license": "MIT",
-  "keywords": [ "php", "object", "class", "transformer", "class-transformer"],
+  "keywords": [ "php", "object", "class", "transformer","convert", "class-transformer"],
   "authors": [
     {
       "name": "Andey Iatsenko",
@@ -26,7 +26,7 @@
     }
   },
   "require": {
-    "php": "^7.4 || ^8.0"
+    "php": "^8.0"
   },
   "scripts": {
     "phpunit": [
