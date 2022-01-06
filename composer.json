@@ -45,12 +45,6 @@
     "phpunit/phpunit": "^9.3",
     "squizlabs/php_codesniffer": "*"
   },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "master-dev",
-      "dev-dev": "dev-dev"
-    }
-  },
   "support": {
     "issues": "https://github.com/yzen-dev/plain-to-class/issues",
     "source": "https://github.com/yzen-dev/plain-to-class"
