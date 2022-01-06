@@ -14,11 +14,7 @@ This approach guarantees that the service will work with the data it needs, full
 ## :scroll: **Installation**
 The package can be installed via composer:
 ```
-for PHP ^8.0
 composer require yzen.dev/plain-to-class
-
-for PHP ^7.4
-composer require yzen.dev/plain-to-class:php7
 ```
 
 ## :scroll: **Usage**
