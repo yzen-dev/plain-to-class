@@ -5,7 +5,7 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "license": "MIT",
-  "keywords": [ "php", "object", "class", "transformer", "class-transformer"],
+  "keywords": [ "php", "object", "class", "transformer","convert", "class-transformer"],
   "authors": [
     {
       "name": "Andey Iatsenko",
@@ -47,8 +47,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "dev",
-      "php7": "php7"
+      "dev-master": "dev-dev",
+      "php7": "php7-dev"
     }
   },
   "support": {
