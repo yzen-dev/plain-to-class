@@ -10,6 +10,7 @@ use ClassTransformer\ClassTransformer;
 use ReflectionException;
 use Tests\DTO\CustomTransformUserDTO;
 use Tests\DTO\CustomTransformUserDTOArray;
+use Tests\DTO\UserNoTypeArrayDTO;
 
 /**
  * Class CustomTransformerTest
@@ -35,6 +36,32 @@ class CustomTransformerTest extends TestCase
 
         self::assertEquals('test-login', $userDTO->email);
         self::assertEquals('Corey', $userDTO->username);
+    }
+
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testArrayNotType(): void
+    {
+        $data = [
+            'id' => 1,
+            'products' => [
+                ['id' => 1, 'price' => 43.03,],
+                ['id' => 2, 'price' => 10.56,],
+            ],
+        ];
+        $userDTO = ClassTransformer::transform(UserNoTypeArrayDTO::class, $data);
+
+        self::assertInstanceOf(UserNoTypeArrayDTO::class, $userDTO);
+
+        self::assertTrue(isset($userDTO->id));
+        self::assertTrue(isset($userDTO->products));
+        self::assertEquals($data['id'], $userDTO->id);
+
+        foreach ($userDTO->products as $key => $product) {
+            self::assertEquals($data['products'][$key]['id'], $product['id']);
+            self::assertEquals($data['products'][$key]['price'], $product['price']);
+        }
     }
 
     /**

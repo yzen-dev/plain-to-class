@@ -108,6 +108,9 @@ class ClassTransformer
                     }
                     continue;
                 }
+
+                $instance->{$item->name} = $value;
+                continue;
             }
 
             if ($propertyType instanceof ReflectionNamedType) {
