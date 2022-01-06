@@ -47,8 +47,8 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "dev-dev",
-      "php7": "php7-dev"
+      "dev-master": "master-dev",
+      "dev-dev": "dev-dev"
     }
   },
   "support": {
