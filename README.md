@@ -1,4 +1,7 @@
 ## Class-transformer helper
+![Packagist Version](https://img.shields.io/packagist/v/yzen.dev/plain-to-class?color=%23007ec6&style=plastic)
+![Packagist Downloads](https://img.shields.io/packagist/dm/yzen.dev/plain-to-class)
+![Packagist Downloads](https://img.shields.io/packagist/dt/yzen.dev/plain-to-class)
 
 > Alas, I do not speak English, and the documentation was compiled through google translator :(
 > I will be glad if you can help me describe the documentation more correctly :)
