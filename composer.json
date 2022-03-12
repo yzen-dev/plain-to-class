@@ -1,6 +1,6 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Class-transformer to transform your dataset into a structured object",
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -12,6 +12,10 @@
       "email": "yzen.dev@gmail.com"
     }
   ],
+  "support": {
+    "issues": "https://github.com/yzen-dev/plain-to-class/issues",
+    "source": "https://github.com/yzen-dev/plain-to-class"
+  },
   "config": {
     "sort-packages": true
   },
@@ -27,6 +31,12 @@
   },
   "require": {
     "php": "^8.0"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^0.12.82",
+    "mockery/mockery": "^1.0",
+    "phpunit/phpunit": "^9.3",
+    "squizlabs/php_codesniffer": "*"
   },
   "scripts": {
     "phpunit": [
@@ -45,14 +55,10 @@
       "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-html public/coverage --coverage-text"
     ]
   },
-  "require-dev": {
-    "phpstan/phpstan": "^0.12.82",
-    "mockery/mockery": "^1.0",
-    "phpunit/phpunit": "^9.3",
-    "squizlabs/php_codesniffer": "*"
-  },
-  "support": {
-    "issues": "https://github.com/yzen-dev/plain-to-class/issues",
-    "source": "https://github.com/yzen-dev/plain-to-class"
+  "scripts-descriptions": {
+    "phpunit": "Run tests",
+    "coverage": "Checking code coverage",
+    "phpstan": "Run static analyze",
+    "phpcs": "Checking codestyle"
   }
 }

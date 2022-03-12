@@ -13,12 +13,78 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class ClassTransformer
+ *
  * @package ClassTransformer
  */
 class ClassTransformer
 {
     /**
      * Class-transformer function to transform our object into a typed object
+     *
+     * @template T
+     *
+     * @param class-string<T>|array<class-string<T>> $className
+     * @param array<mixed>|object|null $args
+     *
+     * @return null|T|array<T>
+     * @throws ClassNotFoundException|ReflectionException
+     */
+    public static function transform(string|array $className, ...$args)
+    {
+        if (is_string($className)) {
+            return self::dataConverting($className, ...$args);
+        }
+
+        if (count(func_get_args()) === 1) {
+            throw new \RuntimeException('Input parameter error. Named arguments are not supported for an anonymous array of classes');
+        }
+        if (empty($args) || !is_array($args[0])) {
+            return null;
+        }
+        if (count($className) === 1) {
+            return self::anonymousArrayConverting($className[0], $args[0]);
+        }
+
+        return self::extractArrayConverting($className, $args[0]);
+    }
+
+    /**
+     * @template T
+     *
+     * @param class-string<T> $className
+     * @param array<mixed> $args
+     *
+     * @return array<T>
+     * @throws ClassNotFoundException|ReflectionException
+     */
+    private static function anonymousArrayConverting(string $className, $args)
+    {
+        $result = [];
+        foreach ($args as $item) {
+            $result [] = self::dataConverting($className, $item);
+        }
+        return $result;
+    }
+
+    /**
+     * @template T
+     *
+     * @param array<class-string<T>> $className
+     * @param array<mixed> $args
+     *
+     * @return array<T>
+     * @throws ClassNotFoundException|ReflectionException
+     */
+    private static function extractArrayConverting(array $className, $args): array
+    {
+        $result = [];
+        foreach ($className as $key => $class) {
+            $result [] = self::dataConverting($class, $args[$key]);
+        }
+        return $result;
+    }
+
+    /**
      * @template T
      *
      * @param class-string<T> $className
@@ -27,7 +93,7 @@ class ClassTransformer
      * @return T
      * @throws ClassNotFoundException|ReflectionException
      */
-    public static function transform(string $className, ...$args)
+    private static function dataConverting(string $className, ...$args)
     {
         // arguments transferred as named arguments (for php8)
         $isNamedArguments = count(func_get_args()) === 1;
@@ -64,6 +130,7 @@ class ClassTransformer
                 $value = $inArgs[$item->name];
             } else {
                 $writingStyle = $item->getAttributes(WritingStyle::class);
+
                 if (empty($writingStyle)) {
                     continue;
                 }
@@ -104,7 +171,7 @@ class ClassTransformer
                 if (!empty($arrayType)) {
                     foreach ($value as $el) {
                         /** @phpstan-ignore-next-line */
-                        $instance->{$item->name}[] = self::transform($arrayType, $el);
+                        $instance->{$item->name}[] = self::dataConverting($arrayType, $el);
                     }
                     continue;
                 }
@@ -115,7 +182,7 @@ class ClassTransformer
 
             if ($propertyType instanceof ReflectionNamedType) {
                 /** @phpstan-ignore-next-line */
-                $instance->{$item->name} = self::transform($propertyType->getName(), $value);
+                $instance->{$item->name} = self::dataConverting($propertyType->getName(), $value);
                 continue;
             }
             $instance->{$item->name} = $value;
@@ -125,6 +192,7 @@ class ClassTransformer
 
     /**
      * @param string|false $phpDoc
+     *
      * @return string|null
      */
     private static function getClassFromPhpDoc($phpDoc): ?string
@@ -138,6 +206,7 @@ class ClassTransformer
 
     /**
      * @param ReflectionType|null $propertyType
+     *
      * @return array<string>
      */
     private static function getPropertyTypes(?ReflectionType $propertyType): array

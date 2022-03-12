@@ -16,12 +16,12 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class ClassTransformerTest
+ *
  * @package Tests
  */
 class ClassTransformerFromArrayTest extends TestCase
 {
     use FakerData;
-
 
     /**
      * @throws ReflectionException|ClassNotFoundException
@@ -39,6 +39,52 @@ class ClassTransformerFromArrayTest extends TestCase
         self::assertIsFloat($userDTO->balance);
     }
 
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testAnonymousArray(): void
+    {
+        $data = $this->getArrayUsers();
+
+        $users = ClassTransformer::transform([UserDTO::class], $data);
+
+        self::assertCount(count($data), $users);
+        foreach ($users as $key => $user) {
+            self::assertInstanceOf(UserDTO::class, $user);
+            self::assertEquals($data[$key]['id'], $user->id);
+            self::assertEquals($data[$key]['email'], $user->email);
+            self::assertEquals($data[$key]['balance'], $user->balance);
+        }
+    }
+
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testExtractArrayConverting(): void
+    {
+        $userData = $this->getBaseArrayData();
+        $purchaseData = $this->getRecursiveArrayData();
+
+        $result = ClassTransformer::transform([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
+
+        [$user, $purchase] = $result;
+
+        self::assertInstanceOf(UserDTO::class, $user);
+        self::assertEquals($userData['id'], $user->id);
+        self::assertEquals($userData['email'], $user->email);
+        self::assertEquals($userData['balance'], $user->balance);
+
+        self::assertInstanceOf(PurchaseDTO::class, $purchase);
+    }
+
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testInvalidExtractArray(): void
+    {
+        $userDTO = ClassTransformer::transform([UserDTO::class], null);
+        self::assertNull($userDTO);
+    }
 
     /**
      * @throws ReflectionException|ClassNotFoundException

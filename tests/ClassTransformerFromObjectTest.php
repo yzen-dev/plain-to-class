@@ -16,11 +16,22 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class ClassTransformerTest
+ *
  * @package Tests
  */
 class ClassTransformerFromObjectTest extends TestCase
 {
     use FakerData;
+
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testEmptyData(): void
+    {
+        $userDTO = ClassTransformer::transform(UserDTO::class);
+        self::assertInstanceOf(UserDTO::class, $userDTO);
+        self::assertTrue(!isset($userDTO->id));
+    }
 
     /**
      * @throws ReflectionException|ClassNotFoundException
@@ -44,7 +55,7 @@ class ClassTransformerFromObjectTest extends TestCase
     public function testBaseObjectPhp8(): void
     {
         $data = $this->getBaseObject();
-        $userDTO = ClassTransformer::transform(UserDTO::class, id:$data->id, email:$data->email, balance:$data->balance);
+        $userDTO = ClassTransformer::transform(UserDTO::class, id: $data->id, email: $data->email, balance: $data->balance);
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data->id, $userDTO->id);
         self::assertEquals($data->email, $userDTO->email);

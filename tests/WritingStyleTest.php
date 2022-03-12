@@ -9,6 +9,7 @@ use Tests\DTO\WritingStyleCamelCaseDTO;
 use PHPUnit\Framework\TestCase;
 use ClassTransformer\ClassTransformer;
 use ClassTransformer\Exceptions\ClassNotFoundException;
+use Tests\DTO\WritingStyleEmpyDTO;
 use Tests\DTO\WritingStyleSnakeCaseDTO;
 
 /**
@@ -17,6 +18,22 @@ use Tests\DTO\WritingStyleSnakeCaseDTO;
  */
 class WritingStyleTest extends TestCase
 {
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testEmptyWritingStyle(): void
+    {
+        $data = [
+            'contact_fio' => 'corey',
+            'contact_email' => 'test@mail.com',
+        ];
+        $model = ClassTransformer::transform(WritingStyleEmpyDTO::class, $data);
+
+        self::assertInstanceOf(WritingStyleEmpyDTO::class, $model);
+        self::assertTrue(!isset($model->contactFio));
+        self::assertTrue(!isset($model->contactEmail));
+    }
+    
     /**
      * @throws ReflectionException|ClassNotFoundException
      */

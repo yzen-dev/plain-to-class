@@ -15,6 +15,14 @@ trait FakerData
         ];
     }
 
+    public function getArrayUsers(): array
+    {
+        return [
+            ['id' => 1, 'email' => 'fake@mail.com', 'balance' => 128.41],
+            ['id' => 1, 'email' => 'fake@mail.com', 'balance' => 128.41]
+        ];
+    }
+
     public function getRecursiveArrayData(): array
     {
         return [

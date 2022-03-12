@@ -5,3 +5,5 @@ vendor
 .phpunit.cache/code-coverage/
 
 .phpunit.cache/
+
+.DS_Store
