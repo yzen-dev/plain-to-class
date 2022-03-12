@@ -1,0 +1,40 @@
+name: Code analyze
+
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    # Setup PHP versions, run checks
+    - name: PHP setup
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    - name: Install dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Run phpstan
+      run: composer run-script phpstan
+      
+    - name: Check codestyle
+      run: composer run-script phpcs
+  
