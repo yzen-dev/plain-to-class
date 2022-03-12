@@ -37,6 +37,12 @@
     ],
     "phpcs": [
       "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s"
+    ],
+    "coverage": [
+      "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-text --colors=never --coverage-clover coverage.xml"
+    ],
+    "coverage-html": [
+      "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-html public/coverage --coverage-text"
     ]
   },
   "require-dev": {
