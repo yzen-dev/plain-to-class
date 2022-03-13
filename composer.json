@@ -1,6 +1,6 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Class-transformer to transform your dataset into a structured object",
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -47,6 +47,9 @@
     ],
     "phpcs": [
       "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s"
+    ],
+    "phpcbf": [
+      "./vendor/bin/phpcbf --standard=./phpcs.xml -n --no-cache -s"
     ],
     "coverage": [
       "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-text --colors=never --coverage-clover coverage.xml"

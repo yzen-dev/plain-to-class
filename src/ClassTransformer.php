@@ -144,7 +144,7 @@ class ClassTransformer
                 }
             }
 
-            if (count(array_intersect($propertyClassTypeName, ['int', 'float', 'string', 'bool'])) > 0) {
+            if (self::propertyIsScalar($propertyClassTypeName)) {
                 $instance->{$item->name} = $value;
                 continue;
             }
@@ -152,6 +152,10 @@ class ClassTransformer
             if (in_array('array', $propertyClassTypeName, true)) {
                 $arrayType = self::getClassFromPhpDoc($property->getDocComment());
                 if (!empty($arrayType)) {
+                    if (self::propertyIsScalar($arrayType)) {
+                        $instance->{$item->name} = $value;
+                        continue;
+                    }
                     foreach ($value as $el) {
                         /** @phpstan-ignore-next-line */
                         $instance->{$item->name}[] = self::dataConverting($arrayType, $el);
@@ -171,6 +175,19 @@ class ClassTransformer
             $instance->{$item->name} = $value;
         }
         return $instance;
+    }
+
+    /**
+     * @param array<string>|string $type
+     *
+     * @return bool
+     */
+    private static function propertyIsScalar($type): bool
+    {
+        if (is_array($type)) {
+            return count(array_intersect($type, ['int', 'float', 'string', 'bool'])) > 0;
+        }
+        return in_array($type, ['int', 'float', 'string', 'bool']);
     }
 
     /**
