@@ -8,9 +8,15 @@ use ClassTransformer\Attributes\WritingStyle;
 
 class WritingStyleSnakeCaseDTO
 {
-    #[WritingStyle(WritingStyle::STYLE_CAMEL_CASE)]
+    /**
+     * @var string $contact_fio
+     * @writingStyle<WritingStyle::STYLE_CAMEL_CASE>
+     */
     public string $contact_fio;
 
-    #[WritingStyle(WritingStyle::STYLE_ALL)]
+    /**
+     * @var string $contact_email
+     * @writingStyle<WritingStyle::STYLE_ALL>
+     */
     public string $contact_email;
 }

@@ -1,8 +1,8 @@
 ## Class-transformer helper
 
 ![Packagist Version](https://img.shields.io/packagist/v/yzen.dev/plain-to-class?color=blue&label=version)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/yzen-dev/plain-to-class/Run%20tests?label=tests&logo=github)
-[![Coverage](https://codecov.io/gh/yzen-dev/plain-to-class/branch/master/graph/badge.svg?token=QAO8STLPMI)](https://codecov.io/gh/yzen-dev/plain-to-class)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/yzen-dev/plain-to-class/Run%20tests/php-7.4?label=tests&logo=github)
+[![Coverage](https://codecov.io/gh/yzen-dev/plain-to-class/branch/php-7.4/graph/badge.svg?token=QAO8STLPMI)](https://codecov.io/gh/yzen-dev/plain-to-class)
 ![License](https://img.shields.io/github/license/yzen-dev/plain-to-class)
 ![Packagist Downloads](https://img.shields.io/packagist/dm/yzen.dev/plain-to-class)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/yzen.dev/plain-to-class)
@@ -31,6 +31,8 @@ The package can be installed via composer:
 ```
 composer require yzen.dev/plain-to-class
 ```
+
+>This branch contains PHP 7.4 support
 
 ## :scroll: **Usage**
 
@@ -105,7 +107,7 @@ class UserDTO
 
 class PurchaseDTO
 {
-    #[ConvertArray(ProductDTO::class)]
+    /** @var array<\DTO\ProductDTO> $products Product list */
     public array $products;
         
     /** @var UserDTO $user */
@@ -233,10 +235,16 @@ WritingStyle attribute on the property:
 ```php
 class WritingStyleSnakeCaseDTO
 {
-    #[WritingStyle(WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_SNAKE_CASE)]
+    /**
+     * @var string $contact_fio 
+     * @writingStyle<WritingStyle::STYLE_SNAKE_CASE|WritingStyle::STYLE_CAMEL_CASE>
+     */
     public string $contact_fio;
 
-    #[WritingStyle(WritingStyle::STYLE_CAMEL_CASE)]
+    /**
+     * @var string $contact_fio 
+     * @writingStyle<WritingStyle::STYLE_CAMEL_CASE>
+     */
     public string $contact_email;
 }
 

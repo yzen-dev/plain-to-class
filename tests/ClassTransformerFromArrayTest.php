@@ -57,6 +57,16 @@ class ClassTransformerFromArrayTest extends TestCase
         }
     }
 
+
+    public function testAnonymousArrayFromItem(): void
+    {
+        $users = ClassTransformer::transform([UserDTO::class], ['a'=> 1]);
+        self::assertIsArray($users);
+        foreach ($users as $user) {
+            self::assertInstanceOf(UserDTO::class, $user);
+            self::assertTrue(!isset($user->id));
+        }
+    }
     /**
      * @throws ReflectionException|ClassNotFoundException
      */

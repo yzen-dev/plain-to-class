@@ -6,7 +6,12 @@ namespace Tests\DTO;
 
 class UnionTypeDTO
 {
-    public int|string $id;
+    /** @var int|string $id */
+    public $id;
+
+    /** @var string $email */
     public string $email;
-    public float|string $balance;
+
+    /** @var float|string $balance */
+    public $balance;
 }

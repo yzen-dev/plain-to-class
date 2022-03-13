@@ -63,20 +63,4 @@ class CustomTransformerTest extends TestCase
             self::assertEquals($data['products'][$key]['price'], $product['price']);
         }
     }
-
-    /**
-     * @throws ReflectionException|ClassNotFoundException
-     */
-    public function testCustomTransformPhp8(): void
-    {
-        $userDTO = ClassTransformer::transform(CustomTransformUserDTO::class, login: 'test-login', fio: 'Corey');
-
-        self::assertInstanceOf(CustomTransformUserDTO::class, $userDTO);
-
-        self::assertFalse(isset($userDTO->login));
-        self::assertFalse(isset($userDTO->fio));
-
-        self::assertEquals('test-login', $userDTO->email);
-        self::assertEquals('Corey', $userDTO->username);
-    }
 }

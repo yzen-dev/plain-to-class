@@ -52,22 +52,6 @@ class ClassTransformerFromObjectTest extends TestCase
     /**
      * @throws ReflectionException|ClassNotFoundException
      */
-    public function testBaseObjectPhp8(): void
-    {
-        $data = $this->getBaseObject();
-        $userDTO = ClassTransformer::transform(UserDTO::class, id: $data->id, email: $data->email, balance: $data->balance);
-        self::assertInstanceOf(UserDTO::class, $userDTO);
-        self::assertEquals($data->id, $userDTO->id);
-        self::assertEquals($data->email, $userDTO->email);
-        self::assertEquals($data->balance, $userDTO->balance);
-        self::assertIsInt($userDTO->id);
-        self::assertIsString($userDTO->email);
-        self::assertIsFloat($userDTO->balance);
-    }
-
-    /**
-     * @throws ReflectionException|ClassNotFoundException
-     */
     public function testRecursiveObject(): void
     {
         $data = $this->getRecursiveObject();
