@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Tests\DTO\ArrayScalarDTO;
 use Tests\DTO\UserDTO;
 use Tests\DTO\BasketDTO;
 use ReflectionException;
@@ -37,6 +38,16 @@ class ClassTransformerFromArrayTest extends TestCase
         self::assertIsInt($userDTO->id);
         self::assertIsString($userDTO->email);
         self::assertIsFloat($userDTO->balance);
+    }
+
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
+    public function testScalarArray(): void
+    {
+        $data = $this->getDataWithScalarArray();
+        $userDTO = ClassTransformer::transform(ArrayScalarDTO::class, $data);
+        self::assertInstanceOf(ArrayScalarDTO::class, $userDTO);
     }
 
     /**

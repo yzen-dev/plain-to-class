@@ -15,6 +15,14 @@ trait FakerData
         ];
     }
 
+    public function getDataWithScalarArray(): array
+    {
+        return [
+            'id' => 1,
+            'history' => ['test1', 'test2', 'test3']
+        ];
+    }
+
     public function getArrayUsers(): array
     {
         return [
