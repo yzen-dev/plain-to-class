@@ -32,6 +32,10 @@ The package can be installed via composer:
 composer require yzen.dev/plain-to-class
 ```
 
+>Note:  The current version of the package supports only PHP^8.0. 
+>
+>For PHP version 7.4, you can read the documentation in [version v0.*](https://github.com/yzen-dev/plain-to-class/tree/php-7.4).
+
 ## :scroll: **Usage**
 
 Common use case:
