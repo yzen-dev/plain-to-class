@@ -2,9 +2,9 @@ name: Code analyze
 
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ php-7.4 ]
   pull_request:
-    branches: [ master, dev ]
+    branches: [ php-7.4 ]
 
 jobs:
   build:
