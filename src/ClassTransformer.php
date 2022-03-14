@@ -126,6 +126,10 @@ class ClassTransformer
 
         $instance = new $className();
         foreach ($refInstance->getProperties() as $item) {
+            $property = $refInstance->getProperty($item->name);
+            $propertyType = $property->getType();
+            $propertyClassTypeName = self::getPropertyTypes($propertyType);
+
             if (array_key_exists($item->name, $inArgs)) {
                 $value = $inArgs[$item->name];
             } else {
@@ -150,10 +154,6 @@ class ClassTransformer
                     continue;
                 }
             }
-
-            $property = $refInstance->getProperty($item->name);
-            $propertyType = $property->getType();
-            $propertyClassTypeName = self::getPropertyTypes($propertyType);
 
             if (self::propertyIsScalar($propertyClassTypeName)) {
                 $instance->{$item->name} = $value;
