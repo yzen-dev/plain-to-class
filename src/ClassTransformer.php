@@ -199,9 +199,9 @@ class ClassTransformer
     private static function propertyIsScalar(array|string $type): bool
     {
         if (is_array($type)) {
-            return count(array_intersect($type, ['int', 'float', 'string', 'bool'])) > 0;
+            return count(array_intersect($type, ['int', 'float', 'string', 'bool', 'mixed'])) > 0;
         }
-        return in_array($type, ['int', 'float', 'string', 'bool']);
+        return in_array($type, ['int', 'float', 'string', 'bool', 'mixed']);
     }
 
     /**

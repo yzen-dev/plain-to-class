@@ -68,6 +68,21 @@ class ClassTransformerFromObjectTest extends TestCase
     /**
      * @throws ReflectionException|ClassNotFoundException
      */
+    public function testMixedType(): void
+    {
+        $data = [
+            'id'=>1,
+            'email'=>'test',
+            'balance'=>1,
+            'mixed'=> ['1'],
+        ];
+        $userDTO = ClassTransformer::transform(UserDTO::class,$data);
+        self::assertInstanceOf(UserDTO::class, $userDTO);
+    }
+
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
     public function testRecursiveObject(): void
     {
         $data = $this->getRecursiveObject();
