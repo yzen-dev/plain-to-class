@@ -3,10 +3,13 @@ declare(strict_types=1);
 
 namespace Tests\DTO;
 
+use ClassTransformer\Attributes\ConvertArray;
+
 class ArrayScalarDTO
 {
     public $id;
     
-    /** @var array<string>  */
-    public array $history;
+    /** @var null|array<string>  */
+    #[ConvertArray('string')]
+    public ?array $products;
 }
