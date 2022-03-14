@@ -19,7 +19,7 @@ trait FakerData
     {
         return [
             'id' => 1,
-            'history' => ['test1', 'test2', 'test3']
+            'products' => ['test1', 'test2', 'test3']
         ];
     }
 

@@ -53,6 +53,19 @@ class ClassTransformerFromArrayTest extends TestCase
     /**
      * @throws ReflectionException|ClassNotFoundException
      */
+    public function testNullArray(): void
+    {
+        $data = [
+            'id' => 1,
+            'products' => null
+        ];
+        $userDTO = ClassTransformer::transform(ArrayScalarDTO::class, $data);
+        self::assertInstanceOf(ArrayScalarDTO::class, $userDTO);
+    }
+    
+    /**
+     * @throws ReflectionException|ClassNotFoundException
+     */
     public function testAnonymousArray(): void
     {
         $data = $this->getArrayUsers();
@@ -71,13 +84,14 @@ class ClassTransformerFromArrayTest extends TestCase
 
     public function testAnonymousArrayFromItem(): void
     {
-        $users = ClassTransformer::transform([UserDTO::class], ['a'=> 1]);
+        $users = ClassTransformer::transform([UserDTO::class], ['a' => 1]);
         self::assertIsArray($users);
         foreach ($users as $user) {
             self::assertInstanceOf(UserDTO::class, $user);
             self::assertTrue(!isset($user->id));
         }
     }
+
     /**
      * @throws ReflectionException|ClassNotFoundException
      */

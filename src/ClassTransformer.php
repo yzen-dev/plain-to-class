@@ -151,11 +151,7 @@ class ClassTransformer
 
             if (in_array('array', $propertyClassTypeName, true)) {
                 $arrayType = self::getClassFromPhpDoc($property->getDocComment());
-                if (!empty($arrayType)) {
-                    if (self::propertyIsScalar($arrayType)) {
-                        $instance->{$item->name} = $value;
-                        continue;
-                    }
+                if (!empty($arrayType) && !empty($value) && !self::propertyIsScalar($arrayType)) {
                     foreach ($value as $el) {
                         /** @phpstan-ignore-next-line */
                         $instance->{$item->name}[] = self::dataConverting($arrayType, $el);

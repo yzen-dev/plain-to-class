@@ -7,6 +7,6 @@ class ArrayScalarDTO
 {
     public $id;
     
-    /** @var array<string>  */
-    public array $history;
+    /** @var null|array<string>  */
+    public ?array $products;
 }
