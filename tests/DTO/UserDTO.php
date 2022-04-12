@@ -6,7 +6,7 @@ namespace Tests\DTO;
 class UserDTO
 {
     public int $id;
-    public string $email;
+    public ?string $email;
     public float $balance;
     public mixed $mixed;
 }
