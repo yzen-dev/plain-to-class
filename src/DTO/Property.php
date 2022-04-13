@@ -16,19 +16,23 @@ class Property
 {
     public ReflectionProperty $property;
 
+    /**
+     * @param ReflectionProperty $property
+     */
     public function __construct(ReflectionProperty $property)
     {
         $this->property = $property;
     }
 
+    /**
+     * @return ReflectionType|null
+     */
     public function getType()
     {
         return $this->property->getType();
     }
 
     /**
-     * @param ReflectionType|null $propertyType
-     *
      * @return array<string>
      */
     public function getTypes(): array
@@ -45,8 +49,8 @@ class Property
         if ($this->getType() instanceof ReflectionNamedType) {
             $types = [$this->getType()->getName()];
         }
-        
-        if ($this->getType()->allowsNull()) {
+
+        if ($this->getType() !== null && $this->getType()->allowsNull()) {
             $types [] = 'null';
         }
         return $types;
@@ -57,7 +61,7 @@ class Property
      */
     public function isScalar(): bool
     {
-        return count(array_intersect($this->getTypes(), [ 'int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
+        return count(array_intersect($this->getTypes(), ['int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
     }
 
     /**

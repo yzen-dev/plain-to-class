@@ -10,13 +10,13 @@ namespace ClassTransformer;
 class PropertyHelper
 {
     /**
-     * @param string|false $phpDoc
+     * @param string|bool $phpDoc
      *
      * @return string|null
      */
     public static function getClassFromPhpDoc($phpDoc): ?string
     {
-        if ($phpDoc) {
+        if (is_string($phpDoc)) {
             preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $arrayType);
             return $arrayType[1] ?? null;
         }

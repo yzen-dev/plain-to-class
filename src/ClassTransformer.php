@@ -109,6 +109,4 @@ class ClassTransformer
         }
         return PropertyTransformer::init($className, ...$args)->transform();
     }
-
-
 }
