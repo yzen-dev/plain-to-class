@@ -2,16 +2,15 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Attributes\ConvertArray;
-use ClassTransformer\Attributes\WritingStyle;
-use ClassTransformer\DTO\Property;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\Exceptions\InvalidArgumentException;
-use ClassTransformer\Exceptions\ValueNotFoundException;
 use ReflectionClass;
+use ReflectionProperty;
 use ReflectionException;
 use ReflectionNamedType;
-use ReflectionProperty;
+use ClassTransformer\DTO\Property;
+use ClassTransformer\Attributes\ConvertArray;
+use ClassTransformer\Attributes\WritingStyle;
+use ClassTransformer\Exceptions\ClassNotFoundException;
+use ClassTransformer\Exceptions\ValueNotFoundException;
 
 /**
  * Class ClassTransformerService
@@ -29,9 +28,6 @@ class PropertyTransformer
     /** @var array<mixed> */
     private array $args;
 
-    /** @var bool Arguments transfer as named arguments (for php8) */
-    private $isNamedArguments;
-
     /**
      * @template T
      *
@@ -45,10 +41,9 @@ class PropertyTransformer
         $this->className = $className;
         $this->validate();
 
-        $this->isNamedArguments = count(func_get_args()) === 1;
-
+        // Arguments transfer as named arguments (for php8)
         // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
-        $inArgs = $this->isNamedArguments ? $args : $args[0];
+        $inArgs = count(func_get_args()) === 1 ? $args : $args[0];
 
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
@@ -100,15 +95,15 @@ class PropertyTransformer
 
         /** @var T $instance */
         $instance = new $this->className();
+
         foreach ($refInstance->getProperties() as $item) {
             $property = new Property($refInstance->getProperty($item->name));
 
             try {
-                $value = $this->searchValue($item);
+                $value = $this->getValue($item);
             } catch (ValueNotFoundException) {
                 continue;
             }
-            //$this->validateFieldType($property, $value);
 
             if ($property->isScalar()) {
                 $instance->{$item->name} = $value;
@@ -143,36 +138,6 @@ class PropertyTransformer
         return $instance;
     }
 
-    /**
-     * Check the value for type compliance
-     *
-     * @param Property $item
-     * @param mixed $value
-     *
-     * @return void
-     */
-    /*private function validateFieldType(Property $item, mixed $value): void
-    {
-        $clearType = match (gettype($value)) {
-            'integer' => 'int',
-            'boolean' => 'bool',
-            'NULL' => 'null',
-            default => gettype($value)
-        };
-        $types = $item->getTypes();
-        if (in_array('float', $types)) {
-            $types [] = 'double';
-        }
-
-        if (empty($types)) {
-            return;
-        }
-        if (!in_array($clearType, $types)) {
-            $propertyName = $item->property->getName();
-            throw new InvalidArgumentException("The \"$propertyName\" property has the wrong type. Expected type ("
-                . implode("|", $item->getTypes()) . "), received \"" . $clearType . "\"");
-        }
-    }*/
 
     /**
      * @param ReflectionProperty $item
@@ -180,7 +145,7 @@ class PropertyTransformer
      * @return mixed|object|void
      * @throws ValueNotFoundException
      */
-    private function searchValue(ReflectionProperty $item)
+    private function getValue(ReflectionProperty $item)
     {
         if (array_key_exists($item->name, $this->args)) {
             return $this->args[$item->name];
