@@ -2,6 +2,7 @@
 
 namespace ClassTransformer\DTO;
 
+use ClassTransformer\Attributes\ConvertArray;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionType;
@@ -14,6 +15,9 @@ use ReflectionUnionType;
  */
 class Property
 {
+    /**
+     * @var ReflectionProperty
+     */
     public ReflectionProperty $property;
 
     /**
@@ -77,5 +81,29 @@ class Property
     public function getDocComment(): bool|string
     {
         return $this->property->getDocComment();
+    }
+
+    /**
+     * @param string|null $name
+     *
+     * @return bool
+     */
+    public function existsAttribute(?string $name = null): bool
+    {
+        return $this->getAttributes($name) !== null;
+    }
+
+    /**
+     * @param string|null $name
+     *
+     * @return \ReflectionAttribute[]|null
+     */
+    public function getAttributes(?string $name = null)
+    {
+        $attr = $this->property->getAttributes($name);
+        if (!empty($attr)) {
+            return $attr;
+        }
+        return null;
     }
 }

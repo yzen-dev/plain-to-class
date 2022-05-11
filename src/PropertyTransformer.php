@@ -2,6 +2,7 @@
 
 namespace ClassTransformer;
 
+use ClassTransformer\Attributes\NotTransform;
 use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
@@ -105,7 +106,7 @@ class PropertyTransformer
                 continue;
             }
 
-            if ($property->isScalar()) {
+            if ($property->isScalar() || $property->existsAttribute(NotTransform::class)) {
                 $instance->{$item->name} = $value;
                 continue;
             }
