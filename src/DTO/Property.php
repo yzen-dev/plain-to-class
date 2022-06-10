@@ -2,10 +2,9 @@
 
 namespace ClassTransformer\DTO;
 
-use ClassTransformer\Attributes\ConvertArray;
-use ReflectionNamedType;
-use ReflectionProperty;
 use ReflectionType;
+use ReflectionProperty;
+use ReflectionNamedType;
 use ReflectionUnionType;
 
 /**
@@ -96,9 +95,9 @@ class Property
     /**
      * @param string|null $name
      *
-     * @return \ReflectionAttribute[]|null
+     * @return null|array<mixed>
      */
-    public function getAttributes(?string $name = null)
+    public function getAttributes(?string $name = null): ?array
     {
         $attr = $this->property->getAttributes($name);
         if (!empty($attr)) {
