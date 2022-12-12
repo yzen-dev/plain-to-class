@@ -2,12 +2,16 @@
 
 namespace ClassTransformer;
 
+use function in_array;
+use function is_array;
+use function sizeof;
+use function array_intersect;
 /**
  * Class PropertyHelper
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class PropertyHelper
+final class PropertyHelper
 {
     /**
      * @param string|bool $phpDoc
@@ -22,7 +26,7 @@ class PropertyHelper
         }
         return null;
     }
-
+    
     /**
      * @param array<string>|string $type
      *
@@ -31,7 +35,7 @@ class PropertyHelper
     public static function propertyIsScalar(array|string $type): bool
     {
         if (is_array($type)) {
-            return count(array_intersect($type, ['int', 'float', 'string', 'bool', 'mixed'])) > 0;
+            return sizeof(array_intersect($type, ['int', 'float', 'string', 'bool', 'mixed'])) > 0;
         }
         return in_array($type, ['int', 'float', 'string', 'bool', 'mixed']);
     }

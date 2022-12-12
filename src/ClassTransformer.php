@@ -2,14 +2,7 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\DTO\Property;
-use ReflectionClass;
 use ReflectionException;
-use ReflectionNamedType;
-use ReflectionType;
-use ReflectionUnionType;
-use ClassTransformer\Attributes\WritingStyle;
-use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
@@ -17,7 +10,7 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
  *
  * @package ClassTransformer
  */
-class ClassTransformer
+final class ClassTransformer
 {
     /**
      * Class-transformer function to transform our object into a typed object
@@ -36,13 +29,13 @@ class ClassTransformer
             return self::dataConverting($className, ...$args);
         }
 
-        if (count(func_get_args()) === 1) {
+        if (sizeof(func_get_args()) === 1) {
             throw new \RuntimeException('Input parameter error. Named arguments are not supported for an anonymous array of classes');
         }
         if (empty($args) || !is_array($args[0])) {
             return null;
         }
-        if (count($className) === 1) {
+        if (sizeof($className) === 1) {
             return self::anonymousArrayConverting($className[0], $args[0]);
         }
 

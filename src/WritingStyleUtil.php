@@ -2,13 +2,20 @@
 
 namespace ClassTransformer;
 
+use function ucwords;
+use function lcfirst;
+use function strtolower;
+use function str_replace;
+use function preg_replace;
+
 /**
  *
  */
-class WritingStyleUtil
+final class WritingStyleUtil
 {
     /**
      * @param string $string
+     *
      * @return string
      */
     public static function strToSnakeCase(string $string): string
@@ -19,6 +26,7 @@ class WritingStyleUtil
 
     /**
      * @param string $string
+     *
      * @return string
      */
     public static function strToCamelCase(string $string): string

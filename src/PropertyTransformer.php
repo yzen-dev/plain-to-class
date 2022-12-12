@@ -2,23 +2,27 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Attributes\NotTransform;
 use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
 use ReflectionNamedType;
 use ClassTransformer\DTO\Property;
+use ClassTransformer\Attributes\NotTransform;
 use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
+
+use function sizeof;
+use function func_get_args;
+use function array_key_exists;
 
 /**
  * Class ClassTransformerService
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class PropertyTransformer
+final class PropertyTransformer
 {
     /**
      * @template T
@@ -44,7 +48,7 @@ class PropertyTransformer
 
         // Arguments transfer as named arguments (for php8)
         // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
-        $inArgs = count(func_get_args()) === 1 ? $args : $args[0];
+        $inArgs = sizeof(func_get_args()) === 1 ? $args : $args[0];
 
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
@@ -70,7 +74,7 @@ class PropertyTransformer
      * @return void
      * @throws ClassNotFoundException
      */
-    private function validate()
+    private function validate(): void
     {
         if (!class_exists($this->className)) {
             throw new ClassNotFoundException("Class $this->className not found. Please check the class path you specified.");
@@ -138,7 +142,6 @@ class PropertyTransformer
         }
         return $instance;
     }
-
 
     /**
      * @param ReflectionProperty $item

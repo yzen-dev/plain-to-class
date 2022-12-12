@@ -7,12 +7,16 @@ use ReflectionProperty;
 use ReflectionNamedType;
 use ReflectionUnionType;
 
+use function sizeof;
+use function in_array;
+use function array_intersect;
+
 /**
  * Class Property
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class Property
+final class Property
 {
     /**
      * @var ReflectionProperty
@@ -64,7 +68,7 @@ class Property
      */
     public function isScalar(): bool
     {
-        return count(array_intersect($this->getTypes(), ['int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
+        return sizeof(array_intersect($this->getTypes(), ['int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
     }
 
     /**

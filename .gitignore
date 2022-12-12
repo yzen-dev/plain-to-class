@@ -1,9 +1,5 @@
+.DS_Store
 .idea
 vendor
-/.phpunit.result.cache
-
-.phpunit.cache/code-coverage/
-
+.phpunit.result.cache
 .phpunit.cache/
-
-.DS_Store
