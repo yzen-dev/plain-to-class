@@ -32,9 +32,11 @@ final class ClassTransformer
         if (sizeof(func_get_args()) === 1) {
             throw new \RuntimeException('Input parameter error. Named arguments are not supported for an anonymous array of classes');
         }
+
         if (empty($args) || !is_array($args[0])) {
             return null;
         }
+
         if (sizeof($className) === 1) {
             return self::anonymousArrayConverting($className[0], $args[0]);
         }
@@ -51,7 +53,7 @@ final class ClassTransformer
      * @return array<T>
      * @throws ClassNotFoundException|ReflectionException
      */
-    private static function anonymousArrayConverting(string $className, $args)
+    private static function anonymousArrayConverting(string $className, array $args): array
     {
         $result = [];
         foreach ($args as $item) {

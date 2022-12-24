@@ -34,7 +34,7 @@ final class Property
     /**
      * @return ReflectionType|null
      */
-    public function getType()
+    public function getType(): ?ReflectionType
     {
         return $this->property->getType();
     }
@@ -45,16 +45,21 @@ final class Property
     public function getTypes(): array
     {
         $types = [];
-        if ($this->getType() instanceof ReflectionUnionType) {
+        $currentType = $this->getType();
+        if ($currentType === null) {
+            return [];
+        }
+        if ($currentType instanceof ReflectionUnionType) {
             $types = array_map(
                 static function ($item) {
                     return $item->getName();
                 },
-                $this->getType()->getTypes()
+                $currentType->getTypes()
             );
         }
-        if ($this->getType() instanceof ReflectionNamedType) {
-            $types = [$this->getType()->getName()];
+
+        if ($currentType instanceof ReflectionNamedType) {
+            $types = [$currentType->getName()];
         }
 
         if ($this->getType() !== null && $this->getType()->allowsNull()) {
@@ -64,6 +69,8 @@ final class Property
     }
 
     /**
+     * Finds whether a variable is a scalar
+     *
      * @return bool
      */
     public function isScalar(): bool
@@ -72,6 +79,7 @@ final class Property
     }
 
     /**
+     * Finds whether a variable is an array
      * @return bool
      */
     public function isArray(): bool
