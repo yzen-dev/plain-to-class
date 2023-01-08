@@ -95,7 +95,6 @@ final class PropertyTransformer
      */
     public function transform()
     {
-
         // if exist custom transform method
         if (method_exists($this->className, 'transform')) {
             /** @phpstan-ignore-next-line */
@@ -108,9 +107,6 @@ final class PropertyTransformer
         foreach ($this->refInstance->getProperties() as $item) {
             $property = new Property($this->refInstance->getProperty($item->name));
 
-            //var_dump($property->getTypes());
-            //var_dump($property);
-            //            die(0);
             try {
                 $value = $this->getValue($item);
             } catch (ValueNotFoundException) {
@@ -179,13 +175,13 @@ final class PropertyTransformer
         foreach ($writingStyle as $style) {
             $styles = $style->getArguments();
             if (
-                (in_array(WritingStyle::STYLE_SNAKE_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) &&
+                (in_array(WritingStyle::STYLE_SNAKE_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) &
                 array_key_exists(WritingStyleUtil::strToSnakeCase($item->name), $this->args)
             ) {
                 return $this->args[WritingStyleUtil::strToSnakeCase($item->name)];
             }
             if (
-                (in_array(WritingStyle::STYLE_CAMEL_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) &&
+                (in_array(WritingStyle::STYLE_CAMEL_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) &
                 array_key_exists(WritingStyleUtil::strToCamelCase($item->name), $this->args)
             ) {
                 return $this->args[WritingStyleUtil::strToCamelCase($item->name)];

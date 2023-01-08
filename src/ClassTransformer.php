@@ -57,6 +57,7 @@ final class ClassTransformer
     {
         $result = [];
         foreach ($args as $item) {
+            /** @var T $item */
             $result [] = self::dataConverting($className, $item);
         }
         return $result;
