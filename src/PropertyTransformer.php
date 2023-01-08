@@ -47,7 +47,7 @@ final class PropertyTransformer
     {
         $this->className = $className;
         $this->validate();
-        
+
         /** @phpstan-ignore-next-line */
         $this->refInstance = new ReflectionClass($this->className);
 
@@ -58,9 +58,7 @@ final class PropertyTransformer
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
         }
-        if (is_string($inArgs)) {
-            $inArgs = [$inArgs];
-        }
+        
         $this->args = $inArgs ?? [];
     }
 
@@ -152,7 +150,7 @@ final class PropertyTransformer
                     $instance->{$item->name} = $value;
                     continue;
                 }
-                
+
                 $instance->{$item->name} = self::init($property->getType()->getName(), $value)->transform();
                 continue;
             }
