@@ -33,6 +33,8 @@ final class PropertyTransformer
     /** @var array<mixed> */
     private array $args;
 
+    private ReflectionClass $refInstance;
+
     /**
      * @template T
      *
@@ -45,6 +47,9 @@ final class PropertyTransformer
     {
         $this->className = $className;
         $this->validate();
+        
+        /** @phpstan-ignore-next-line */
+        $this->refInstance = new ReflectionClass($this->className);
 
         // Arguments transfer as named arguments (for php8)
         // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
@@ -52,6 +57,9 @@ final class PropertyTransformer
 
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
+        }
+        if (is_string($inArgs)) {
+            $inArgs = [$inArgs];
         }
         $this->args = $inArgs ?? [];
     }
@@ -89,8 +97,6 @@ final class PropertyTransformer
      */
     public function transform()
     {
-        /** @phpstan-ignore-next-line */
-        $refInstance = new ReflectionClass($this->className);
 
         // if exist custom transform method
         if (method_exists($this->className, 'transform')) {
@@ -101,9 +107,12 @@ final class PropertyTransformer
         /** @var T $instance */
         $instance = new $this->className();
 
-        foreach ($refInstance->getProperties() as $item) {
-            $property = new Property($refInstance->getProperty($item->name));
+        foreach ($this->refInstance->getProperties() as $item) {
+            $property = new Property($this->refInstance->getProperty($item->name));
 
+            //var_dump($property->getTypes());
+            //var_dump($property);
+            //            die(0);
             try {
                 $value = $this->getValue($item);
             } catch (ValueNotFoundException) {
@@ -135,6 +144,15 @@ final class PropertyTransformer
             }
 
             if ($property->getType() instanceof ReflectionNamedType) {
+                /** @phpstan-ignore-next-line */
+                $propertyClass = $property->getType()->getName();
+                $childrenRefInstance = new ReflectionClass($propertyClass);
+                if ($childrenRefInstance->isEnum()) {
+                    $value = constant($propertyClass . '::' . $value);
+                    $instance->{$item->name} = $value;
+                    continue;
+                }
+                
                 $instance->{$item->name} = self::init($property->getType()->getName(), $value)->transform();
                 continue;
             }
