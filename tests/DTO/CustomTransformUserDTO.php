@@ -15,11 +15,9 @@ class CustomTransformUserDTO
      * @param $fio
      * @return CustomTransformUserDTO
      */
-    public static function transform($login, $fio)
+    public function transform($login, $fio)
     {
-        $dto = new self();
-        $dto->email = $login;
-        $dto->username = $fio;
-        return $dto;
+        $this->email = $login;
+        $this->username = $fio;
     }
 }

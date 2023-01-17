@@ -6,103 +6,69 @@ use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
 use ReflectionNamedType;
-use ClassTransformer\DTO\Property;
-use ClassTransformer\Attributes\NotTransform;
+use ClassTransformer\WritingStyleUtil;
 use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Attributes\WritingStyle;
+use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
-use function sizeof;
-use function func_get_args;
-use function array_key_exists;
-
 /**
- * Class ClassTransformerService
+ * Class GenericInstance
+ *
+ * @template T of ClassTransformable
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-final class PropertyTransformer
+final class GenericInstance
 {
-    /**
-     * @template T
-     * class-string<T> $className
-     */
-    private string $className;
+    /** @var class-string $class */
+    private string $class;
 
-    /** @var array<mixed> */
+    /** @var array<mixed> $args */
     private array $args;
 
     /**
-     * @var ReflectionClass
-     */
-    private ReflectionClass $refInstance;
-
-    /**
-     * @template T
-     *
-     * @param ReflectionClass|string $class
-     * @param array<mixed>|object|null $args
+     * @param class-string $class
      *
      * @throws ClassNotFoundException
-     * @throws ReflectionException
      */
-    public function __construct(ReflectionClass|string $class, ...$args)
+    public function __construct(string $class)
     {
-        if ($class instanceof ReflectionClass) {
-            $this->className = $class->getName();
-            /** @phpstan-ignore-next-line */
-            $this->refInstance = $class;
-        } else {
-            $this->className = $class;
+        new ClassExistsValidator($class);
 
-            $this->validate();
+        $this->class = $class;
+    }
 
+    /**
+     * @param array<mixed>|object|null $args
+     *
+     * @return T
+     * @throws ClassNotFoundException
+     */
+    public function transform(...$args): mixed
+    {
+        /** @var T $instance */
+        $instance = new $this->class();
+
+        try {
+            $refInstance = new ReflectionClass($this->class);
             /** @phpstan-ignore-next-line */
-            $this->refInstance = new ReflectionClass($this->className);
+        } catch (ReflectionException) {
+            throw new ClassNotFoundException('Class ' . $this->class . ' not found. Please check the class path you specified.');
         }
 
-        // Arguments transfer as named arguments (for php8)
-        // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
-        $inArgs = sizeof(func_get_args()) === 1 ? $args : $args[0];
+        // Unpacking named arguments
+        $inArgs = sizeof(func_get_args()) === 1 ? $args[0] : $args;
 
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
         }
 
         $this->args = $inArgs ?? [];
-    }
 
-    /**
-     * @return void
-     * @throws ClassNotFoundException
-     */
-    private function validate(): void
-    {
-        if (!class_exists($this->className)) {
-            throw new ClassNotFoundException("Class $this->className not found. Please check the class path you specified.");
-        }
-    }
-
-    /**
-     * @template T
-     *
-     * @return T
-     * @throws ClassNotFoundException|ReflectionException
-     */
-    public function transform()
-    {
-        // if exist custom transform method
-        if (method_exists($this->className, 'transform')) {
-            /** @phpstan-ignore-next-line */
-            return $this->className::transform($this->args);
-        }
-
-        /** @var T $instance */
-        $instance = new $this->className();
-
-        foreach ($this->refInstance->getProperties() as $item) {
-            $property = new Property($this->refInstance->getProperty($item->name));
+        foreach ($refInstance->getProperties() as $item) {
+            $property = new GenericProperty($item);
 
             try {
                 $value = $this->getValue($item);
@@ -123,9 +89,9 @@ final class PropertyTransformer
                     $arrayType = PropertyHelper::getClassFromPhpDoc($property->getDocComment());
                 }
 
-                if (!empty($arrayType) && !empty($value) && !PropertyHelper::propertyIsScalar($arrayType)) {
+                if (!empty($arrayType) && !empty($value) && is_array($value) && !PropertyHelper::propertyIsScalar($arrayType)) {
                     foreach ($value as $el) {
-                        $instance->{$item->name}[] = (new self($arrayType, $el))->transform();
+                        $instance->{$item->name}[] = (new TransformBuilder($arrayType, $el))->build();
                     }
                     continue;
                 }
@@ -135,16 +101,9 @@ final class PropertyTransformer
             }
 
             if ($property->getType() instanceof ReflectionNamedType) {
-                /** @phpstan-ignore-next-line */
+                /** @var class-string<T> $propertyClass */
                 $propertyClass = $property->getType()->getName();
-                $childrenRefInstance = new ReflectionClass($propertyClass);
-                if ($childrenRefInstance->isEnum()) {
-                    $value = constant($propertyClass . '::' . $value);
-                    $instance->{$item->name} = $value;
-                    continue;
-                }
-
-                $instance->{$item->name} = (new self($childrenRefInstance, $value))->transform();
+                $instance->{$item->name} = (new TransformBuilder($propertyClass, $value))->build();
                 continue;
             }
             $instance->{$item->name} = $value;
@@ -155,7 +114,7 @@ final class PropertyTransformer
     /**
      * @param ReflectionProperty $item
      *
-     * @return mixed|object|void
+     * @return mixed|object|array<mixed>|null
      * @throws ValueNotFoundException
      */
     private function getValue(ReflectionProperty $item)

@@ -1,23 +1,23 @@
 <?php
 
-namespace ClassTransformer\DTO;
+namespace ClassTransformer;
 
-use ClassTransformer\Attributes\NotTransform;
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionNamedType;
 use ReflectionUnionType;
+use ClassTransformer\Attributes\NotTransform;
 
 use function sizeof;
 use function in_array;
 use function array_intersect;
 
 /**
- * Class Property
+ * Class GenericProperty
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-final class Property
+final class GenericProperty
 {
     /**
      * @var ReflectionProperty

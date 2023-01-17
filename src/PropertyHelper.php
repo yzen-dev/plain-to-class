@@ -6,6 +6,7 @@ use function in_array;
 use function is_array;
 use function sizeof;
 use function array_intersect;
+
 /**
  * Class PropertyHelper
  *
@@ -26,17 +27,14 @@ final class PropertyHelper
         }
         return null;
     }
-    
+
     /**
-     * @param array<string>|string $type
+     * @param string $type
      *
      * @return bool
      */
-    public static function propertyIsScalar(array|string $type): bool
+    public static function propertyIsScalar(string $type): bool
     {
-        if (is_array($type)) {
-            return sizeof(array_intersect($type, ['int', 'float', 'string', 'bool', 'mixed'])) > 0;
-        }
         return in_array($type, ['int', 'float', 'string', 'bool', 'mixed']);
     }
 }

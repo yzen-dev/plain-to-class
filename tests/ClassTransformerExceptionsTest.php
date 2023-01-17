@@ -31,13 +31,4 @@ class ClassTransformerExceptionsTest extends TestCase
 
         ClassTransformer::transform(FakeClassDTO::class, fake: ['exception']);
     }
-
-    
-    public function testInvalidExtractArray(): void
-    {
-        $this->expectException(\RuntimeException::class);
-        $userDTO = ClassTransformer::transform([UserDTO::class], a: 1);
-        self::assertInstanceOf(UserDTO::class, $userDTO);
-        self::assertTrue(!isset($userDTO->id));
-    }
 }

@@ -8,15 +8,10 @@ class CustomTransformUserDTOArray
 {
     public string $email;
     public string $username;
-
-    /**
-     * @return CustomTransformUserDTO
-     */
-    public static function transform($args)
+    
+    public function transform($args)
     {
-        $dto = new self();
-        $dto->email = $args['login'];
-        $dto->username = $args['fio'];
-        return $dto;
+        $this->email = $args['login'];
+        $this->username = $args['fio'];
     }
 }

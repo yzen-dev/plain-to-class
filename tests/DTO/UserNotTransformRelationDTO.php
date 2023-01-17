@@ -6,7 +6,7 @@ namespace Tests\DTO;
 
 class UserNotTransformRelationDTO
 {
-    public static function transform()
+    public function transform()
     {
         throw new \Exception();
     }

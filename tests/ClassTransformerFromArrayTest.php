@@ -66,11 +66,11 @@ class ClassTransformerFromArrayTest extends TestCase
     /**
      * @throws ReflectionException|ClassNotFoundException
      */
-    public function testAnonymousArray(): void
+    public function testTransformCollection(): void
     {
         $data = $this->getArrayUsers();
 
-        $users = ClassTransformer::transform([UserDTO::class], $data);
+        $users = ClassTransformer::transformCollection(UserDTO::class, $data);
 
         self::assertCount(count($data), $users);
         foreach ($users as $key => $user) {
@@ -84,12 +84,12 @@ class ClassTransformerFromArrayTest extends TestCase
     /**
      * @throws ReflectionException|ClassNotFoundException
      */
-    public function testExtractArrayConverting(): void
+    public function testTransformMultiple(): void
     {
         $userData = $this->getBaseArrayData();
         $purchaseData = $this->getRecursiveArrayData();
 
-        $result = ClassTransformer::transform([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
+        $result = ClassTransformer::transformMultiple([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
 
         [$user, $purchase] = $result;
 
@@ -99,15 +99,6 @@ class ClassTransformerFromArrayTest extends TestCase
         self::assertEquals($userData['balance'], $user->balance);
 
         self::assertInstanceOf(PurchaseDTO::class, $purchase);
-    }
-
-    /**
-     * @throws ReflectionException|ClassNotFoundException
-     */
-    public function testInvalidExtractArray(): void
-    {
-        $userDTO = ClassTransformer::transform([UserDTO::class], null);
-        self::assertNull($userDTO);
     }
 
     /**
