@@ -23,7 +23,6 @@ class CheckBench extends TestCase
      */
     public function benchBaseReflection(): void
     {
-        $data = $this->getRecursiveObject();
         $productOne = new ProductDTO();
         $productOne->id = 1;
         $productOne->name = 'phone';
@@ -50,7 +49,7 @@ class CheckBench extends TestCase
     public function benchTransformReflection(): void
     {
         $data = $this->getRecursiveObject();
-        $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+        ClassTransformer::transform(PurchaseDTO::class, $data);
     }
 
 }

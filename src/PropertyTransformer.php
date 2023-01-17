@@ -33,23 +33,34 @@ final class PropertyTransformer
     /** @var array<mixed> */
     private array $args;
 
+    /**
+     * @var ReflectionClass
+     */
     private ReflectionClass $refInstance;
 
     /**
      * @template T
      *
-     * @param string|class-string<T> $className
+     * @param ReflectionClass|string $class
      * @param array<mixed>|object|null $args
      *
      * @throws ClassNotFoundException
+     * @throws ReflectionException
      */
-    public function __construct(string $className, ...$args)
+    public function __construct(ReflectionClass|string $class, ...$args)
     {
-        $this->className = $className;
-        $this->validate();
+        if ($class instanceof ReflectionClass) {
+            $this->className = $class->getName();
+            /** @phpstan-ignore-next-line */
+            $this->refInstance = $class;
+        } else {
+            $this->className = $class;
 
-        /** @phpstan-ignore-next-line */
-        $this->refInstance = new ReflectionClass($this->className);
+            $this->validate();
+
+            /** @phpstan-ignore-next-line */
+            $this->refInstance = new ReflectionClass($this->className);
+        }
 
         // Arguments transfer as named arguments (for php8)
         // if dynamic arguments, named ones lie immediately in the root, if they were passed as an array, then they need to be unpacked
@@ -58,22 +69,8 @@ final class PropertyTransformer
         if (is_object($inArgs)) {
             $inArgs = (array)$inArgs;
         }
-        
-        $this->args = $inArgs ?? [];
-    }
 
-    /**
-     * @template T
-     *
-     * @param string|class-string<T> $className
-     * @param array<mixed>|object|null $args
-     *
-     * @return PropertyTransformer
-     * @throws ClassNotFoundException
-     */
-    public static function init(string $className, ...$args): PropertyTransformer
-    {
-        return new self($className, ...$args);
+        $this->args = $inArgs ?? [];
     }
 
     /**
@@ -113,7 +110,7 @@ final class PropertyTransformer
                 continue;
             }
 
-            if ($property->isScalar() || $property->existsAttribute(NotTransform::class)) {
+            if ($property->isScalar() || $property->notTransform()) {
                 $instance->{$item->name} = $value;
                 continue;
             }
@@ -128,7 +125,7 @@ final class PropertyTransformer
 
                 if (!empty($arrayType) && !empty($value) && !PropertyHelper::propertyIsScalar($arrayType)) {
                     foreach ($value as $el) {
-                        $instance->{$item->name}[] = self::init($arrayType, $el)->transform();
+                        $instance->{$item->name}[] = (new self($arrayType, $el))->transform();
                     }
                     continue;
                 }
@@ -147,7 +144,7 @@ final class PropertyTransformer
                     continue;
                 }
 
-                $instance->{$item->name} = self::init($property->getType()->getName(), $value)->transform();
+                $instance->{$item->name} = (new self($childrenRefInstance, $value))->transform();
                 continue;
             }
             $instance->{$item->name} = $value;

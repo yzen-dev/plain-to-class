@@ -103,6 +103,6 @@ final class ClassTransformer
         if (empty($args)) {
             return new $className();
         }
-        return PropertyTransformer::init($className, ...$args)->transform();
+        return (new PropertyTransformer($className, ...$args))->transform();
     }
 }

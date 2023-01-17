@@ -2,6 +2,7 @@
 
 namespace ClassTransformer\DTO;
 
+use ClassTransformer\Attributes\NotTransform;
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionNamedType;
@@ -80,6 +81,7 @@ final class Property
 
     /**
      * Finds whether a variable is an array
+     *
      * @return bool
      */
     public function isArray(): bool
@@ -102,6 +104,14 @@ final class Property
     public function existsAttribute(?string $name = null): bool
     {
         return $this->getAttributes($name) !== null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function notTransform(): bool
+    {
+        return $this->existsAttribute(NotTransform::class);
     }
 
     /**
