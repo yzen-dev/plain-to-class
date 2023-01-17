@@ -6,7 +6,6 @@ use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;
 use ReflectionNamedType;
-use ClassTransformer\WritingStyleUtil;
 use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Validators\ClassExistsValidator;
@@ -86,10 +85,10 @@ final class GenericInstance
                 if (!empty($arrayTypeAttr)) {
                     $arrayType = $arrayTypeAttr[0]->getArguments()[0];
                 } else {
-                    $arrayType = PropertyHelper::getClassFromPhpDoc($property->getDocComment());
+                    $arrayType = TransformUtils::getClassFromPhpDoc($property->getDocComment());
                 }
 
-                if (!empty($arrayType) && !empty($value) && is_array($value) && !PropertyHelper::propertyIsScalar($arrayType)) {
+                if (!empty($arrayType) && !empty($value) && is_array($value) && !TransformUtils::propertyIsScalar($arrayType)) {
                     foreach ($value as $el) {
                         $instance->{$item->name}[] = (new TransformBuilder($arrayType, $el))->build();
                     }
@@ -103,6 +102,14 @@ final class GenericInstance
             if ($property->getType() instanceof ReflectionNamedType) {
                 /** @var class-string<T> $propertyClass */
                 $propertyClass = $property->getType()->getName();
+                
+                $childrenRefInstance = new ReflectionClass($propertyClass);
+                if ($childrenRefInstance->isEnum()) {
+                    $value = constant($propertyClass . '::' . $value);
+                    $instance->{$item->name} = $value;
+                    continue;
+                }
+                
                 $instance->{$item->name} = (new TransformBuilder($propertyClass, $value))->build();
                 continue;
             }
@@ -132,15 +139,15 @@ final class GenericInstance
             $styles = $style->getArguments();
             if (
                 (in_array(WritingStyle::STYLE_SNAKE_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) &
-                array_key_exists(WritingStyleUtil::strToSnakeCase($item->name), $this->args)
+                array_key_exists(TransformUtils::strToSnakeCase($item->name), $this->args)
             ) {
-                return $this->args[WritingStyleUtil::strToSnakeCase($item->name)];
+                return $this->args[TransformUtils::strToSnakeCase($item->name)];
             }
             if (
                 (in_array(WritingStyle::STYLE_CAMEL_CASE, $styles) || in_array(WritingStyle::STYLE_ALL, $styles)) &
-                array_key_exists(WritingStyleUtil::strToCamelCase($item->name), $this->args)
+                array_key_exists(TransformUtils::strToCamelCase($item->name), $this->args)
             ) {
-                return $this->args[WritingStyleUtil::strToCamelCase($item->name)];
+                return $this->args[TransformUtils::strToCamelCase($item->name)];
             }
         }
         throw new ValueNotFoundException();

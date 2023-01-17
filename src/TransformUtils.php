@@ -11,7 +11,7 @@ use function preg_replace;
 /**
  *
  */
-final class WritingStyleUtil
+final class TransformUtils
 {
     /**
      * @param string $string
@@ -32,5 +32,29 @@ final class WritingStyleUtil
     public static function strToCamelCase(string $string): string
     {
         return lcfirst(str_replace('_', '', ucwords($string, '_')));
+    }
+
+    /**
+     * @param string|bool $phpDoc
+     *
+     * @return string|null
+     */
+    public static function getClassFromPhpDoc($phpDoc): ?string
+    {
+        if (is_string($phpDoc)) {
+            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $arrayType);
+            return $arrayType[1] ?? null;
+        }
+        return null;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function propertyIsScalar(string $type): bool
+    {
+        return in_array($type, ['int', 'float', 'string', 'bool', 'mixed']);
     }
 }
