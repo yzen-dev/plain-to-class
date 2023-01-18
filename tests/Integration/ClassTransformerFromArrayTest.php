@@ -14,7 +14,7 @@ use Tests\Integration\DTO\ProductDTO;
 use Tests\Integration\DTO\PurchaseDTO;
 use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\UserEmptyTypeDTO;
-use function Tests\count;
+use function \count;
 
 /**
  * Class ClassTransformerTest

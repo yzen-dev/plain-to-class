@@ -47,10 +47,10 @@ final class TransformBuilder
             $instance = new $this->class();
             $instance->transform(...$this->args);
         } else {
-            $generic = new GenericInstance($this->class);
+            $generic = new GenericInstance($this->class, new ArgumentsResource(...$this->args));
             /** @var T $instance */
             /** @phpstan-ignore-next-line */
-            $instance = $generic->transform(...$this->args);
+            $instance = $generic->transform();
         }
 
         if (method_exists($instance, 'afterTransform')) {

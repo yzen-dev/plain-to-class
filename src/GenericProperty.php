@@ -4,6 +4,7 @@ namespace ClassTransformer;
 
 use ReflectionType;
 use ReflectionProperty;
+use ReflectionAttribute;
 use ReflectionNamedType;
 use ReflectionUnionType;
 use ClassTransformer\Attributes\NotTransform;
@@ -24,59 +25,61 @@ final class GenericProperty
      */
     public ReflectionProperty $property;
 
+    readonly public ?ReflectionType $type;
+    readonly public array $types;
+
+    /** @var class-string|string $propertyClass */
+    readonly public string $name;
+    readonly public bool $isScalar;
+
     /**
      * @param ReflectionProperty $property
      */
     public function __construct(ReflectionProperty $property)
     {
         $this->property = $property;
+        $this->type = $this->property->getType();
+        $this->name = $this->property->name;
+        $this->types = $this->initTypes();
+        $this->isScalar = sizeof(array_intersect($this->types, ['int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
     }
 
     /**
-     * @return ReflectionType|null
+     * @return bool
      */
-    public function getType(): ?ReflectionType
+    public function isEnum(): bool
     {
-        return $this->property->getType();
+        return enum_exists($this->type->getName());
     }
 
     /**
      * @return array<string>
      */
-    public function getTypes(): array
+    private function initTypes(): array
     {
         $types = [];
-        $currentType = $this->getType();
-        if ($currentType === null) {
+
+        if ($this->type === null) {
             return [];
         }
-        if ($currentType instanceof ReflectionUnionType) {
+        
+        if ($this->type instanceof ReflectionUnionType) {
             $types = array_map(
                 static function ($item) {
                     return $item->getName();
                 },
-                $currentType->getTypes()
+                $this->type->getTypes()
             );
         }
 
-        if ($currentType instanceof ReflectionNamedType) {
-            $types = [$currentType->getName()];
+        if ($this->type instanceof ReflectionNamedType) {
+            $types = [$this->type->getName()];
         }
 
-        if ($this->getType() !== null && $this->getType()->allowsNull()) {
+        if ($this->type !== null && $this->type->allowsNull()) {
             $types [] = 'null';
         }
         return $types;
-    }
-
-    /**
-     * Finds whether a variable is a scalar
-     *
-     * @return bool
-     */
-    public function isScalar(): bool
-    {
-        return sizeof(array_intersect($this->getTypes(), ['int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
     }
 
     /**
@@ -86,7 +89,7 @@ final class GenericProperty
      */
     public function isArray(): bool
     {
-        return in_array('array', $this->getTypes(), true);
+        return in_array('array', $this->types, true);
     }
 
     /**
@@ -111,19 +114,33 @@ final class GenericProperty
      */
     public function notTransform(): bool
     {
-        return $this->existsAttribute(NotTransform::class);
+        return $this->notTransform = $this->existsAttribute(NotTransform::class);
     }
 
     /**
      * @param string|null $name
      *
-     * @return null|array<mixed>
+     * @return null|ReflectionAttribute[]
      */
     public function getAttributes(?string $name = null): ?array
     {
         $attr = $this->property->getAttributes($name);
         if (!empty($attr)) {
             return $attr;
+        }
+        return null;
+    }
+    
+    /**
+     * @param string|null $name
+     *
+     * @return null|ReflectionAttribute
+     */
+    public function getAttribute(?string $name = null): ?ReflectionAttribute
+    {
+        $attr = $this->property->getAttributes($name);
+        if (!empty($attr)) {
+            return $attr[0];
         }
         return null;
     }

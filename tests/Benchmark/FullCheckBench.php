@@ -2,24 +2,26 @@
 
 namespace Tests\Benchmark;
 
+use ClassTransformer\ClassTransformer;
 use PHPUnit\Framework\TestCase;
-use Tests\Benchmark\DTO\UserDTO;
 use Tests\Benchmark\DTO\ProductDTO;
 use Tests\Benchmark\DTO\PurchaseDTO;
-use ClassTransformer\ClassTransformer;
+use Tests\Benchmark\DTO\UserDTO;
+use Tests\Benchmark\DTO\UserTypeEnum;
 
 /**
  * Class CheckBench
  *
  * @package Tests\Benchmark
- *
+ * 
  * ./vendor/bin/phpbench run tests/Benchmark/CheckBench.php --report=default
  */
-class CheckBench extends TestCase
+class FullCheckBench extends TestCase
 {
 
     /**
      * @Revs(5000)
+     * @Iterations(5)
      */
     public function benchBaseReflection(): void
     {
@@ -39,6 +41,8 @@ class CheckBench extends TestCase
         $user->id = $data['user']['id'];
         $user->email = $data['user']['email'];
         $user->balance = $data['user']['balance'];
+        $user->real_address = $data['user']['real_address'] ?? $data['user']['realAddress'];
+        $user->type = UserTypeEnum::from($data['user']['type']);
 
         $data = new PurchaseDTO();
         $data->products = [$productOne, $productTwo];
@@ -47,6 +51,7 @@ class CheckBench extends TestCase
 
     /**
      * @Revs(5000)
+     * @Iterations(5)
      */
     public function benchTransformReflection(): void
     {
@@ -73,6 +78,8 @@ class CheckBench extends TestCase
                 'id' => 1,
                 'email' => 'fake@mail.com',
                 'balance' => 10012.23,
+                'type' => 'admin',
+                'realAddress' => 'test address',
             ]
         ];
     }
