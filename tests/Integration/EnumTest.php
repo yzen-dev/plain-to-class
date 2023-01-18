@@ -25,10 +25,10 @@ class EnumTest extends TestCase
     {
         $data = [
             'colorEnum' => 'Red',
-            'colorScalarEnum' => 'Red',
+            'colorScalarEnum' => 'R',
         ];
         $model = ClassTransformer::transform(ExampleWithEnumDTO::class, $data);
-        
+
         self::assertInstanceOf(ExampleWithEnumDTO::class, $model);
         self::assertInstanceOf(ColorEnum::class, $model->colorEnum);
         self::assertEquals(ColorEnum::Red, $model->colorEnum);

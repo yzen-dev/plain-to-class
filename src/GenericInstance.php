@@ -99,8 +99,12 @@ final class GenericInstance
                 $propertyClass = $property->getType()->getName();
 
                 if (enum_exists($property->getType()->getName())) {
-                    $value = constant($propertyClass . '::' . $value);
-                    $instance->{$item->name} = $value;
+                    if (method_exists($propertyClass, 'from')) {
+                        /** @var \UnitEnum $propertyClass */
+                        $instance->{$item->name} = $propertyClass::from($value);
+                    } else {
+                        $instance->{$item->name} = constant($propertyClass . '::' . $value);
+                    }
                     continue;
                 }
 
