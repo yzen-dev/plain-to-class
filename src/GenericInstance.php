@@ -3,14 +3,15 @@
 namespace ClassTransformer;
 
 use ReflectionClass;
-use ReflectionProperty;
-use ReflectionException;
 use ReflectionNamedType;
 use ClassTransformer\Attributes\ConvertArray;
-use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
+
+use function is_array;
+use function constant;
+use function method_exists;
 
 /**
  * Class GenericInstance
@@ -24,7 +25,9 @@ final class GenericInstance
     /** @var class-string $class */
     private string $class;
 
-    
+    /** @var ArgumentsResource $argumentsResource */
+    private ArgumentsResource $argumentsResource;
+
 
     /**
      * @param class-string $class

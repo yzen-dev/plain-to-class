@@ -11,6 +11,7 @@ use ClassTransformer\Attributes\NotTransform;
 
 use function sizeof;
 use function in_array;
+use function enum_exists;
 use function array_intersect;
 
 /**
@@ -57,26 +58,22 @@ final class GenericProperty
      */
     private function initTypes(): array
     {
-        $types = [];
-
         if ($this->type === null) {
             return [];
         }
-        
+
+        $types = [];
         if ($this->type instanceof ReflectionUnionType) {
-            $types = array_map(
-                static function ($item) {
-                    return $item->getName();
-                },
-                $this->type->getTypes()
-            );
+            foreach ($this->type->getTypes() as $type) {
+                $types [] = $type->getName();
+            }
         }
 
         if ($this->type instanceof ReflectionNamedType) {
             $types = [$this->type->getName()];
         }
 
-        if ($this->type !== null && $this->type->allowsNull()) {
+        if ($this->type->allowsNull()) {
             $types [] = 'null';
         }
         return $types;
@@ -100,21 +97,11 @@ final class GenericProperty
     }
 
     /**
-     * @param string|null $name
-     *
-     * @return bool
-     */
-    public function existsAttribute(?string $name = null): bool
-    {
-        return $this->getAttributes($name) !== null;
-    }
-
-    /**
      * @return bool
      */
     public function notTransform(): bool
     {
-        return $this->notTransform = $this->existsAttribute(NotTransform::class);
+        return $this->getAttributes(NotTransform::class) !== null;
     }
 
     /**
@@ -130,7 +117,7 @@ final class GenericProperty
         }
         return null;
     }
-    
+
     /**
      * @param string|null $name
      *

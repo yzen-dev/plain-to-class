@@ -4,9 +4,12 @@ namespace ClassTransformer;
 
 use function ucwords;
 use function lcfirst;
+use function is_string;
 use function strtolower;
+use function preg_match;
 use function str_replace;
 use function preg_replace;
+use function array_key_exists;
 
 /**
  *
@@ -55,6 +58,6 @@ final class TransformUtils
      */
     public static function propertyIsScalar(string $type): bool
     {
-        return in_array($type, ['int', 'float', 'string', 'bool', 'mixed']);
+        return array_key_exists($type, ['int', 'float', 'string', 'bool', 'mixed']);
     }
 }

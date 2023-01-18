@@ -6,7 +6,9 @@ use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
 use function sizeof;
-use function in_array;
+use function is_object;
+use function func_get_args;
+use function array_intersect;
 use function array_key_exists;
 
 /**
@@ -48,7 +50,7 @@ final class ArgumentsResource
 
         $writingStyle = $genericProperty->getAttribute(WritingStyle::class);
 
-        if (empty($writingStyle)) {
+        if ($writingStyle === null) {
             throw new ValueNotFoundException();
         }
 
@@ -61,26 +63,12 @@ final class ArgumentsResource
         $snakeCase = TransformUtils::strToSnakeCase($genericProperty->name);
         $camelCase = TransformUtils::strToCamelCase($genericProperty->name);
 
-        if (
-            (in_array(WritingStyle::STYLE_SNAKE_CASE, $styles, true) || in_array(WritingStyle::STYLE_ALL, $styles, true)) &
-            array_key_exists($snakeCase, $this->args)
-        ) {
+        if (sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($snakeCase, $this->args)) {
             return $this->args[$snakeCase];
         }
-        if (
-            (in_array(WritingStyle::STYLE_CAMEL_CASE, $styles, true) || in_array(WritingStyle::STYLE_ALL, $styles, true)) &
-            array_key_exists($camelCase, $this->args)
-        ) {
+        if (sizeof(array_intersect([WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($camelCase, $this->args)) {
             return $this->args[$camelCase];
         }
         throw new ValueNotFoundException();
-    }
-
-    /**
-     * @return array
-     */
-    public function getArgs(): array
-    {
-        return $this->args;
     }
 }
