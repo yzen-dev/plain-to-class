@@ -50,12 +50,7 @@ final class GenericInstance
         /** @var T $instance */
         $instance = new $this->class();
 
-        try {
-            $refInstance = new ReflectionClass($this->class);
-            /** @phpstan-ignore-next-line */
-        } catch (ReflectionException) {
-            throw new ClassNotFoundException('Class ' . $this->class . ' not found. Please check the class path you specified.');
-        }
+        $refInstance = new ReflectionClass($this->class);
 
         // Unpacking named arguments
         $inArgs = sizeof(func_get_args()) === 1 ? $args[0] : $args;
@@ -102,14 +97,13 @@ final class GenericInstance
             if ($property->getType() instanceof ReflectionNamedType) {
                 /** @var class-string<T> $propertyClass */
                 $propertyClass = $property->getType()->getName();
-                
-                $childrenRefInstance = new ReflectionClass($propertyClass);
-                if ($childrenRefInstance->isEnum()) {
+
+                if (enum_exists($property->getType()->getName())) {
                     $value = constant($propertyClass . '::' . $value);
                     $instance->{$item->name} = $value;
                     continue;
                 }
-                
+
                 $instance->{$item->name} = (new TransformBuilder($propertyClass, $value))->build();
                 continue;
             }
