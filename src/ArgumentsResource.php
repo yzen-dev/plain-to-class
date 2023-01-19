@@ -60,9 +60,9 @@ final class ArgumentsResource
             throw new ValueNotFoundException();
         }
 
-        $snakeCase = TransformUtils::strToSnakeCase($genericProperty->name);
-        $camelCase = TransformUtils::strToCamelCase($genericProperty->name);
-
+        $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->name);
+        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->name);
+        
         if (sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($snakeCase, $this->args)) {
             return $this->args[$snakeCase];
         }

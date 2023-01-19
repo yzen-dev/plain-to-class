@@ -2,7 +2,6 @@
 
 namespace ClassTransformer;
 
-use ReflectionException;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
@@ -19,7 +18,7 @@ final class TransformBuilder
      */
     private string $class;
 
-    /** @var array<mixed> $args */
+    /** @var array<mixed>|object|null|mixed $args */
     private array $args;
 
     /**
@@ -38,7 +37,7 @@ final class TransformBuilder
 
     /**
      * @return T
-     * @throws ReflectionException|ClassNotFoundException
+     * @throws ClassNotFoundException
      */
     public function build()
     {
@@ -49,7 +48,6 @@ final class TransformBuilder
         } else {
             $generic = new GenericInstance($this->class, new ArgumentsResource(...$this->args));
             /** @var T $instance */
-            /** @phpstan-ignore-next-line */
             $instance = $generic->transform();
         }
 

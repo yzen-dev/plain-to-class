@@ -21,17 +21,30 @@ use function array_intersect;
  */
 final class GenericProperty
 {
-    /**
-     * @var ReflectionProperty
-     */
+    /** @var ReflectionProperty */
     public ReflectionProperty $property;
 
+    /** @var null|ReflectionType|ReflectionUnionType|ReflectionNamedType */
     readonly public ?ReflectionType $type;
+
+    /** @var array|string[] */
     readonly public array $types;
 
     /** @var class-string|string $propertyClass */
     readonly public string $name;
+
+    /** @var string */
+    readonly public string $class;
+
+    /** @var bool */
     readonly public bool $isScalar;
+    
+    
+
+    /** @var array<array<array<string>>> */
+    private static $attributeTypesCache = [];
+    
+    
 
     /**
      * @param ReflectionProperty $property
@@ -39,6 +52,7 @@ final class GenericProperty
     public function __construct(ReflectionProperty $property)
     {
         $this->property = $property;
+        $this->class = $property->class;
         $this->type = $this->property->getType();
         $this->name = $this->property->name;
         $this->types = $this->initTypes();
@@ -50,7 +64,10 @@ final class GenericProperty
      */
     public function isEnum(): bool
     {
-        return enum_exists($this->type->getName());
+        if ($this->type instanceof ReflectionNamedType) {
+            return enum_exists($this->type->getName());
+        }
+        return false;
     }
 
     /**
@@ -58,6 +75,10 @@ final class GenericProperty
      */
     private function initTypes(): array
     {
+        if (isset(static::$attributeTypesCache[$this->class][$this->name])) {
+            return static::$attributeTypesCache[$this->class][$this->name];
+        }
+
         if ($this->type === null) {
             return [];
         }
@@ -76,7 +97,8 @@ final class GenericProperty
         if ($this->type->allowsNull()) {
             $types [] = 'null';
         }
-        return $types;
+
+        return static::$attributeTypesCache[$this->class][$this->name] = $types;
     }
 
     /**
@@ -105,9 +127,10 @@ final class GenericProperty
     }
 
     /**
-     * @param string|null $name
+     * @param class-string<T>|null $name
      *
-     * @return null|ReflectionAttribute[]
+     * @template T
+     * @return null|ReflectionAttribute<T>[]
      */
     public function getAttributes(?string $name = null): ?array
     {
@@ -119,9 +142,10 @@ final class GenericProperty
     }
 
     /**
-     * @param string|null $name
+     * @param class-string<T>|null $name
      *
-     * @return null|ReflectionAttribute
+     * @template T
+     * @return null|T
      */
     public function getAttribute(?string $name = null): ?ReflectionAttribute
     {

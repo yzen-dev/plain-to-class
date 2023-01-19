@@ -16,25 +16,55 @@ use function array_key_exists;
  */
 final class TransformUtils
 {
+    /** @var array<string> */
+    private static array $camelCache = [];
+    
+    /** @var array<string> */
+    private static array $snakeCache = [];
+    
+    /** @var array<string> */
+    private static array $mutationSetterCache = [];
+
     /**
-     * @param string $string
+     * @param string $key
      *
      * @return string
      */
-    public static function strToSnakeCase(string $string): string
+    public static function attributeToSnakeCase(string $key): string
     {
-        $str = preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '_', $string) ?? '';
-        return strtolower($str);
+        if (isset(static::$snakeCache[$key])) {
+            return static::$snakeCache[$key];
+        }
+        $str = preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '_', $key) ?? '';
+        return static::$snakeCache[$key] = strtolower($str);
     }
 
     /**
-     * @param string $string
+     * @param string $key
      *
      * @return string
      */
-    public static function strToCamelCase(string $string): string
+    public static function attributeToCamelCase(string $key): string
     {
-        return lcfirst(str_replace('_', '', ucwords($string, '_')));
+        if (isset(static::$camelCache[$key])) {
+            return static::$camelCache[$key];
+        }
+        $str = lcfirst(str_replace('_', '', ucwords($key, '_')));
+        return static::$camelCache[$key] = $str;
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return string
+     */
+    public static function mutationSetterToCamelCase(string $key): string
+    {
+        if (isset(static::$mutationSetterCache[$key])) {
+            return static::$mutationSetterCache[$key];
+        }
+        $str = 'set' . ucfirst(self::attributeToCamelCase($key)) . 'Attribute';
+        return static::$mutationSetterCache[$key] = $str;
     }
 
     /**
@@ -49,15 +79,5 @@ final class TransformUtils
             return $arrayType[1] ?? null;
         }
         return null;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public static function propertyIsScalar(string $type): bool
-    {
-        return array_key_exists($type, ['int', 'float', 'string', 'bool', 'mixed']);
     }
 }
