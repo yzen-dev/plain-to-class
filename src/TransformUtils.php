@@ -18,10 +18,10 @@ final class TransformUtils
 {
     /** @var array<string> */
     private static array $camelCache = [];
-    
+
     /** @var array<string> */
     private static array $snakeCache = [];
-    
+
     /** @var array<string> */
     private static array $mutationSetterCache = [];
 

@@ -38,13 +38,13 @@ final class GenericProperty
 
     /** @var bool */
     readonly public bool $isScalar;
-    
-    
 
     /** @var array<array<array<string>>> */
     private static $attributeTypesCache = [];
-    
-    
+
+    /** @var array<array<array<ReflectionAttribute>>> */
+    private static $attributesCache = [];
+
 
     /**
      * @param ReflectionProperty $property
@@ -123,22 +123,7 @@ final class GenericProperty
      */
     public function notTransform(): bool
     {
-        return $this->getAttributes(NotTransform::class) !== null;
-    }
-
-    /**
-     * @param class-string<T>|null $name
-     *
-     * @template T
-     * @return null|ReflectionAttribute<T>[]
-     */
-    public function getAttributes(?string $name = null): ?array
-    {
-        $attr = $this->property->getAttributes($name);
-        if (!empty($attr)) {
-            return $attr;
-        }
-        return null;
+        return $this->getAttribute(NotTransform::class) !== null;
     }
 
     /**
@@ -149,9 +134,13 @@ final class GenericProperty
      */
     public function getAttribute(?string $name = null): ?ReflectionAttribute
     {
+        if (isset(static::$attributesCache[$this->class][$this->name][$name])) {
+            return static::$attributesCache[$this->class][$this->name][$name];
+        }
+
         $attr = $this->property->getAttributes($name);
         if (!empty($attr)) {
-            return $attr[0];
+            return static::$attributesCache[$this->class][$this->name][$name] = $attr[0];
         }
         return null;
     }

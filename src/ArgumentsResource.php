@@ -61,14 +61,15 @@ final class ArgumentsResource
         }
 
         $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->name);
-        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->name);
-        
         if (sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($snakeCase, $this->args)) {
             return $this->args[$snakeCase];
         }
+
+        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->name);
         if (sizeof(array_intersect([WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($camelCase, $this->args)) {
             return $this->args[$camelCase];
         }
+
         throw new ValueNotFoundException();
     }
 }
