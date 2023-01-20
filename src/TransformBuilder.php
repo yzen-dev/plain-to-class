@@ -18,8 +18,8 @@ final class TransformBuilder
      */
     private string $class;
 
-    /** @var array<mixed>|object|null|mixed $args */
-    private array $args;
+    /** @var iterable<mixed> $args */
+    private $args;
 
     /**
      * @param class-string<T> $class

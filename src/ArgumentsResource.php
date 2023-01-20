@@ -22,7 +22,7 @@ final class ArgumentsResource
     private array $args;
 
     /**
-     * @param array<mixed>|object|null $args
+     * @param mixed $args
      */
     public function __construct(...$args)
     {

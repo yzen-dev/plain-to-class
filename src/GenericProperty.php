@@ -22,7 +22,7 @@ use function array_intersect;
 final class GenericProperty
 {
     /** @var ReflectionProperty */
-    public ReflectionProperty $property;
+    readonly public ReflectionProperty $property;
 
     /** @var null|ReflectionType|ReflectionUnionType|ReflectionNamedType */
     readonly public ?ReflectionType $type;
@@ -44,7 +44,6 @@ final class GenericProperty
 
     /** @var array<array<array<ReflectionAttribute>>> */
     private static $attributesCache = [];
-
 
     /**
      * @param ReflectionProperty $property
@@ -130,7 +129,7 @@ final class GenericProperty
      * @param class-string<T>|null $name
      *
      * @template T
-     * @return null|T
+     * @return null|ReflectionAttribute
      */
     public function getAttribute(?string $name = null): ?ReflectionAttribute
     {
