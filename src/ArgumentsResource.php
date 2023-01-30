@@ -2,6 +2,7 @@
 
 namespace ClassTransformer;
 
+use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
@@ -46,6 +47,23 @@ final class ArgumentsResource
     {
         if (array_key_exists($genericProperty->name, $this->args)) {
             return $this->args[$genericProperty->name];
+        }
+
+        $aliasesAttr = $genericProperty->getAttribute(FieldAlias::class);
+
+        if ($aliasesAttr !== null) {
+            $aliases = $aliasesAttr->getArguments();
+            if (!empty($aliases)) {
+                $aliases = $aliases[0];
+                if (is_string($aliases)) {
+                    $aliases = [$aliases];
+                }
+                foreach ($aliases as $alias) {
+                    if (array_key_exists($alias, $this->args)) {
+                        return $this->args[$alias];
+                    }
+                }
+            }
         }
 
         $writingStyle = $genericProperty->getAttribute(WritingStyle::class);
