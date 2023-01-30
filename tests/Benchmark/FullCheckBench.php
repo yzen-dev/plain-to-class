@@ -31,7 +31,7 @@ class FullCheckBench extends TestCase
 
         $user = new UserDTO();
         $user->id = $data['user']['id'];
-        $user->email = $data['user']['email'];
+        $user->email = $data['user']['contact'];
         $user->balance = $data['user']['balance'];
         $user->real_address = $data['user']['real_address'] ?? $data['user']['realAddress'];
         $user->type = UserTypeEnum::from($data['user']['type']);
@@ -84,7 +84,7 @@ class FullCheckBench extends TestCase
             ],
             'user' => [
                 'id' => 1,
-                'email' => 'fake@mail.com',
+                'contact' => 'fake@mail.com',
                 'balance' => 10012.23,
                 'type' => 'admin',
                 'realAddress' => 'test address',

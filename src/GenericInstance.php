@@ -141,15 +141,14 @@ final class GenericInstance
             return $value;
         }
 
+        $array = [];
         if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
-            $array = [];
             foreach ($value as $el) {
                 $array[] = (new TransformBuilder($arrayType, $el))->build();
             }
             return $array;
         }
 
-        $array = [];
         foreach ($value as $el) {
             $array[] = match ($arrayType) {
                 'string' => (string)$el,
