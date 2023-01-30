@@ -137,12 +137,27 @@ final class GenericInstance
             $arrayType = TransformUtils::getClassFromPhpDoc($property->getDocComment());
         }
 
-        if (empty($arrayType) || !is_array($value)) {
+        if (empty($arrayType) || !is_array($value) || $arrayType === 'mixed') {
             return $value;
         }
+
+        if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
+            $array = [];
+            foreach ($value as $el) {
+                $array[] = (new TransformBuilder($arrayType, $el))->build();
+            }
+            return $array;
+        }
+
         $array = [];
         foreach ($value as $el) {
-            $array[] = (new TransformBuilder($arrayType, $el))->build();
+            $array[] = match ($arrayType) {
+                'string' => (string)$el,
+                'int' => (int)$el,
+                'float' => (float)$el,
+                'bool' => (bool)$el,
+                default => $el
+            };
         }
         return $array;
     }

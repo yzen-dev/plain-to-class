@@ -45,9 +45,14 @@ class ClassTransformerFromArrayTest extends TestCase
      */
     public function testScalarArray(): void
     {
-        $data = $this->getDataWithScalarArray();
-        $userDTO = ClassTransformer::transform(ArrayScalarDTO::class, $data);
-        self::assertInstanceOf(ArrayScalarDTO::class, $userDTO);
+        $data = [
+            'stringList' => [100, 200, 300],
+            'intList' => [100, 200, 300]
+        ];
+        $dto = ClassTransformer::transform(ArrayScalarDTO::class, $data);
+        self::assertInstanceOf(ArrayScalarDTO::class, $dto);
+        self::assertIsString($dto->stringList[0]);
+        self::assertIsInt($dto->intList[0]);
     }
 
     /**

@@ -9,7 +9,8 @@ class ArrayScalarDTO
 {
     public $id;
     
-    /** @var null|array<string>  */
     #[ConvertArray('string')]
-    public ?array $products;
+    public ?array $stringList;
+    #[ConvertArray('int')]
+    public ?array $intList;
 }
