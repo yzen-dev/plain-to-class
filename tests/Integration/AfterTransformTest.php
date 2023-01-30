@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
+use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\UserAfterTransformDTO;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class AfterTransformTest
@@ -18,7 +17,7 @@ class AfterTransformTest extends TestCase
 {
     use FakerData;
     /**
-     * @throws ReflectionException|ClassNotFoundException
+     * @throws ClassNotFoundException
      */
     public function testAfterTransformStyle(): void
     {

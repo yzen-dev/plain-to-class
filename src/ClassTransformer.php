@@ -2,7 +2,6 @@
 
 namespace ClassTransformer;
 
-use ReflectionException;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
@@ -21,7 +20,6 @@ final class ClassTransformer
      *
      * @return null|T
      * @throws ClassNotFoundException
-     * @throws ReflectionException
      */
     public static function transform(string $className, ...$args)
     {
@@ -35,7 +33,6 @@ final class ClassTransformer
      *
      * @return null|array<null>|array<T>
      * @throws ClassNotFoundException
-     * @throws ReflectionException
      */
     public static function transformCollection(string $className, array $args): ?array
     {
@@ -51,7 +48,7 @@ final class ClassTransformer
      * @param array<array<mixed>>|array<object> $args
      *
      * @return null|array<null>|array<T>
-     * @throws ClassNotFoundException|ReflectionException
+     * @throws ClassNotFoundException
      */
     public static function transformMultiple(array $className, array $args): ?array
     {

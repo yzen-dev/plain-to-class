@@ -7,7 +7,6 @@ namespace Tests\Integration;
 use ClassTransformer\ClassTransformer;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use PHPUnit\Framework\TestCase;
-use ReflectionException;
 use Tests\Integration\DTO\ArrayScalarDTO;
 use Tests\Integration\DTO\BasketDTO;
 use Tests\Integration\DTO\ProductDTO;
@@ -26,7 +25,7 @@ class ClassTransformerFromArrayTest extends TestCase
     use FakerData;
 
     /**
-     * @throws ReflectionException|ClassNotFoundException
+     * @throws ClassNotFoundException
      */
     public function testBaseArray(): void
     {
@@ -42,7 +41,7 @@ class ClassTransformerFromArrayTest extends TestCase
     }
 
     /**
-     * @throws ReflectionException|ClassNotFoundException
+     * @throws ClassNotFoundException
      */
     public function testScalarArray(): void
     {

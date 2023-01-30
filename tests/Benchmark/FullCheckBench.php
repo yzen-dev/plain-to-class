@@ -13,7 +13,7 @@ use Tests\Benchmark\DTO\UserTypeEnum;
  * Class CheckBench
  *
  * @package Tests\Benchmark
- * 
+ *
  * ./vendor/bin/phpbench run tests/Benchmark/CheckBench.php --report=default
  */
 class FullCheckBench extends TestCase
@@ -27,15 +27,7 @@ class FullCheckBench extends TestCase
     {
         $data = $this->getPurcheseObject();
 
-        $productOne = new ProductDTO();
-        $productOne->id = $data['products'][0]['id'];
-        $productOne->name = $data['products'][0]['name'];
-        $productOne->price = $data['products'][0]['price'];
-
-        $productTwo = new ProductDTO();
-        $productTwo->id = $data['products'][0]['id'];
-        $productTwo->name = $data['products'][0]['name'];
-        $productTwo->price = $data['products'][0]['price'];
+        $purchase = new PurchaseDTO();
 
         $user = new UserDTO();
         $user->id = $data['user']['id'];
@@ -43,10 +35,15 @@ class FullCheckBench extends TestCase
         $user->balance = $data['user']['balance'];
         $user->real_address = $data['user']['real_address'] ?? $data['user']['realAddress'];
         $user->type = UserTypeEnum::from($data['user']['type']);
+        $purchase->user = $user;
 
-        $data = new PurchaseDTO();
-        $data->products = [$productOne, $productTwo];
-        $data->user = $user;
+        foreach ($data['products'] as $product) {
+            $newProduct = new ProductDTO();
+            $newProduct->id = $product['id'];
+            $newProduct->name = $product['name'];
+            $newProduct->price = $product['price'];
+            $purchase->products []= $newProduct;
+        }
     }
 
     /**
@@ -67,11 +64,22 @@ class FullCheckBench extends TestCase
                     'id' => 1,
                     'name' => 'phone',
                     'price' => 43.03,
+                    'description' => 'test description for phone',
+                    'count' => 123
                 ],
                 [
                     'id' => 2,
                     'name' => 'bread',
                     'price' => 10.56,
+                    'description' => 'test description for bread',
+                    'count' => 321
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'book',
+                    'price' => 5.5,
+                    'description' => 'test description for book',
+                    'count' => 333
                 ]
             ],
             'user' => [
