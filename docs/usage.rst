@@ -189,7 +189,7 @@ Result:
     }
 
 Writing style
-_____________
+-------------
 
 A constant problem with the style of writing, for example, in the database it is snake_case, and in the camelCase code. And they constantly need to be transformed somehow. The package takes care of this, you just need to specify the WritingStyle attribute on the property:
 
@@ -222,7 +222,7 @@ Output:
     }
 
 Alias
-_____
+-----
 
 Various possible aliases can be set for the property, which will also be searched in the data source. This can be
 useful if the DTO is generated from different data sources.
@@ -240,7 +240,7 @@ useful if the DTO is generated from different data sources.
 
 
 Custom setter
-_____________
+-------------
 
 If a field requires additional processing during its initialization, you can mutate its setter. To do this, create a method in the following format in the class - `set{$name}Attribute`. Example:
 
@@ -258,7 +258,7 @@ If a field requires additional processing during its initialization, you can mut
     }
 
 After Transform
-_______________
+---------------
 
 Inside the class, you can create the `afterTransform` method, which will be called immediately after the conversion is completed. In it, we
 can describe our additional verification or transformation logic by already working with the state of the object.
@@ -277,7 +277,7 @@ can describe our additional verification or transformation logic by already work
     }
 
 Custom transform
-________________
+----------------
 
 If you need to completely transform yourself, then you can create a transform method in the class. In this case, no library processing is called, all the responsibility of the conversion passes to your class.
 
