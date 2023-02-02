@@ -23,7 +23,7 @@ This is where this package comes to the rescue, which takes care of all the work
 
 [Documentation](https://plain-to-class.readthedocs.io)
 
-## :scroll: **Установка**
+## :scroll: **Installation**
 
 The package can be installed via composer:
 
@@ -34,6 +34,7 @@ composer require yzen.dev/plain-to-class
 > Note: The current version of the package supports only PHP 8.1 +.
 
 > For PHP version 7.4, you can read the documentation in [version v0.*](https://github.com/yzen-dev/plain-to-class/tree/php-7.4).
+
 ## :scroll: **Usage**
 
 Common use case:
@@ -112,7 +113,7 @@ object(PurchaseDTO)
   public float 'cost' => float 10012.23
 ```
 
-### :scroll: **Коллекция**
+### :scroll: **Collection**
 
 If you have an array of objects of a certain class, then you must specify the ConvertArray attribute for it, passing it to which class you need to bring the elements.
 
