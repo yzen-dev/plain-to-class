@@ -20,7 +20,7 @@ class CustomSetterAttributeTest extends TestCase
     /**
      * @throws ReflectionException|ClassNotFoundException
      */
-    public function testAfterTransformStyle(): void
+    public function testCustomSetterAttibute(): void
     {
         $data = [
             'id' => 77,
