@@ -23,7 +23,18 @@ This is where this package comes to the rescue, which takes care of all the work
 
 [Documentation](https://plain-to-class.readthedocs.io)
 
-## :scroll: **Installation**
+- [Installation](#Installation)
+- [Usage](#Usage)
+  - [Collection](#Collection)
+  - [Anonymous array](#anonymous-array)
+  - [Writing style](#writing-style)
+  - [Alias](#alias)
+  - [Custom setter](#custom-setter)
+  - [After Transform](#after-transform)
+  - [Custom transform](#custom-transform)
+  - [Comparison](#Comparison)
+
+## **Installation**
 
 The package can be installed via composer:
 
@@ -35,12 +46,12 @@ composer require yzen.dev/plain-to-class
 
 > For PHP version 7.4, you can read the documentation in [version v0.*](https://github.com/yzen-dev/plain-to-class/tree/php-7.4).
 
-## :scroll: **Usage**
+## **Usage**
 
 Common use case:
 
 
-### :scroll: **Base**
+### **Base**
 
 ```
 namespace DTO;
@@ -113,7 +124,7 @@ object(PurchaseDTO)
   public float 'cost' => float 10012.23
 ```
 
-### :scroll: **Collection**
+### **Collection**
 
 If you have an array of objects of a certain class, then you must specify the ConvertArray attribute for it, passing it to which class you need to bring the elements.
 
@@ -145,7 +156,7 @@ $data = [
 $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
 ```
 
-#### :scroll: **Anonymous array**
+### **Anonymous array**
 
 In case you need to convert an array of data into an array of class objects, you can implement this using
 the `transformCollection` method.
@@ -227,7 +238,7 @@ object(PurchaseDTO) (2) {
 }
 ```
 
-### :scroll: **Writing style**
+### **Writing style**
 
 A constant problem with the style of writing, for example, in the database it is snake_case, and in the camelCase code. And they constantly need to be transformed somehow. The package takes care of this, you just need to specify the WritingStyle attribute on the property:
 
@@ -259,7 +270,7 @@ object(WritingStyleSnakeCaseDTO) (2) {
 }
 ```
 
-### :scroll: **Alias**
+### **Alias**
 
 Various possible aliases can be set for the property, which will also be searched in the data source. This can be
 useful if the DTO is generated from different data sources.
@@ -275,7 +286,7 @@ class WithAliasDTO
 }
 ```
 
-### :scroll: **Custom setter**
+### **Custom setter**
 
 Если поле требует дополнительной обработки при его инициализации, вы можете мутировать его сеттер. Для это создайте в классе метод следующего формата -  `set{$name}Attribute`. Пример:
 
@@ -292,7 +303,7 @@ class UserDTO
 }
 ```
 
-### :scroll: **After Transform**
+### **After Transform**
 
 Inside the class, you can create the `afterTransform` method, which will be called immediately after the conversion is completed. In it, we
 can describe our additional verification or transformation logic by already working with the state of the object.
@@ -310,7 +321,7 @@ class UserDTO
 }
 ```
 
-### :scroll: **Custom transform**
+### **Custom transform**
 
 If you need to completely transform yourself, then you can create a transform method in the class. In this case, no library processing is called, all the responsibility of the conversion passes to your class.
 
