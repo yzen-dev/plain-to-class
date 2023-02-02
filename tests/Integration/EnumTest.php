@@ -23,6 +23,11 @@ class EnumTest extends TestCase
      */
     public function testEmptyWritingStyle(): void
     {
+        if (PHP_MAJOR_VERSION < 8.1) {
+            $this->markTestSkipped('Php version mismatch');
+            return;
+        }
+        
         $data = [
             'colorEnum' => 'Red',
             'colorScalarEnum' => 'R',

@@ -11,7 +11,6 @@ use ClassTransformer\Attributes\NotTransform;
 
 use function sizeof;
 use function in_array;
-use function enum_exists;
 use function array_intersect;
 
 /**
@@ -22,22 +21,22 @@ use function array_intersect;
 final class GenericProperty
 {
     /** @var ReflectionProperty */
-    readonly public ReflectionProperty $property;
+    public ReflectionProperty $property;
 
     /** @var null|ReflectionType|ReflectionUnionType|ReflectionNamedType */
-    readonly public ?ReflectionType $type;
+    public ?ReflectionType $type;
 
     /** @var array|string[] */
-    readonly public array $types;
+    public array $types;
 
     /** @var class-string|string $propertyClass */
-    readonly public string $name;
+    public string $name;
 
     /** @var string */
-    readonly public string $class;
+    public string $class;
 
     /** @var bool */
-    readonly public bool $isScalar;
+    public bool $isScalar;
 
     /** @var array<array<array<string>>> */
     private static $attributeTypesCache = [];
@@ -63,6 +62,9 @@ final class GenericProperty
      */
     public function isEnum(): bool
     {
+        if (!function_exists('enum_exists')) {
+            return false;
+        }
         if ($this->type instanceof ReflectionNamedType) {
             return enum_exists($this->type->getName());
         }

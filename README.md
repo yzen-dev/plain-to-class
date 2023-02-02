@@ -34,9 +34,6 @@ composer require yzen.dev/plain-to-class
 > Note: The current version of the package supports only PHP 8.1 +.
 
 > For PHP version 7.4, you can read the documentation in [version v0.*](https://github.com/yzen-dev/plain-to-class/tree/php-7.4).
->
-> For PHP version 8.0, you can read the documentation in [version v1.*](https://github.com/yzen-dev/plain-to-class/tree/php-8.0).
-
 ## :scroll: **Usage**
 
 Common use case:
