@@ -329,3 +329,14 @@ class CustomTransformUserDTOArray
     }
 }
 ```
+
+### Comparison
+I also made a comparison with current analogues and here are the main disadvantages
+- Works only for a specific framework
+- Force to inherit or change your current class structure
+- Conversion takes longer
+
+Below is an example of my benchmark comparison
+
+https://github.com/yzen-dev/php-dto-transform-benchmark
+![image](https://user-images.githubusercontent.com/24630195/216361904-e2cf5674-071b-4e3e-9ecd-937f88c472f5.png)
