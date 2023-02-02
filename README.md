@@ -21,6 +21,7 @@ Accordingly, each time the service is called, we need to initialize this DTO. Bu
 
 This is where this package comes to the rescue, which takes care of all the work with mapping and initialization of the necessary DTO.
 
+[Documentation](https://plain-to-class.readthedocs.io)
 
 ## :scroll: **Установка**
 
