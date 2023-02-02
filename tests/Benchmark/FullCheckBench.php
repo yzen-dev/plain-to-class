@@ -14,7 +14,7 @@ use Tests\Benchmark\DTO\UserTypeEnum;
  *
  * @package Tests\Benchmark
  *
- * ./vendor/bin/phpbench run tests/Benchmark/CheckBench.php --report=default
+ * ./vendor/bin/phpbench run tests/Benchmark/FullCheckBench.php --report=default
  */
 class FullCheckBench extends TestCase
 {

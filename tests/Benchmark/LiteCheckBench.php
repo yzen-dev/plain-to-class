@@ -13,7 +13,7 @@ use ClassTransformer\ClassTransformer;
  *
  * @package Tests\Benchmark
  *
- * ./vendor/bin/phpbench run tests/Benchmark/CheckBench.php --report=default
+ * ./vendor/bin/phpbench run tests/Benchmark/LiteCheckBench.php --report=default
  */
 class LiteCheckBench extends TestCase
 {
