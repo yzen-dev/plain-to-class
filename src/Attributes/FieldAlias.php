@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace ClassTransformer\Attributes;
 
 /**
- * An attribute for properties that are an array that allows you to specify the type of element
+ *
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class ConvertArray
+final class FieldAlias
 {
     /**
-     * @param string $type
+     * @param string|array<string> $aliases
      */
     public function __construct(
-        public string $type
+        public string|array $aliases
     ) {
     }
 }

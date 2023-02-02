@@ -1,11 +1,11 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "1.2",
+  "version": "2.0",
   "description": "Class-transformer to transform your dataset into a structured object",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "license": "MIT",
-  "keywords": [ "php", "object", "class", "transformer","convert", "class-transformer"],
+  "keywords": [ "php", "object", "class", "transformer", "convert", "class-transformer" ],
   "authors": [
     {
       "name": "Andey Iatsenko",
@@ -30,13 +30,14 @@
     }
   },
   "require": {
-    "php": "^8.0"
+    "php": "^8.1"
   },
   "require-dev": {
-    "phpstan/phpstan": "^0.12.82",
-    "mockery/mockery": "^1.0",
-    "phpunit/phpunit": "^9.3",
-    "squizlabs/php_codesniffer": "*"
+    "mockery/mockery": "1.5.1",
+    "phpbench/phpbench": "1.2.8",
+    "phpstan/phpstan": "1.9.12",
+    "phpunit/phpunit": "9.5.28",
+    "squizlabs/php_codesniffer": "3.7.1"
   },
   "scripts": {
     "phpunit": [
