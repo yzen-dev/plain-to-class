@@ -11,9 +11,10 @@ namespace ClassTransformer\Attributes;
 final class FieldAlias
 {
     /**
-     * @param string|array $aliases
+     * @param string|array<string> $aliases
      */
-    public function __construct(string|array $aliases)
-    {
+    public function __construct(
+        public string|array $aliases
+    ) {
     }
 }

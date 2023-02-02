@@ -93,7 +93,7 @@ final class GenericInstance
 
     /**
      * @param GenericProperty $property
-     * @param int|string|array|object $value
+     * @param mixed $value
      *
      * @return mixed
      * @throws ClassNotFoundException
@@ -104,11 +104,11 @@ final class GenericInstance
             return $value;
         }
 
-        if ($property->isArray()) {
+        if ($property->isArray() && is_array($value)) {
             return $this->castArray($property, $value);
         }
 
-        if ($property->isEnum()) {
+        if ($property->isEnum() && (is_string($value) || is_int($value))) {
             return $this->castEnum($property, $value);
         }
 
@@ -116,6 +116,7 @@ final class GenericInstance
             /** @var class-string<T> $propertyClass */
             $propertyClass = $property->type->getName();
 
+            /** @phpstan-ignore-next-line */
             return (new TransformBuilder($propertyClass, $value))->build();
         }
         return $value;
@@ -123,12 +124,12 @@ final class GenericInstance
 
     /**
      * @param GenericProperty $property
-     * @param mixed $value
+     * @param array<mixed> $value
      *
-     * @return array
+     * @return array<mixed>
      * @throws ClassNotFoundException
      */
-    private function castArray(GenericProperty $property, $value)
+    private function castArray(GenericProperty $property, array $value): array
     {
         $arrayTypeAttr = $property->getAttribute(ConvertArray::class);
         if ($arrayTypeAttr !== null) {
@@ -169,6 +170,7 @@ final class GenericInstance
      */
     private function castEnum(GenericProperty $property, int|string $value)
     {
+        /** @phpstan-ignore-next-line */
         $propertyClass = $property->type->getName();
         if (method_exists($propertyClass, 'from')) {
             /** @var \BackedEnum $propertyClass */

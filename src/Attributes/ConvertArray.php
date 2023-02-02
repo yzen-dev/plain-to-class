@@ -10,7 +10,11 @@ namespace ClassTransformer\Attributes;
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 final class ConvertArray
 {
-    public function __construct(string $type)
-    {
+    /**
+     * @param string $type
+     */
+    public function __construct(
+        public string $type
+    ) {
     }
 }

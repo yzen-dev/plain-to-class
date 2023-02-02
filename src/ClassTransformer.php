@@ -16,7 +16,7 @@ final class ClassTransformer
      * Class-transformer function to transform our object into a typed object
      *
      * @param class-string<T> $className
-     * @param array<mixed>|object|null $args
+     * @param iterable<mixed> ...$args
      *
      * @return null|T
      * @throws ClassNotFoundException
@@ -29,7 +29,7 @@ final class ClassTransformer
 
     /**
      * @param class-string<T> $className
-     * @param array<array<mixed>>|array<object> $args
+     * @param array<iterable<mixed>> $args
      *
      * @return null|array<null>|array<T>
      * @throws ClassNotFoundException
@@ -45,7 +45,7 @@ final class ClassTransformer
 
     /**
      * @param array<class-string<T>> $className
-     * @param array<array<mixed>>|array<object> $args
+     * @param array<iterable<mixed>> $args
      *
      * @return null|array<null>|array<T>
      * @throws ClassNotFoundException

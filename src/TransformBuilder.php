@@ -23,7 +23,7 @@ final class TransformBuilder
 
     /**
      * @param class-string<T> $class
-     * @param array<mixed>|object|null|mixed $args
+     * @param iterable<mixed> ...$args
      *
      * @throws ClassNotFoundException
      */

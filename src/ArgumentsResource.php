@@ -23,18 +23,16 @@ final class ArgumentsResource
     private array $args;
 
     /**
-     * @param mixed $args
+     * @param iterable<mixed>|mixed ...$args
      */
     public function __construct(...$args)
     {
         // Unpacking named arguments
         $inArgs = sizeof(func_get_args()) === 1 ? $args[0] : $args;
 
-        if (is_object($inArgs)) {
-            $inArgs = (array)$inArgs;
-        }
+        $inArgs = (array)$inArgs;
 
-        $this->args = $inArgs ?? [];
+        $this->args = $inArgs;
     }
 
     /**
