@@ -104,7 +104,7 @@ final class GenericInstance
             return $value;
         }
 
-        if ($property->isArray() && is_array($value)) {
+        if ($property->isArray()) {
             return $this->castArray($property, $value);
         }
 
@@ -124,12 +124,12 @@ final class GenericInstance
 
     /**
      * @param GenericProperty $property
-     * @param array<mixed> $value
+     * @param array<mixed>|mixed $value
      *
-     * @return array<mixed>
+     * @return array<mixed>|mixed
      * @throws ClassNotFoundException
      */
-    private function castArray(GenericProperty $property, array $value): array
+    private function castArray(GenericProperty $property, $value): mixed
     {
         $arrayTypeAttr = $property->getAttribute(ConvertArray::class);
         if ($arrayTypeAttr !== null) {
