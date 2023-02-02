@@ -14,6 +14,7 @@ use Tests\Integration\DTO\ExampleWithEnumDTO;
 
 /**
  * Class EnumTest
+ *
  * @package Tests
  */
 class EnumTest extends TestCase
@@ -23,11 +24,11 @@ class EnumTest extends TestCase
      */
     public function testEmptyWritingStyle(): void
     {
-        if (PHP_MAJOR_VERSION < 8.1) {
+        if (PHP_MAJOR_VERSION < 8 || (PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION < 1)) {
             $this->markTestSkipped('Php version mismatch');
             return;
         }
-        
+
         $data = [
             'colorEnum' => 'Red',
             'colorScalarEnum' => 'R',
