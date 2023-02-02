@@ -1,4 +1,4 @@
-## Class-transformer helper
+## ClassTransformer
 
 ![Packagist Version](https://img.shields.io/packagist/v/yzen.dev/plain-to-class?color=blue&label=version)
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/yzen-dev/plain-to-class/Run%20tests?label=tests&logo=github)
@@ -7,24 +7,22 @@
 ![Packagist Downloads](https://img.shields.io/packagist/dm/yzen.dev/plain-to-class)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/yzen.dev/plain-to-class)
 
-> Alas, I do not speak English, and the documentation was compiled through google translator :(
-> I will be glad if you can help me describe the documentation more correctly :)
+> Alas, I do not speak English, and the documentation was compiled through google translator :( I will be glad if you can help me describe the documentation more correctly :)
 
-This package will help you transform any dataset into a structured object. This is very convenient when values obtained
-from a query, database, or any other place can be easily cast to the object you need. But what exactly is this
-convenient?
+This library will allow you to easily convert any data set into the object you need. You are not required to change the structure of classes, inherit them from external modules, etc. No dancing with tambourines - just data and the right class.
 
-When writing code, it is very important to separate logic, adhere to the principle of single responsibility, reduce
-dependence on other services, and much more.
+It is considered good practice to write code independent of third-party packages and frameworks. The code is divided into services, domain zones, various layers, etc.
 
-When creating a new service to create a user, you only need the necessary data set - name, email and phone. Why do you
-need to check around separately arrays, separately objects, check for the presence of keys through isset. It is much
-more convenient to make a DTO model with which the service will already work.
+To transfer data between layers, the **DataTransfer Object** (DTO) template is usually used. A DTO is an object that is used to encapsulate data and send it from one application subsystem to another.
 
-This approach guarantees that the service will work with the data it needs, full typing, there is no need to check for
-the presence of keys if it is an array.
+Thus, services/methods work with a specific object and the data necessary for it. At the same time, it does not matter where this data was obtained from, it can be an http request, a database, a file, etc.
 
-## :scroll: **Installation**
+Accordingly, each time the service is called, we need to initialize this DTO. But it is not effective to compare data manually each time, and it affects the readability of the code, especially if the object is complex.
+
+This is where this package comes to the rescue, which takes care of all the work with mapping and initialization of the necessary DTO.
+
+
+## :scroll: **Установка**
 
 The package can be installed via composer:
 
@@ -32,17 +30,20 @@ The package can be installed via composer:
 composer require yzen.dev/plain-to-class
 ```
 
->Note:  The current version of the package supports only PHP^8.0. 
+> Note: The current version of the package supports only PHP 8.1 +.
+
+> For PHP version 7.4, you can read the documentation in [version v0.*](https://github.com/yzen-dev/plain-to-class/tree/php-7.4).
 >
->For PHP version 7.4, you can read the documentation in [version v0.*](https://github.com/yzen-dev/plain-to-class/tree/php-7.4).
+> For PHP version 8.0, you can read the documentation in [version v1.*](https://github.com/yzen-dev/plain-to-class/tree/php-8.0).
 
 ## :scroll: **Usage**
 
 Common use case:
 
+
 ### :scroll: **Base**
 
-```php
+```
 namespace DTO;
 
 class CreateUserDTO
@@ -57,7 +58,7 @@ $data = [
     'email' => 'test@mail.com',
     'balance' => 128.41,
 ];
-$dto = ClassTransformer::transform(CreateUserDTO::class,$data);
+$dto = ClassTransformer::transform(CreateUserDTO::class, $data);
 var_dump($dto);
 ```
 
@@ -80,15 +81,47 @@ $dto = ClassTransformer::transform(CreateUserDTO::class,
 
 If the property is not of a scalar type, but a class of another DTO is allowed, it will also be automatically converted.
 
-### :scroll: **Collection**
+```php
+class ProductDTO
+{
+    public int $id;
+    public string $name;
+}
 
-If you have an array of objects of a certain class, then you must specify the ConvertArray attribute to it, passing it
-to which class you need to cast the elements.
+class PurchaseDTO
+{
+    public ProductDTO $product;
+    public float $cost;
+}
 
-It is also possible to specify the class in PHP DOC, but then you need to write the full path to this
-class `array <\ DTO \ ProductDTO>`. This is done in order to know exactly which instance you need to create. Since
-Reflection does not provide out-of-the-box functions for getting the `use *` file. Besides `use *`, you can specify an
-alias, and it will be more difficult to trace it. Example:
+$data = [
+    'product' => ['id' => 1, 'name' => 'phone'],
+    'cost' => 10012.23,
+];
+
+$purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+var_dump($purchaseDTO);
+```
+
+Output:
+
+```php
+object(PurchaseDTO)
+  public ProductDTO 'product' => 
+    object(ProductDTO)
+      public int 'id' => int 1
+      public string 'name' => string 'phone' (length=5)
+  public float 'cost' => float 10012.23
+```
+
+### :scroll: **Коллекция**
+
+If you have an array of objects of a certain class, then you must specify the ConvertArray attribute for it, passing it to which class you need to bring the elements.
+
+You can also specify a class in PHP DOC, but then you need to write the full path to this class `array <\DTO\ProductDTO>`.
+This is done in order to know exactly which instance you need to create. Since Reflection does not provide out-of-the-box functions for getting the `use *` file. Besides `use *`, you can specify an alias, and it will be more difficult to trace it. 
+Example:
+
 
 ```php
 
@@ -98,22 +131,10 @@ class ProductDTO
     public string $name;
 }
 
-
-class UserDTO
-{
-    public int $id;
-    public string $email;
-    public string $balance;
-}
-
-
 class PurchaseDTO
 {
     #[ConvertArray(ProductDTO::class)]
     public array $products;
-        
-    /** @var UserDTO $user */
-    public UserDTO $user;
 }
 
 $data = [
@@ -121,45 +142,24 @@ $data = [
         ['id' => 1, 'name' => 'phone',],
         ['id' => 2, 'name' => 'bread',],
     ],
-    'user' => ['id' => 1, 'email' => 'test@test.com', 'balance' => 10012.23,],
 ];
 $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
-var_dump($purchaseDTO);
 ```
 
-```php
-object(PurchaseDTO)[345]
-  public array 'products' => 
-    array (size=2)
-      0 => 
-        object(ProductDTO)[1558]
-          public int 'id' => int 1
-          public string 'name' => string 'phone' (length=5)
-      1 => 
-        object(ProductDTO)[1563]
-          public int 'id' => int 2
-          public string 'name' => string 'bread' (length=5)
-  public UserDTO 'user' => 
-    object(UserDTO)[1559]
-      public int 'id' => int 1
-      public string 'email' => string 'test@test.com' (length=13)
-      public float 'balance' => float 10012.23
-```
+#### :scroll: **Anonymous array**
 
-### :scroll: **Anonymous array**
-
-In case you need to convert an array of data into an array of class objects, you can implement this through an anonymous
-array. To do this, you just need to wrap the class in **[]**
+In case you need to convert an array of data into an array of class objects, you can implement this using
+the `transformCollection` method.
 
 ```php
 $data = [
-        ['id' => 1, 'name' => 'phone'],
-        ['id' => 2, 'name' => 'bread'],
-    ];
-$products = ClassTransformer::transform([ProductDTO::class], $data);
+  ['id' => 1, 'name' => 'phone'],
+  ['id' => 2, 'name' => 'bread'],
+];
+$products = ClassTransformer::transformCollection(ProductDTO::class, $data);
 ```
 
-The result of this execution you will get an array of objects ProductDTO
+As a result of this execution, you will get an array of ProductDTO objects
 
 ```php
 array(2) {
@@ -176,8 +176,8 @@ array(2) {
 } 
 ```
 
-You may also need an element-by-element array transformation. In such a case, you can pass an array of classes, which
-can then be easily unpacked
+You may also need a piecemeal transformation of the array. In this case, you can pass an array of classes,
+which can then be easily unpacked.
 
 ```php
     $userData = ['id' => 1, 'email' => 'test@test.com', 'balance' => 10012.23];
@@ -189,7 +189,7 @@ can then be easily unpacked
         'user' => ['id' => 3, 'email' => 'fake@mail.com', 'balance' => 10012.23,],
     ];
 
-    $result = ClassTransformer::transform([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
+    $result = ClassTransformer::transformMultiple([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
     
     [$user, $purchase] = $result;
     var_dump($user);
@@ -230,9 +230,7 @@ object(PurchaseDTO) (2) {
 
 ### :scroll: **Writing style**
 
-A constant problem with the style of writing, for example, in the database it is snake_case, and in the camelCase code.
-And they constantly need to be transformed somehow. The package takes care of this, you just need to specify the
-WritingStyle attribute on the property:
+A constant problem with the style of writing, for example, in the database it is snake_case, and in the camelCase code. And they constantly need to be transformed somehow. The package takes care of this, you just need to specify the WritingStyle attribute on the property:
 
 ```php
 class WritingStyleSnakeCaseDTO
@@ -246,9 +244,9 @@ class WritingStyleSnakeCaseDTO
 
 
  $data = [
-            'contactFio' => 'yzen.dev',
-            'contactEmail' => 'test@mail.com',
-        ];
+  'contactFio' => 'yzen.dev',
+  'contactEmail' => 'test@mail.com',
+];
 $model = ClassTransformer::transform(WritingStyleSnakeCaseDTO::class, $data);
 var_dump($model);
 ```
@@ -259,5 +257,74 @@ RESULT:
 object(WritingStyleSnakeCaseDTO) (2) {
   ["contact_fio"]=> string(8) "yzen.dev"
   ["contact_email"]=> string(13) "test@mail.com"
+}
+```
+
+### :scroll: **Alias**
+
+Various possible aliases can be set for the property, which will also be searched in the data source. This can be
+useful if the DTO is generated from different data sources.
+
+```php
+class WithAliasDTO
+{
+    #[FieldAlias('userFio')]
+    public string $fio;
+
+    #[FieldAlias(['email', 'phone'])]
+    public string $contact;
+}
+```
+
+### :scroll: **Custom setter**
+
+Если поле требует дополнительной обработки при его инициализации, вы можете мутировать его сеттер. Для это создайте в классе метод следующего формата -  `set{$name}Attribute`. Пример:
+
+```php
+class UserDTO
+{
+    public int $id;
+    public string $real_address;
+
+    public function setRealAddressAttribute(string $value)
+    {
+        $this->real_address = strtolower($value);
+    }
+}
+```
+
+### :scroll: **After Transform**
+
+Inside the class, you can create the `afterTransform` method, which will be called immediately after the conversion is completed. In it, we
+can describe our additional verification or transformation logic by already working with the state of the object.
+
+```php
+class UserDTO
+{
+    public int $id;
+    public float $balance;
+
+    public function afterTransform()
+    {
+        $this->balance = 777;
+    }
+}
+```
+
+### :scroll: **Custom transform**
+
+If you need to completely transform yourself, then you can create a transform method in the class. In this case, no library processing is called, all the responsibility of the conversion passes to your class.
+
+```php
+class CustomTransformUserDTOArray
+{
+    public string $email;
+    public string $username;
+    
+    public function transform($args)
+    {
+        $this->email = $args['login'];
+        $this->username = $args['fio'];
+    }
 }
 ```
