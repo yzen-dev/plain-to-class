@@ -288,7 +288,8 @@ class WithAliasDTO
 
 ### **Custom setter**
 
-Если поле требует дополнительной обработки при его инициализации, вы можете мутировать его сеттер. Для это создайте в классе метод следующего формата -  `set{$name}Attribute`. Пример:
+If a field requires additional processing during its initialization, you can mutator. To define a mutator, define a set{Attribute}Attribute method on your model where {Attribute} is cased name of the property you wish to access.
+This mutator will be automatically called when we attempt to set the value of the real_address attribute on the model:
 
 ```php
 class UserDTO
