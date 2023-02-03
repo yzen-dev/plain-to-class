@@ -1,9 +1,9 @@
 ## ClassTransformer
-
 ![Packagist Version](https://img.shields.io/packagist/v/yzen.dev/plain-to-class?color=blue&label=version)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/yzen-dev/plain-to-class/Run%20tests?label=tests&logo=github)
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/yzen-dev/plain-to-class/tests.yml?branch=master)
 [![Coverage](https://codecov.io/gh/yzen-dev/plain-to-class/branch/master/graph/badge.svg?token=QAO8STLPMI)](https://codecov.io/gh/yzen-dev/plain-to-class)
 ![License](https://img.shields.io/github/license/yzen-dev/plain-to-class)
+![readthedocs](https://img.shields.io/readthedocs/plain-to-class)
 ![Packagist Downloads](https://img.shields.io/packagist/dm/yzen.dev/plain-to-class)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/yzen.dev/plain-to-class)
 
