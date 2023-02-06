@@ -53,7 +53,7 @@ Common use case:
 
 ### **Base**
 
-```
+```php
 namespace DTO;
 
 class CreateUserDTO
