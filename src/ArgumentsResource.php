@@ -4,13 +4,14 @@ namespace ClassTransformer;
 
 use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\WritingStyle;
+use ClassTransformer\Contracts\ReflectionProperty;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
-use function sizeof;
-use function is_object;
-use function func_get_args;
+use function is_string;
 use function array_intersect;
 use function array_key_exists;
+use function func_get_args;
+use function sizeof;
 
 /**
  * Class GenericProperty
@@ -36,15 +37,15 @@ final class ArgumentsResource
     }
 
     /**
-     * @param GenericProperty $genericProperty
+     * @param ReflectionProperty $genericProperty
      *
      * @return mixed|object|array<mixed>|null
      * @throws ValueNotFoundException
      */
-    public function getValue(GenericProperty $genericProperty): mixed
+    public function getValue(ReflectionProperty $genericProperty): mixed
     {
-        if (array_key_exists($genericProperty->name, $this->args)) {
-            return $this->args[$genericProperty->name];
+        if (array_key_exists($genericProperty->getName(), $this->args)) {
+            return $this->args[$genericProperty->getName()];
         }
 
         $aliasesAttr = $genericProperty->getAttribute(FieldAlias::class);
@@ -76,12 +77,12 @@ final class ArgumentsResource
             throw new ValueNotFoundException();
         }
 
-        $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->name);
+        $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->getName());
         if (sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($snakeCase, $this->args)) {
             return $this->args[$snakeCase];
         }
 
-        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->name);
+        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->getName());
         if (sizeof(array_intersect([WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($camelCase, $this->args)) {
             return $this->args[$camelCase];
         }

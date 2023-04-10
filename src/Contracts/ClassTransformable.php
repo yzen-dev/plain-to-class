@@ -1,6 +1,6 @@
 <?php
 
-namespace ClassTransformer;
+namespace ClassTransformer\Contracts;
 
 /**
  * @template T

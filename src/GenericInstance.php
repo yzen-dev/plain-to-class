@@ -2,13 +2,10 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Reflection\ReflectionClass;
+use ClassTransformer\Contracts\ClassTransformable;
+use ClassTransformer\Contracts\ReflectionClass;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
-
-use function is_array;
-use function constant;
-use function method_exists;
 
 /**
  * Class GenericInstance
@@ -36,7 +33,7 @@ final class GenericInstance
     public function __construct(ReflectionClass $class, ArgumentsResource $argumentsResource)
     {
         $this->class = $class;
-        
+
         $this->argumentsResource = $argumentsResource;
 
         $this->genericInstance = new ($class->getClass());
@@ -58,14 +55,13 @@ final class GenericInstance
             }
 
             if ($property->hasSetMutator()) {
-                $this->genericInstance->{TransformUtils::mutationSetterToCamelCase($property->name)}($value);
+                $this->genericInstance->{TransformUtils::mutationSetterToCamelCase($property->getName())}($value);
                 continue;
             }
 
-            $this->genericInstance->{$property->name} = $property->castAttribute($value);
+            $caster = new ValueCasting($property);
+            $this->genericInstance->{$property->getName()} = $caster->castAttribute($value);
         }
         return $this->genericInstance;
     }
-
-
 }

@@ -2,6 +2,7 @@
 
 namespace ClassTransformer;
 
+use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**

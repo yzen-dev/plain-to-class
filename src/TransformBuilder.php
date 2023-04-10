@@ -2,6 +2,7 @@
 
 namespace ClassTransformer;
 
+use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Reflection\CacheReflectionClass;
 use ClassTransformer\Reflection\RuntimeReflectionClass;
 use ClassTransformer\Validators\ClassExistsValidator;

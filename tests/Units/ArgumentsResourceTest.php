@@ -2,11 +2,10 @@
 
 namespace Tests\Units;
 
-use ClassTransformer\Attributes\WritingStyle;
-use PHPUnit\Framework\TestCase;
-use ClassTransformer\GenericProperty;
 use ClassTransformer\ArgumentsResource;
 use ClassTransformer\Exceptions\ValueNotFoundException;
+use ClassTransformer\Reflection\RuntimeReflectionProperty;
+use PHPUnit\Framework\TestCase;
 use Tests\Units\DTO\UserDTO;
 
 class ArgumentsResourceTest extends TestCase
@@ -16,7 +15,7 @@ class ArgumentsResourceTest extends TestCase
         $data = ['id' => 1];
         $resource = new ArgumentsResource($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'id'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'id'))
         );
         $this->assertEquals($data['id'], $value);
     }
@@ -26,7 +25,7 @@ class ArgumentsResourceTest extends TestCase
         $this->expectException(ValueNotFoundException::class);
         $resource = new ArgumentsResource(['test' => 1]);
         $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'id'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'id'))
         );
     }
 
@@ -36,7 +35,7 @@ class ArgumentsResourceTest extends TestCase
         $data = ['id' => 1];
         $resource = new ArgumentsResource($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'addressOne'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressOne'))
         );
         $this->assertEquals($data['id'], $value);
     }
@@ -46,7 +45,7 @@ class ArgumentsResourceTest extends TestCase
         $data = ['addressTwo' => 'test'];
         $resource = new ArgumentsResource($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'address_two'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'address_two'))
         );
         $this->assertEquals($data['addressTwo'], $value);
     }
@@ -56,7 +55,7 @@ class ArgumentsResourceTest extends TestCase
         $data = ['address_three' => 'test'];
         $resource = new ArgumentsResource($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'addressThree'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressThree'))
         );
         $this->assertEquals($data['address_three'], $value);
     }
@@ -66,7 +65,7 @@ class ArgumentsResourceTest extends TestCase
         $this->expectException(ValueNotFoundException::class);
         $resource = new ArgumentsResource(['test' => 1]);
         $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'balance'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'balance'))
         );
     }
 }

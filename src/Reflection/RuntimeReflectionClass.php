@@ -2,7 +2,8 @@
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\ClassTransformable;
+use ClassTransformer\Contracts\ClassTransformable;
+use ClassTransformer\Contracts\ReflectionClass;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\GenericProperty;
 use ClassTransformer\Validators\ClassExistsValidator;
@@ -53,7 +54,7 @@ final class RuntimeReflectionClass implements ReflectionClass
         $properties = $refInstance->getProperties();
         $result = [];
         foreach ($properties as $item) {
-            $result [] = new GenericProperty($item);
+            $result [] = new RuntimeReflectionProperty($item);
         }
         
         return static::$propertiesTypesCache[$this->class] = $result;

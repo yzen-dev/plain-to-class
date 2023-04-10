@@ -1,28 +1,30 @@
 <?php
 
-namespace ClassTransformer;
+namespace ClassTransformer\Reflection;
 
 use ClassTransformer\Attributes\ConvertArray;
+use ClassTransformer\Attributes\NotTransform;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use ReflectionType;
-use ReflectionProperty;
+use ClassTransformer\TransformBuilder;
+use ClassTransformer\TransformUtils;
 use ReflectionAttribute;
 use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionType;
 use ReflectionUnionType;
-use ClassTransformer\Attributes\NotTransform;
 
-use function sizeof;
-use function in_array;
 use function array_intersect;
+use function in_array;
+use function sizeof;
 
 /**
  * Class GenericProperty
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-final class GenericProperty
+final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\ReflectionProperty
 {
-    /** @var ReflectionProperty */
+    /** @var \ClassTransformer\Contracts\ReflectionProperty */
     public ReflectionProperty $property;
 
     /** @var null|ReflectionType|ReflectionUnionType|ReflectionNamedType */
@@ -47,7 +49,7 @@ final class GenericProperty
     private static $attributesCache = [];
 
     /**
-     * @param ReflectionProperty $property
+     * @param \ClassTransformer\Contracts\ReflectionProperty $property
      */
     public function __construct(ReflectionProperty $property)
     {
@@ -148,94 +150,6 @@ final class GenericProperty
         return null;
     }
 
-    /**
-     * @param GenericProperty $property
-     * @param mixed $value
-     *
-     * @return mixed
-     * @throws ClassNotFoundException
-     */
-    public function castAttribute($value)
-    {
-        if ($this->isScalar || $this->notTransform()) {
-            return $value;
-        }
-
-        if ($this->isArray()) {
-            return $this->castArray($value);
-        }
-
-        if ($this->isEnum() && (is_string($value) || is_int($value))) {
-            return $this->castEnum($value);
-        }
-
-        if ($this->type instanceof ReflectionNamedType) {
-            $propertyClass = $this->type->getName();
-
-            /** @phpstan-ignore-next-line */
-            return (new TransformBuilder($propertyClass, $value))->build();
-        }
-        return $value;
-    }
-
-
-    /**
-     * @param GenericProperty $property
-     * @param array<mixed>|mixed $value
-     *
-     * @return array<mixed>|mixed
-     * @throws ClassNotFoundException
-     */
-    private function castArray($value): mixed
-    {
-        $arrayTypeAttr = $this->getAttribute(ConvertArray::class);
-        if ($arrayTypeAttr !== null) {
-            $arrayType = $arrayTypeAttr->getArguments()[0];
-        } else {
-            $arrayType = TransformUtils::getClassFromPhpDoc($this->getDocComment());
-        }
-
-        if (empty($arrayType) || !is_array($value) || $arrayType === 'mixed') {
-            return $value;
-        }
-
-        $array = [];
-        if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
-            foreach ($value as $el) {
-                $array[] = (new TransformBuilder($arrayType, $el))->build();
-            }
-            return $array;
-        }
-
-        foreach ($value as $el) {
-            $array[] = match ($arrayType) {
-                'string' => (string)$el,
-                'int' => (int)$el,
-                'float' => (float)$el,
-                'bool' => (bool)$el,
-                default => $el
-            };
-        }
-        return $array;
-    }
-
-    /**
-     * @param GenericProperty $property
-     * @param int|string $value
-     *
-     * @return mixed
-     */
-    private function castEnum(int|string $value)
-    {
-        /** @phpstan-ignore-next-line */
-        $propertyClass = $this->type->getName();
-        if (method_exists($propertyClass, 'from')) {
-            /** @var \BackedEnum $propertyClass */
-            return $propertyClass::from($value);
-        }
-
-        return constant($propertyClass . '::' . $value);
-    }
 
     /**
      * @param string $key
@@ -245,5 +159,25 @@ final class GenericProperty
     public function hasSetMutator(): bool
     {
         return method_exists($this->class, TransformUtils::mutationSetterToCamelCase($this->name));
+    }
+
+    public function isScalar(): bool
+    {
+        return $this->isScalar;
+    }
+
+    public function isTransformable(): bool
+    {
+        return $this->type instanceof ReflectionNamedType;
+    }
+    
+    public function getTypeName(): string
+    {
+        return $this->type->getName();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 }
