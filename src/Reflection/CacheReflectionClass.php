@@ -2,19 +2,17 @@
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Contracts\ReflectionClass;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\GenericProperty;
+use ClassTransformer\Contracts\ClassTransformable;
+use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\Validators\ClassExistsValidator;
-use ReflectionClass as PhpReflectionClass;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class RuntimeReflectionClass
  *
+ * @psalm-api
  * @template T of ClassTransformable
- *
- * @author yzen.dev <yzen.dev@gmail.com>
  */
 final class CacheReflectionClass implements ReflectionClass
 {
@@ -49,13 +47,34 @@ final class CacheReflectionClass implements ReflectionClass
             return static::$propertiesTypesCache[$this->class];
         }
 
-        $refInstance = new PhpReflectionClass($this->class);
+        $cache = new CacheGenerator($this->class);
 
-        $properties = $refInstance->getProperties();
-        $result = [];
-        foreach ($properties as $item) {
-            $result [] = new CacheReflectionProperty($item);
+        if (!$cache->cacheExists()) {
+            $cache->generate();
         }
+
+        $class = $cache->get();
+
+        $result = [];
+        $class['properties'] = array_map(function ($item) {
+            $property = new CacheReflectionProperty();
+
+            $property->class = $item['class'];
+            $property->name = $item['name'];
+            $property->type = $item['type'];
+            $property->types = $item['types'];
+            $property->isScalar = $item['isScalar'];
+            $property->hasSetMutator = $item['hasSetMutator'];
+            $property->isArray = $item['isArray'];
+            $property->isEnum = $item['isEnum'];
+            $property->notTransform = $item['notTransform'];
+            $property->isTransformable = $item['isTransformable'];
+            $property->typeName = $item['typeName'];
+            $property->docComment = $item['docComment'];
+            $property->attributes = $item['attributes'];
+
+            return $property;
+        }, $class['properties']);
 
         return static::$propertiesTypesCache[$this->class] = $result;
     }

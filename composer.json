@@ -35,10 +35,13 @@
   "require-dev": {
     "mockery/mockery": "1.5.1",
     "phpbench/phpbench": "1.2.8",
-    "phpstan/phpstan": "1.9.12",
     "phpunit/phpunit": "9.5.28",
-    "squizlabs/php_codesniffer": "3.7.1"
+    "squizlabs/php_codesniffer": "3.7.1",
+    "vimeo/psalm": "^5.9"
   },
+  "bin": [
+    "bin/plain-to-class-clear"
+  ],
   "scripts": {
     "phpunit": [
       "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml"

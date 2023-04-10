@@ -6,6 +6,8 @@ namespace ClassTransformer\Attributes;
 
 /**
  * Attribute for specifying the style of passed arguments
+ *
+ * @psalm-api
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 final class WritingStyle

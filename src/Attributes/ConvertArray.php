@@ -6,6 +6,8 @@ namespace ClassTransformer\Attributes;
 
 /**
  * An attribute for properties that are an array that allows you to specify the type of element
+ *
+ * @psalm-api
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 final class ConvertArray
@@ -15,6 +17,7 @@ final class ConvertArray
      */
     public function __construct(
         public string $type
-    ) {
+    )
+    {
     }
 }

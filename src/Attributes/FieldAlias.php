@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ClassTransformer\Attributes;
 
 /**
- *
+ * @psalm-api
  */
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 final class FieldAlias
@@ -15,6 +15,7 @@ final class FieldAlias
      */
     public function __construct(
         public string|array $aliases
-    ) {
+    )
+    {
     }
 }

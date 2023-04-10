@@ -16,14 +16,15 @@ use function sizeof;
 /**
  * Class GenericProperty
  *
- * @author yzen.dev <yzen.dev@gmail.com>
+ * @psalm-api
  */
 final class ArgumentsResource
 {
     /** @var array<mixed> $args */
-    private array $args;
+    private array $args = [];
 
     /**
+     * 
      * @param iterable<mixed>|mixed ...$args
      */
     public function __construct(...$args)
@@ -48,10 +49,9 @@ final class ArgumentsResource
             return $this->args[$genericProperty->getName()];
         }
 
-        $aliasesAttr = $genericProperty->getAttribute(FieldAlias::class);
+        $aliases = $genericProperty->getAttributeArguments(FieldAlias::class);
 
-        if ($aliasesAttr !== null) {
-            $aliases = $aliasesAttr->getArguments();
+        if ($aliases !== null) {
             if (!empty($aliases)) {
                 $aliases = $aliases[0];
                 if (is_string($aliases)) {
@@ -65,25 +65,20 @@ final class ArgumentsResource
             }
         }
 
-        $writingStyle = $genericProperty->getAttribute(WritingStyle::class);
+        $styles = $genericProperty->getAttributeArguments(WritingStyle::class);
 
-        if ($writingStyle === null) {
+        if ($styles === null) {
             throw new ValueNotFoundException();
         }
 
-        $styles = $writingStyle->getArguments();
-
-        if (empty($styles)) {
-            throw new ValueNotFoundException();
-        }
 
         $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->getName());
-        if (sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($snakeCase, $this->args)) {
+        if (sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 && array_key_exists($snakeCase, $this->args)) {
             return $this->args[$snakeCase];
         }
 
         $camelCase = TransformUtils::attributeToCamelCase($genericProperty->getName());
-        if (sizeof(array_intersect([WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 & array_key_exists($camelCase, $this->args)) {
+        if (sizeof(array_intersect([WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_ALL], $styles)) > 0 && array_key_exists($camelCase, $this->args)) {
             return $this->args[$camelCase];
         }
 

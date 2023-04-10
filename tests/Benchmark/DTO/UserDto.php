@@ -6,7 +6,7 @@ namespace Tests\Benchmark\DTO;
 use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\WritingStyle;
 
-class UserDTO
+class UserDto
 {
     public int $id;
     public UserTypeEnum $type;

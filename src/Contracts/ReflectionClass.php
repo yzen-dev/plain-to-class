@@ -3,7 +3,7 @@
 namespace ClassTransformer\Contracts;
 
 /**
- *
+ * @psalm-api
  */
 interface ReflectionClass
 {

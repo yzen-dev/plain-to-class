@@ -2,17 +2,49 @@
 
 namespace ClassTransformer\Contracts;
 
+/**
+ * @psalm-api
+ */
 interface ReflectionProperty
 {
+    /**
+     * @return bool
+     */
     public function isScalar(): bool;
 
+    /**
+     * @return bool
+     */
     public function isTransformable(): bool;
 
+    /**
+     * @return string
+     */
     public function getName(): string;
 
-    public function getTypeName(): string;
+    /**
+     * @return class-string
+     */
+    public function getTypeName(): ?string;
 
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
     public function getAttribute(string $name);
+
+    /**
+     * @param string $name
+     *
+     * @return ?array
+     */
+    public function getAttributeArguments(string $name): ?array;
+
+    /**
+     * @return bool|string
+     */
+    public function getDocComment(): bool|string;
 
     /**
      * Finds whether a variable is an enum
@@ -34,8 +66,6 @@ interface ReflectionProperty
     public function notTransform(): bool;
 
     /**
-     * @param string $key
-     *
      * @return bool
      */
     public function hasSetMutator(): bool;

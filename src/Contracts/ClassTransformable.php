@@ -3,14 +3,15 @@
 namespace ClassTransformer\Contracts;
 
 /**
- * @template T
+ * @psalm-api
+ * @template-covariant TClass
  */
 interface ClassTransformable
 {
     /**
      * @param array<mixed> $args
      *
-     * @return T
+     * @return TClass
      */
     public function transform(...$args): mixed;
 }

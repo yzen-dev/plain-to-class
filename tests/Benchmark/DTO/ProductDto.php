@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Benchmark\DTO;
 
-class ProductDTO
+class ProductDto
 {
     public int $id;
     public string $name;

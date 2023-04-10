@@ -2,37 +2,61 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Contracts\ClassTransformable;
+use ClassTransformer\Reflection\CacheReflectionClass;
+use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
+use ClassTransformer\Reflection\RuntimeReflectionClass;
 
 /**
  * Class ClassTransformer
  *
- * @template T of ClassTransformable
- * @package ClassTransformer
+ * @psalm-api
+ * @psalm-immutable
  */
 final class ClassTransformer
 {
     /**
      * Class-transformer function to transform our object into a typed object
      *
-     * @param class-string<T> $className
+     * @template TClass
+     *
+     * @param class-string<TClass> $className
      * @param iterable<mixed> ...$args
      *
-     * @return null|T
+     * @return null|TClass
      * @throws ClassNotFoundException
      */
     public static function transform(string $className, ...$args)
     {
-        return (new TransformBuilder($className, ...$args))
-            ->build();
+        new ClassExistsValidator($className);
+        if (method_exists($className, 'transform')) {
+            $instance = new $className();
+            $instance->transform(...$args);
+        } else {
+            if (ClassTransformerConfig::$cache) {
+                $reflection = new CacheReflectionClass($className);
+            } else {
+                $reflection = new RuntimeReflectionClass($className);
+            }
+            $generic = new GenericInstance($reflection, new ArgumentsResource(...$args));
+            /** @var TClass $instance */
+            $instance = $generic->transform();
+        }
+
+        if (method_exists($instance, 'afterTransform')) {
+            $instance->afterTransform();
+        }
+
+        return $instance;
     }
 
     /**
-     * @param class-string<T> $className
+     * @template TClass
+     *
+     * @param class-string<TClass> $className
      * @param array<iterable<mixed>> $args
      *
-     * @return null|array<null>|array<T>
+     * @return null|array<null>|array<TClass>
      * @throws ClassNotFoundException
      */
     public static function transformCollection(string $className, array $args): ?array
@@ -45,10 +69,12 @@ final class ClassTransformer
     }
 
     /**
-     * @param array<class-string<T>> $className
+     * @template TClass
+     *
+     * @param array<class-string<TClass>> $className
      * @param array<iterable<mixed>> $args
      *
-     * @return null|array<null>|array<T>
+     * @return null|array<null>|array<TClass>
      * @throws ClassNotFoundException
      */
     public static function transformMultiple(array $className, array $args): ?array

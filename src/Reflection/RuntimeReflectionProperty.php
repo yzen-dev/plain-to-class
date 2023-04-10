@@ -2,10 +2,7 @@
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Attributes\NotTransform;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\TransformBuilder;
 use ClassTransformer\TransformUtils;
 use ReflectionAttribute;
 use ReflectionNamedType;
@@ -19,8 +16,6 @@ use function sizeof;
 
 /**
  * Class GenericProperty
- *
- * @author yzen.dev <yzen.dev@gmail.com>
  */
 final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\ReflectionProperty
 {
@@ -36,7 +31,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var class-string|string $propertyClass */
     public string $name;
 
-    /** @var string */
+    /** @var class-string */
     public string $class;
 
     /** @var bool */
@@ -49,7 +44,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     private static $attributesCache = [];
 
     /**
-     * @param \ClassTransformer\Contracts\ReflectionProperty $property
+     * @param \ReflectionProperty $property
      */
     public function __construct(ReflectionProperty $property)
     {
@@ -150,10 +145,21 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         return null;
     }
 
+    /**
+     * @param string|null $name
+     *
+     * @return array|null
+     */
+    public function getAttributeArguments(?string $name = null): ?array
+    {
+        $attr = $this->getAttribute($name);
+        if ($attr !== null) {
+            return $attr->getArguments();
+        }
+        return null;
+    }
 
     /**
-     * @param string $key
-     *
      * @return bool
      */
     public function hasSetMutator(): bool
@@ -161,21 +167,33 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         return method_exists($this->class, TransformUtils::mutationSetterToCamelCase($this->name));
     }
 
+    /**
+     * @return bool
+     */
     public function isScalar(): bool
     {
         return $this->isScalar;
     }
 
+    /**
+     * @return bool
+     */
     public function isTransformable(): bool
     {
         return $this->type instanceof ReflectionNamedType;
     }
-    
-    public function getTypeName(): string
+
+    /**
+     * @return null|class-string
+     */
+    public function getTypeName(): ?string
     {
-        return $this->type->getName();
+        return $this->type?->getName() ?? null;
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;

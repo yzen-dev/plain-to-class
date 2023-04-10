@@ -12,10 +12,6 @@ use ClassTransformer\Reflection\RuntimeReflectionProperty;
 
 /**
  * Class GenericInstance
- *
- * @template T of ClassTransformable
- *
- * @author yzen.dev <yzen.dev@gmail.com>
  */
 final class ValueCasting
 {
@@ -24,16 +20,14 @@ final class ValueCasting
 
 
     /**
-     * @param ReflectionClass $class
-     * @param ArgumentsResource $argumentsResource
+     * @param ReflectionProperty $property
      */
     public function __construct(ReflectionProperty $property)
     {
         $this->property = $property;
     }
-    
+
     /**
-     * @param RuntimeReflectionProperty $property
      * @param mixed $value
      *
      * @return mixed
@@ -56,16 +50,14 @@ final class ValueCasting
         if ($this->property->isTransformable()) {
             $propertyClass = $this->property->getTypeName();
 
-            /** @phpstan-ignore-next-line */
-            return (new TransformBuilder($propertyClass, $value))->build();
+            return ClassTransformer::transform($propertyClass, $value);
         }
-        
+
         return $value;
     }
 
 
     /**
-     * @param RuntimeReflectionProperty $property
      * @param array<mixed>|mixed $value
      *
      * @return array<mixed>|mixed
@@ -73,11 +65,9 @@ final class ValueCasting
      */
     private function castArray($value): mixed
     {
-        /** @var \ReflectionAttribute $arrayTypeAttr */
-        $arrayTypeAttr = $this->property->getAttribute(ConvertArray::class);
-        if ($arrayTypeAttr !== null) {
-            
-            $arrayType = $arrayTypeAttr->getArguments()[0];
+        $arrayTypeAttr = $this->property->getAttributeArguments(ConvertArray::class);
+        if ($arrayTypeAttr !== null && isset($arrayTypeAttr[0])) {
+            $arrayType = $arrayTypeAttr[0];
         } else {
             $arrayType = TransformUtils::getClassFromPhpDoc($this->property->getDocComment());
         }
@@ -89,7 +79,7 @@ final class ValueCasting
         $array = [];
         if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
             foreach ($value as $el) {
-                $array[] = (new TransformBuilder($arrayType, $el))->build();
+                $array[] = ClassTransformer::transform($arrayType, $el);
             }
             return $array;
         }
@@ -107,12 +97,11 @@ final class ValueCasting
     }
 
     /**
-     * @param RuntimeReflectionProperty $property
      * @param int|string $value
      *
      * @return mixed
      */
-    private function castEnum(int|string $value)
+    private function castEnum(int|string $value): mixed
     {
         $propertyClass = $this->property->getTypeName();
         if (method_exists($propertyClass, 'from')) {

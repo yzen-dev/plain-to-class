@@ -5,9 +5,10 @@ namespace Tests\Benchmark;
 use ClassTransformer\ClassTransformer;
 use ClassTransformer\ClassTransformerConfig;
 use PHPUnit\Framework\TestCase;
-use Tests\Benchmark\DTO\ProductDTO;
-use Tests\Benchmark\DTO\PurchaseDTO;
-use Tests\Benchmark\DTO\UserDTO;
+use Tests\Benchmark\DTO\AddressDto;
+use Tests\Benchmark\DTO\ProductDto;
+use Tests\Benchmark\DTO\PurchaseDto;
+use Tests\Benchmark\DTO\UserDto;
 use Tests\Benchmark\DTO\UserTypeEnum;
 
 /**
@@ -27,9 +28,9 @@ class FullCheckBench extends TestCase
     {
         $data = $this->getPurcheseObject();
 
-        $purchase = new PurchaseDTO();
+        $purchase = new PurchaseDto();
 
-        $user = new UserDTO();
+        $user = new UserDto();
         $user->id = $data['user']['id'];
         $user->email = $data['user']['contact'];
         $user->balance = $data['user']['balance'];
@@ -37,12 +38,21 @@ class FullCheckBench extends TestCase
         $user->type = UserTypeEnum::from($data['user']['type']);
         $purchase->user = $user;
 
+        $address = new AddressDto();
+        $address->city = $data['address']['city'];
+        $address->street = $data['address']['street'];
+        $address->house = $data['address']['house'];
+
+        $purchase->address = $address;
+
+        $purchase->createdAt = new \DateTime($data['createdAt']);
+
         foreach ($data['products'] as $product) {
-            $newProduct = new ProductDTO();
+            $newProduct = new ProductDto();
             $newProduct->id = $product['id'];
             $newProduct->name = $product['name'];
             $newProduct->price = $product['price'];
-            $purchase->products []= $newProduct;
+            $purchase->products [] = $newProduct;
         }
     }
 
@@ -52,22 +62,23 @@ class FullCheckBench extends TestCase
     public function benchTransformReflection(): void
     {
         $data = $this->getPurcheseObject();
-        ClassTransformer::transform(PurchaseDTO::class, $data);
+        ClassTransformer::transform(PurchaseDto::class, $data);
     }
-    
+
     /**
      * @Revs(10000)
      */
     public function benchTransformCacheReflection(): void
     {
-        $data = $this->getPurcheseObject();
         ClassTransformerConfig::$cache = true;
-        ClassTransformer::transform(PurchaseDTO::class, $data);
+        $data = $this->getPurcheseObject();
+        ClassTransformer::transform(PurchaseDto::class, $data);
     }
 
     public function getPurcheseObject(): array
     {
         return [
+            'createdAt' => '2023-04-10 12:30:23',
             'products' => [
                 [
                     'id' => 1,
@@ -84,11 +95,18 @@ class FullCheckBench extends TestCase
                     'count' => 321
                 ],
                 [
-                    'id' => 2,
+                    'id' => 3,
                     'name' => 'book',
                     'price' => 5.5,
                     'description' => 'test description for book',
                     'count' => 333
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'PC',
+                    'price' => 100,
+                    'description' => 'test description for PC',
+                    'count' => 7
                 ]
             ],
             'user' => [
@@ -97,6 +115,11 @@ class FullCheckBench extends TestCase
                 'balance' => 10012.23,
                 'type' => 'admin',
                 'realAddress' => 'test address',
+            ],
+            'address' => [
+                'city' => 'NY',
+                'street' => 'street',
+                'house' => '14',
             ]
         ];
     }

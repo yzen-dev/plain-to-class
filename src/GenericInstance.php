@@ -2,17 +2,16 @@
 
 namespace ClassTransformer;
 
-use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Contracts\ReflectionClass;
+use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
 /**
  * Class GenericInstance
  *
+ * @psalm-api
  * @template T of ClassTransformable
- *
- * @author yzen.dev <yzen.dev@gmail.com>
  */
 final class GenericInstance
 {

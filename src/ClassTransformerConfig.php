@@ -7,7 +7,7 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
 /**
  * Class ClassTransformerConfig
  *
- * @package ClassTransformer
+ * @psalm-api
  */
 final class ClassTransformerConfig
 {

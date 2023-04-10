@@ -2,19 +2,17 @@
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Contracts\ReflectionClass;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\GenericProperty;
+use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Validators\ClassExistsValidator;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass as PhpReflectionClass;
 
 /**
  * Class RuntimeReflectionClass
  *
+ * @psalm-api
  * @template T of ClassTransformable
- *
- * @author yzen.dev <yzen.dev@gmail.com>
  */
 final class RuntimeReflectionClass implements ReflectionClass
 {
