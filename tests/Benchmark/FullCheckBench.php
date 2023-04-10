@@ -3,6 +3,7 @@
 namespace Tests\Benchmark;
 
 use ClassTransformer\ClassTransformer;
+use ClassTransformer\ClassTransformerConfig;
 use PHPUnit\Framework\TestCase;
 use Tests\Benchmark\DTO\ProductDTO;
 use Tests\Benchmark\DTO\PurchaseDTO;
@@ -20,8 +21,7 @@ class FullCheckBench extends TestCase
 {
 
     /**
-     * @Revs(5000)
-     * @Iterations(5)
+     * @Revs(10000)
      */
     public function benchBaseReflection(): void
     {
@@ -47,12 +47,21 @@ class FullCheckBench extends TestCase
     }
 
     /**
-     * @Revs(5000)
-     * @Iterations(5)
+     * @Revs(10000)
      */
     public function benchTransformReflection(): void
     {
         $data = $this->getPurcheseObject();
+        ClassTransformer::transform(PurchaseDTO::class, $data);
+    }
+    
+    /**
+     * @Revs(10000)
+     */
+    public function benchTransformCacheReflection(): void
+    {
+        $data = $this->getPurcheseObject();
+        ClassTransformerConfig::$cache = true;
         ClassTransformer::transform(PurchaseDTO::class, $data);
     }
 

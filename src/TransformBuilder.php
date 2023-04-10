@@ -2,6 +2,8 @@
 
 namespace ClassTransformer;
 
+use ClassTransformer\Reflection\CacheReflectionClass;
+use ClassTransformer\Reflection\RuntimeReflectionClass;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
@@ -46,7 +48,12 @@ final class TransformBuilder
             $instance = new $this->class();
             $instance->transform(...$this->args);
         } else {
-            $generic = new GenericInstance($this->class, new ArgumentsResource(...$this->args));
+            if (ClassTransformerConfig::$cache) {
+                $reflection = new CacheReflectionClass($this->class);
+            } else {
+                $reflection = new RuntimeReflectionClass($this->class);
+            }
+            $generic = new GenericInstance($reflection, new ArgumentsResource(...$this->args));
             /** @var T $instance */
             $instance = $generic->transform();
         }
@@ -57,4 +64,5 @@ final class TransformBuilder
 
         return $instance;
     }
+
 }

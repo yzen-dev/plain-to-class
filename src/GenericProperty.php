@@ -2,6 +2,8 @@
 
 namespace ClassTransformer;
 
+use ClassTransformer\Attributes\ConvertArray;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionAttribute;
@@ -144,5 +146,104 @@ final class GenericProperty
             return static::$attributesCache[$this->class][$this->name][$name] = $attr[0];
         }
         return null;
+    }
+
+    /**
+     * @param GenericProperty $property
+     * @param mixed $value
+     *
+     * @return mixed
+     * @throws ClassNotFoundException
+     */
+    public function castAttribute($value)
+    {
+        if ($this->isScalar || $this->notTransform()) {
+            return $value;
+        }
+
+        if ($this->isArray()) {
+            return $this->castArray($value);
+        }
+
+        if ($this->isEnum() && (is_string($value) || is_int($value))) {
+            return $this->castEnum($value);
+        }
+
+        if ($this->type instanceof ReflectionNamedType) {
+            $propertyClass = $this->type->getName();
+
+            /** @phpstan-ignore-next-line */
+            return (new TransformBuilder($propertyClass, $value))->build();
+        }
+        return $value;
+    }
+
+
+    /**
+     * @param GenericProperty $property
+     * @param array<mixed>|mixed $value
+     *
+     * @return array<mixed>|mixed
+     * @throws ClassNotFoundException
+     */
+    private function castArray($value): mixed
+    {
+        $arrayTypeAttr = $this->getAttribute(ConvertArray::class);
+        if ($arrayTypeAttr !== null) {
+            $arrayType = $arrayTypeAttr->getArguments()[0];
+        } else {
+            $arrayType = TransformUtils::getClassFromPhpDoc($this->getDocComment());
+        }
+
+        if (empty($arrayType) || !is_array($value) || $arrayType === 'mixed') {
+            return $value;
+        }
+
+        $array = [];
+        if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
+            foreach ($value as $el) {
+                $array[] = (new TransformBuilder($arrayType, $el))->build();
+            }
+            return $array;
+        }
+
+        foreach ($value as $el) {
+            $array[] = match ($arrayType) {
+                'string' => (string)$el,
+                'int' => (int)$el,
+                'float' => (float)$el,
+                'bool' => (bool)$el,
+                default => $el
+            };
+        }
+        return $array;
+    }
+
+    /**
+     * @param GenericProperty $property
+     * @param int|string $value
+     *
+     * @return mixed
+     */
+    private function castEnum(int|string $value)
+    {
+        /** @phpstan-ignore-next-line */
+        $propertyClass = $this->type->getName();
+        if (method_exists($propertyClass, 'from')) {
+            /** @var \BackedEnum $propertyClass */
+            return $propertyClass::from($value);
+        }
+
+        return constant($propertyClass . '::' . $value);
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function hasSetMutator(): bool
+    {
+        return method_exists($this->class, TransformUtils::mutationSetterToCamelCase($this->name));
     }
 }
