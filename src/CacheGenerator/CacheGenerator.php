@@ -41,7 +41,6 @@ class CacheGenerator
      */
     public function generate(): array
     {
-
         if (
             !file_exists(__DIR__ . '/../../.cache') &&
             !mkdir($concurrentDirectory = __DIR__ . '/../../.cache', 0777, true) &&

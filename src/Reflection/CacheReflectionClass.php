@@ -40,44 +40,42 @@ final class CacheReflectionClass implements ReflectionClass
     }
 
     /**
-     * @return \ReflectionProperty[]
-     * @throws \ReflectionException
+     * @return ReflectionProperty[]
+     * @throws ReflectionException
      */
     public function getProperties(): array
     {
-        if (isset(static::$propertiesTypesCache[$this->class])) {
-            return static::$propertiesTypesCache[$this->class];
+        if (isset(self::$propertiesTypesCache[$this->class])) {
+            return self::$propertiesTypesCache[$this->class];
         }
 
         $cache = new CacheGenerator($this->class);
 
         if (!$cache->cacheExists()) {
-            $cache->generate();
+            $class = $cache->generate();
+        } else {
+            $class = $cache->get();
         }
 
-        $class = $cache->get();
+        $properties = array_map(
+            static fn($item) => new CacheReflectionProperty(
+                $item['class'],
+                $item['name'],
+                $item['type'],
+                $item['types'],
+                $item['isScalar'],
+                $item['hasSetMutator'],
+                $item['isArray'],
+                $item['isEnum'],
+                $item['notTransform'],
+                $item['transformable'],
+                $item['docComment'],
+                $item['attributes'],
+            ),
+            $class['properties']
+        );
 
-        $result = [];
-        $class['properties'] = array_map(function ($item) {
-            $property = new CacheReflectionProperty();
-
-            $property->class = $item['class'];
-            $property->name = $item['name'];
-            $property->type = $item['type'];
-            $property->types = $item['types'];
-            $property->isScalar = $item['isScalar'];
-            $property->hasSetMutator = $item['hasSetMutator'];
-            $property->isArray = $item['isArray'];
-            $property->isEnum = $item['isEnum'];
-            $property->notTransform = $item['notTransform'];
-            $property->transformable = $item['transformable'];
-            $property->docComment = $item['docComment'];
-            $property->attributes = $item['attributes'];
-
-            return $property;
-        }, $class['properties']);
-
-        return static::$propertiesTypesCache[$this->class] = $result;
+        return self::$propertiesTypesCache[$this->class] = $properties;
     }
 
     /**

@@ -54,6 +54,8 @@ class FullCheckBench extends TestCase
             $newProduct->price = $product['price'];
             $purchase->products [] = $newProduct;
         }
+
+        $this->assertEquals($data['user']['id'], $purchase->user->id);
     }
 
     /**
@@ -62,7 +64,9 @@ class FullCheckBench extends TestCase
     public function benchTransformReflection(): void
     {
         $data = $this->getPurcheseObject();
-        ClassTransformer::transform(PurchaseDto::class, $data);
+        $purchase = ClassTransformer::transform(PurchaseDto::class, $data);
+
+        $this->assertEquals($data['user']['id'], $purchase->user->id);
     }
 
     /**
@@ -72,7 +76,10 @@ class FullCheckBench extends TestCase
     {
         ClassTransformerConfig::$cache = true;
         $data = $this->getPurcheseObject();
-        ClassTransformer::transform(PurchaseDto::class, $data);
+        
+        $purchase = ClassTransformer::transform(PurchaseDto::class, $data);
+
+        $this->assertEquals($data['user']['id'], $purchase->user->id);
     }
 
     public function getPurcheseObject(): array

@@ -2,6 +2,7 @@
 .idea
 .cache
 .psalm
+.phpbench
 vendor
 .phpunit.result.cache
 .phpunit.cache/

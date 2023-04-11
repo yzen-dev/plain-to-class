@@ -20,11 +20,11 @@ use function sizeof;
  */
 final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\ReflectionProperty
 {
-    /** @var \ClassTransformer\Contracts\ReflectionProperty */
+    /** @var ReflectionProperty */
     public ReflectionProperty $property;
 
-    /** @var null|ReflectionType|ReflectionUnionType|ReflectionNamedType */
-    public ?ReflectionType $type;
+    /** @var ReflectionType|ReflectionNamedType|ReflectionUnionType|null */
+    public ReflectionType|ReflectionNamedType|ReflectionUnionType|null $type;
 
     /** @var array|string[] */
     public array $types;
@@ -38,14 +38,14 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var bool */
     public bool $isScalar;
 
-    /** @var array<array<array<string>>> */
-    private static $attributeTypesCache = [];
+    /** @var array<class-string,<array<string>>> */
+    private static array $attributeTypesCache = [];
 
-    /** @var array<array<array<ReflectionAttribute>>> */
-    private static $attributesCache = [];
+    /** @var array<class-string,array<string, array<ReflectionAttribute>>> */
+    private static array $attributesCache = [];
 
     /**
-     * @param \ReflectionProperty $property
+     * @param ReflectionProperty $property
      */
     public function __construct(ReflectionProperty $property)
     {
@@ -76,8 +76,8 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
      */
     private function initTypes(): array
     {
-        if (isset(static::$attributeTypesCache[$this->class][$this->name])) {
-            return static::$attributeTypesCache[$this->class][$this->name];
+        if (isset(self::$attributeTypesCache[$this->class][$this->name])) {
+            return self::$attributeTypesCache[$this->class][$this->name];
         }
 
         if ($this->type === null) {
@@ -99,7 +99,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
             $types [] = 'null';
         }
 
-        return static::$attributeTypesCache[$this->class][$this->name] = $types;
+        return self::$attributeTypesCache[$this->class][$this->name] = $types;
     }
 
     /**
@@ -135,13 +135,13 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
      */
     public function getAttribute(?string $name = null): ?ReflectionAttribute
     {
-        if (isset(static::$attributesCache[$this->class][$this->name][$name])) {
-            return static::$attributesCache[$this->class][$this->name][$name];
+        if (isset(self::$attributesCache[$this->class][$this->name][$name])) {
+            return self::$attributesCache[$this->class][$this->name][$name];
         }
 
         $attr = $this->property->getAttributes($name);
         if (!empty($attr)) {
-            return static::$attributesCache[$this->class][$this->name][$name] = $attr[0];
+            return self::$attributesCache[$this->class][$this->name][$name] = $attr[0];
         }
         return null;
     }
@@ -153,11 +153,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
      */
     public function getAttributeArguments(?string $name = null): ?array
     {
-        $attr = $this->getAttribute($name);
-        if ($attr !== null) {
-            return $attr->getArguments();
-        }
-        return null;
+        return $this->getAttribute($name)?->getArguments();
     }
 
     /**

@@ -9,24 +9,22 @@ namespace ClassTransformer\Reflection;
  */
 final class CacheReflectionProperty implements \ClassTransformer\Contracts\ReflectionProperty
 {
-
-    public string $class;
-    public string $name;
-    public string $type;
-    public array $types;
-    public bool $isScalar;
-    public bool $hasSetMutator;
-    public bool $isArray;
-    public bool $isEnum;
-    public bool $notTransform;
-    public bool $transformable;
-    public string $docComment;
-    public array $attributes;
-
     /**
      */
-    public function __construct()
-    {
+    public function __construct(
+        public string $class,
+        public string $name,
+        public ?string $type,
+        public array $types,
+        public bool $isScalar,
+        public bool $hasSetMutator,
+        public bool $isArray,
+        public bool $isEnum,
+        public bool $notTransform,
+        public false|string $transformable,
+        public string $docComment,
+        public array $attributes,
+    ) {
     }
 
     /**

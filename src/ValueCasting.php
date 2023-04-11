@@ -33,7 +33,7 @@ final class ValueCasting
      * @return mixed
      * @throws ClassNotFoundException
      */
-    public function castAttribute($value)
+    public function castAttribute(mixed $value): mixed
     {
         if ($this->property->isScalar() || $this->property->notTransform()) {
             return $value;
@@ -46,7 +46,7 @@ final class ValueCasting
         if ($this->property->isEnum() && (is_string($value) || is_int($value))) {
             return $this->castEnum($value);
         }
-
+        
         $propertyClass = $this->property->transformable();
         if ($propertyClass) {
             return ClassTransformer::transform($propertyClass, $value);
