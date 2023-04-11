@@ -29,6 +29,7 @@ final class ClassTransformer
     public static function transform(string $className, ...$args)
     {
         new ClassExistsValidator($className);
+        
         if (method_exists($className, 'transform')) {
             $instance = new $className();
             $instance->transform(...$args);
