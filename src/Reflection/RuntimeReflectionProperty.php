@@ -176,19 +176,11 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
-     * @return bool
+     * @return false|class-string
      */
-    public function isTransformable(): bool
+    public function transformable(): false|string
     {
-        return $this->type instanceof ReflectionNamedType;
-    }
-
-    /**
-     * @return null|class-string
-     */
-    public function getTypeName(): ?string
-    {
-        return $this->type?->getName() ?? null;
+        return $this->type instanceof ReflectionNamedType ? $this->type->getName() : false;
     }
 
     /**

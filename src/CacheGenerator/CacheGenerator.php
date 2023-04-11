@@ -86,8 +86,7 @@ class CacheGenerator
                 'isArray' => $property->isArray(),
                 'isEnum' => $property->isEnum(),
                 'notTransform' => $property->notTransform(),
-                'isTransformable' => $property->isTransformable(),
-                'typeName' => $property->getTypeName(),
+                'transformable' => $property->transformable(),
                 'docComment' => $property->getDocComment(),
                 'attributes' => $attributes,
             ];

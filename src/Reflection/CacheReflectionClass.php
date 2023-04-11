@@ -68,8 +68,7 @@ final class CacheReflectionClass implements ReflectionClass
             $property->isArray = $item['isArray'];
             $property->isEnum = $item['isEnum'];
             $property->notTransform = $item['notTransform'];
-            $property->isTransformable = $item['isTransformable'];
-            $property->typeName = $item['typeName'];
+            $property->transformable = $item['transformable'];
             $property->docComment = $item['docComment'];
             $property->attributes = $item['attributes'];
 

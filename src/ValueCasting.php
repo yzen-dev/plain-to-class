@@ -47,9 +47,8 @@ final class ValueCasting
             return $this->castEnum($value);
         }
 
-        if ($this->property->isTransformable()) {
-            $propertyClass = $this->property->getTypeName();
-
+        $propertyClass = $this->property->transformable();
+        if ($propertyClass) {
             return ClassTransformer::transform($propertyClass, $value);
         }
 
@@ -103,8 +102,8 @@ final class ValueCasting
      */
     private function castEnum(int|string $value): mixed
     {
-        $propertyClass = $this->property->getTypeName();
-        if (method_exists($propertyClass, 'from')) {
+        $propertyClass = $this->property->transformable();
+        if ($propertyClass && method_exists($propertyClass, 'from')) {
             /** @var \BackedEnum $propertyClass */
             return $propertyClass::from($value);
         }

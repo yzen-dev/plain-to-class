@@ -13,19 +13,14 @@ interface ReflectionProperty
     public function isScalar(): bool;
 
     /**
-     * @return bool
+     * @return false|class-string
      */
-    public function isTransformable(): bool;
+    public function transformable(): false|string;
 
     /**
      * @return string
      */
     public function getName(): string;
-
-    /**
-     * @return class-string
-     */
-    public function getTypeName(): ?string;
 
     /**
      * @param string $name
@@ -59,11 +54,6 @@ interface ReflectionProperty
      * @return bool
      */
     public function isArray(): bool;
-
-    /**
-     * @return bool
-     */
-    public function notTransform(): bool;
 
     /**
      * @return bool
