@@ -1,6 +1,7 @@
 .DS_Store
 .idea
 .cache
+.psalm
 vendor
 .phpunit.result.cache
 .phpunit.cache/
