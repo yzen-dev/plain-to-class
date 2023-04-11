@@ -2,8 +2,6 @@
 
 namespace ClassTransformer\Reflection;
 
-use ReflectionProperty;
-
 /**
  * Class GenericProperty
  *
@@ -56,6 +54,14 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     }
 
     /**
+     * @return bool
+     */
+    public function notTransform(): bool
+    {
+        return $this->notTransform;
+    }
+
+    /**
      * @return false|class-string
      */
     public function transformable(): false|string
@@ -84,7 +90,7 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
      *
      * @return mixed|null
      */
-    public function getAttribute(string $name)
+    public function getAttribute(string $name): mixed
     {
         return $this->attributes[$name] ?? null;
     }

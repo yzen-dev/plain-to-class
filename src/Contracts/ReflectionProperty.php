@@ -27,7 +27,7 @@ interface ReflectionProperty
      *
      * @return mixed
      */
-    public function getAttribute(string $name);
+    public function getAttribute(string $name): mixed;
 
     /**
      * @param string $name

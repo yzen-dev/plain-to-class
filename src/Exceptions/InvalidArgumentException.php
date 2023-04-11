@@ -2,7 +2,6 @@
 
 namespace ClassTransformer\Exceptions;
 
-
 /**
  * @psalm-api
  */

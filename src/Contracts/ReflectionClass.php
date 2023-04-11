@@ -7,7 +7,6 @@ namespace ClassTransformer\Contracts;
  */
 interface ReflectionClass
 {
-
     /**
      * @return array<ReflectionProperty>
      */

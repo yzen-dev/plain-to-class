@@ -2,14 +2,15 @@
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Attributes\NotTransform;
-use ClassTransformer\TransformUtils;
-use ReflectionAttribute;
-use ReflectionNamedType;
-use ReflectionProperty;
 use ReflectionType;
+use ReflectionProperty;
+use ReflectionNamedType;
 use ReflectionUnionType;
+use ReflectionAttribute;
+use ClassTransformer\TransformUtils;
+use ClassTransformer\Attributes\NotTransform;
 
+use function method_exists;
 use function array_intersect;
 use function in_array;
 use function sizeof;

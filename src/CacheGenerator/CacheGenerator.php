@@ -2,6 +2,9 @@
 
 namespace ClassTransformer\CacheGenerator;
 
+use RuntimeException;
+use ReflectionException;
+use ReflectionNamedType;
 use ReflectionClass as PhpReflectionClass;
 use ClassTransformer\Reflection\RuntimeReflectionProperty;
 
@@ -12,7 +15,6 @@ use ClassTransformer\Reflection\RuntimeReflectionProperty;
  */
 class CacheGenerator
 {
-
     /** @param class-string $class */
     private string $class;
 
@@ -27,21 +29,25 @@ class CacheGenerator
     /**
      * @return bool
      */
-    public function cacheExists()
+    public function cacheExists(): bool
     {
         $class = str_replace('\\', '_', $this->class);
         return file_exists('./.cache/' . $class . '.cache.php');
     }
 
     /**
-     * @return void
-     * @throws \ReflectionException
+     * @return array
+     * @throws ReflectionException
      */
-    public function generate()
+    public function generate(): array
     {
 
-        if (!file_exists(__DIR__ . '/../../.cache')) {
-            mkdir(__DIR__ . '/../../.cache', 0777, true);
+        if (
+            !file_exists(__DIR__ . '/../../.cache') &&
+            !mkdir($concurrentDirectory = __DIR__ . '/../../.cache', 0777, true) &&
+            !is_dir($concurrentDirectory)
+        ) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
         }
 
         $class = str_replace('\\', '_', $this->class);
@@ -61,20 +67,17 @@ class CacheGenerator
 
         foreach ($properties as $item) {
             $property = new RuntimeReflectionProperty($item);
-            if ($property->type instanceof \ReflectionNamedType) {
+            if ($property->type instanceof ReflectionNamedType) {
                 $type = $property->type->getName();
             } else {
                 $type = $property->type;
             }
             $attrs = $property->property->getAttributes();
+            $attributes = [];
             if (!empty($attrs)) {
-                $attributes = [];
                 foreach ($attrs as $attr) {
                     $attributes[$attr->getName()] = $attr->getArguments();
                 }
-
-            } else {
-                $attributes = [];
             }
             $cache['properties'][] = [
                 'class' => $property->class,
@@ -96,14 +99,15 @@ class CacheGenerator
             $path,
             '<?php ' . PHP_EOL . 'return ' . var_export($cache, true) . ';'
         );
+        return $cache;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function get()
+    public function get(): array
     {
         $class = str_replace('\\', '_', $this->class);
-        return require_once __DIR__ . '/../../.cache/' . $class . '.cache.php';
+        return require __DIR__ . '/../../.cache/' . $class . '.cache.php';
     }
 }

@@ -2,6 +2,8 @@
 
 namespace ClassTransformer\Reflection;
 
+use ReflectionProperty;
+use ReflectionException;
 use ClassTransformer\Contracts\ReflectionClass;
 use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\CacheGenerator\CacheGenerator;
@@ -20,9 +22,9 @@ final class CacheReflectionClass implements ReflectionClass
     private string $class;
 
     /**
-     * @var array<string,\ReflectionProperty[]>
+     * @var array<string,ReflectionProperty[]>
      */
-    private static $propertiesTypesCache = [];
+    private static array $propertiesTypesCache = [];
 
 
     /**
