@@ -3,12 +3,13 @@
 namespace ClassTransformer;
 
 use ClassTransformer\Attributes\ConvertArray;
-use ClassTransformer\Contracts\ClassTransformable;
-use ClassTransformer\Contracts\ReflectionClass;
 use ClassTransformer\Contracts\ReflectionProperty;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\Exceptions\ValueNotFoundException;
-use ClassTransformer\Reflection\RuntimeReflectionProperty;
+
+use function method_exists;
+use function is_array;
+use function in_array;
+use function array_map;
 
 /**
  * Class GenericInstance
@@ -46,7 +47,7 @@ final class ValueCasting
         if ($this->property->isEnum() && (is_string($value) || is_int($value))) {
             return $this->castEnum($value);
         }
-        
+
         $propertyClass = $this->property->transformable();
         if ($propertyClass) {
             return ClassTransformer::transform($propertyClass, $value);
@@ -75,24 +76,18 @@ final class ValueCasting
             return $value;
         }
 
-        $array = [];
         if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
-            foreach ($value as $el) {
-                $array[] = ClassTransformer::transform($arrayType, $el);
-            }
-            return $array;
+            return array_map(static fn($el) => ClassTransformer::transform($arrayType, $el), $value);
+
         }
 
-        foreach ($value as $el) {
-            $array[] = match ($arrayType) {
-                'string' => (string)$el,
-                'int' => (int)$el,
-                'float' => (float)$el,
-                'bool' => (bool)$el,
-                default => $el
-            };
-        }
-        return $array;
+        return array_map(static fn($el) => match ($arrayType) {
+            'string' => (string)$el,
+            'int' => (int)$el,
+            'float' => (float)$el,
+            'bool' => (bool)$el,
+            default => $el
+        }, $value);
     }
 
     /**
