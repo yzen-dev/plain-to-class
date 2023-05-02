@@ -26,7 +26,6 @@ class EnumTest extends TestCase
     {
         if (PHP_MAJOR_VERSION < 8 || (PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION < 1)) {
             $this->markTestSkipped('Php version mismatch');
-            return;
         }
 
         $data = [

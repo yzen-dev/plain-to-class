@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
+use ReflectionException;
 use PHPUnit\Framework\TestCase;
-use Tests\Integration\DTO\ArrayScalarDTO;
+use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\BasketDTO;
 use Tests\Integration\DTO\ProductDTO;
 use Tests\Integration\DTO\PurchaseDTO;
-use Tests\Integration\DTO\UserDTO;
+use ClassTransformer\ClassTransformer;
+use Tests\Integration\DTO\ArrayScalarDTO;
 use Tests\Integration\DTO\UserEmptyTypeDTO;
-use function \count;
+use ClassTransformer\Exceptions\ClassNotFoundException;
+
+use function count;
 
 /**
  * Class ClassTransformerTest

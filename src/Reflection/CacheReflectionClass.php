@@ -40,7 +40,7 @@ final class CacheReflectionClass implements ReflectionClass
     }
 
     /**
-     * @return ReflectionProperty[]
+     * @return CacheReflectionProperty[]
      * @throws ReflectionException
      */
     public function getProperties(): array

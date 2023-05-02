@@ -108,7 +108,6 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
      */
     public function getDocComment(): bool|string
     {
-        return $this->docComment ?? false;
+        return !empty($this->docComment) ? $this->docComment : false;
     }
-
 }

@@ -38,7 +38,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var bool */
     public bool $isScalar;
 
-    /** @var array<class-string,<array<string>>> */
+    /** @var array<class-string,<array<string,array<string>>>> */
     private static array $attributeTypesCache = [];
 
     /** @var array<class-string,array<string, array<ReflectionAttribute>>> */

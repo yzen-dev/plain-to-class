@@ -13,4 +13,5 @@ final class ClassTransformerConfig
 {
     /** @var bool */
     public static bool $cache = false;
+    public static string $cachePath = __DIR__ . '/../.cache';
 }

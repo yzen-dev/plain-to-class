@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use PHPUnit\Framework\TestCase;
+use Tests\Integration\DTO\UserDTO;
+use Tests\Integration\DTO\ProductDTO;
+use Tests\Integration\DTO\PurchaseDTO;
 use ClassTransformer\ClassTransformer;
 use ClassTransformer\ClassTransformerConfig;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use PHPUnit\Framework\TestCase;
-use ReflectionException;
-use Tests\Integration\DTO\BasketDTO;
-use Tests\Integration\DTO\ProductDTO;
-use Tests\Integration\DTO\PurchaseDTO;
-use Tests\Integration\DTO\UserDTO;
-use Tests\Integration\DTO\UserEmptyTypeDTO;
 
 /**
  * Class ClassTransformerTest
@@ -25,15 +22,18 @@ class ClassTransformerFromCacheTest extends TestCase
     use FakerData;
 
     /**
-     * @throws ReflectionException|ClassNotFoundException
+     * @throws ClassNotFoundException
      */
     public function testRecursiveObject(): void
     {
-        $this->markTestSkipped('cache');
-        return;
-        ClassTransformerConfig::$cache = true;
+        //$this->markTestSkipped('cache');
+        //return;
         $data = $this->getRecursiveObject();
+        $data->orders = $this->getArrayUsers();
+        ClassTransformerConfig::$cache = true;
         $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+        ClassTransformerConfig::$cache = false;
+        
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);
         self::assertEquals($data->user->id, $purchaseDTO->user->id);
@@ -42,6 +42,7 @@ class ClassTransformerFromCacheTest extends TestCase
         self::assertIsInt($purchaseDTO->user->id);
         self::assertIsString($purchaseDTO->user->email);
         self::assertIsFloat($purchaseDTO->user->balance);
+
         foreach ($purchaseDTO->products as $key => $product) {
             self::assertInstanceOf(ProductDTO::class, $product);
             self::assertEquals($data->products[$key]->id, $product->id);

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use PHPUnit\Framework\TestCase;
+use ClassTransformer\ClassTransformer;
+use Tests\Integration\DTO\UserNoTypeArrayDTO;
 use Tests\Integration\DTO\CustomTransformUserDTO;
 use Tests\Integration\DTO\CustomTransformUserDTOArray;
-use Tests\Integration\DTO\UserNoTypeArrayDTO;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class CustomTransformerTest

@@ -21,7 +21,7 @@ final class ClassTransformer
      * @template TClass
      *
      * @param class-string<TClass> $className
-     * @param iterable<mixed> ...$args
+     * @param iterable<mixed>|object ...$args
      *
      * @return null|TClass
      * @throws ClassNotFoundException

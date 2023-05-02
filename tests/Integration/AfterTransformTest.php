@@ -16,6 +16,7 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
 class AfterTransformTest extends TestCase
 {
     use FakerData;
+
     /**
      * @throws ClassNotFoundException
      */

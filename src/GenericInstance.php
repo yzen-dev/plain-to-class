@@ -21,9 +21,6 @@ final class GenericInstance
     /** @var ArgumentsResource $argumentsResource */
     private ArgumentsResource $argumentsResource;
 
-    /** @var T $genericInstance */
-    private $genericInstance;
-
 
     /**
      * @param ReflectionClass $class
@@ -34,8 +31,6 @@ final class GenericInstance
         $this->class = $class;
 
         $this->argumentsResource = $argumentsResource;
-
-        $this->genericInstance = new ($class->getClass());
     }
 
     /**
@@ -45,6 +40,8 @@ final class GenericInstance
     public function transform(): mixed
     {
         $properties = $this->class->getProperties();
+        /** @var T $genericInstance */
+        $genericInstance = new ($this->class->getClass());
 
         foreach ($properties as $property) {
             try {
@@ -54,13 +51,13 @@ final class GenericInstance
             }
 
             if ($property->hasSetMutator()) {
-                $this->genericInstance->{TransformUtils::mutationSetterToCamelCase($property->getName())}($value);
+                $genericInstance->{TransformUtils::mutationSetterToCamelCase($property->getName())}($value);
                 continue;
             }
 
             $caster = new ValueCasting($property);
-            $this->genericInstance->{$property->getName()} = $caster->castAttribute($value);
+            $genericInstance->{$property->getName()} = $caster->castAttribute($value);
         }
-        return $this->genericInstance;
+        return $genericInstance;
     }
 }

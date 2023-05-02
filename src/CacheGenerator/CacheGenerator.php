@@ -2,6 +2,7 @@
 
 namespace ClassTransformer\CacheGenerator;
 
+use ClassTransformer\ClassTransformerConfig;
 use RuntimeException;
 use ReflectionException;
 use ReflectionNamedType;
@@ -12,27 +13,20 @@ use ClassTransformer\Reflection\RuntimeReflectionProperty;
  * Class CacheGenerator
  *
  * @template TClass
+ * @psalm-api
+ * @psalm-immutable
  */
 class CacheGenerator
 {
-    /** @param class-string $class */
+    /** @psalm-param class-string<TClass> $class */
     private string $class;
 
     /**
-     * @param class-string $class
+     * @param class-string<TClass> $class
      */
     public function __construct(string $class)
     {
         $this->class = $class;
-    }
-
-    /**
-     * @return bool
-     */
-    public function cacheExists(): bool
-    {
-        $class = str_replace('\\', '_', $this->class);
-        return file_exists('./.cache/' . $class . '.cache.php');
     }
 
     /**
@@ -41,16 +35,9 @@ class CacheGenerator
      */
     public function generate(): array
     {
-        if (
-            !file_exists(__DIR__ . '/../../.cache') &&
-            !mkdir($concurrentDirectory = __DIR__ . '/../../.cache', 0777, true) &&
-            !is_dir($concurrentDirectory)
-        ) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
-        }
-
+        $this->makeCacheDir(ClassTransformerConfig::$cachePath);
         $class = str_replace('\\', '_', $this->class);
-        $path = __DIR__ . '/../../.cache/' . $class . '.cache.php';
+        $path = ClassTransformerConfig::$cachePath . '/' . $class . '.cache.php';
 
         if (file_exists($path)) {
             unlink($path);
@@ -59,7 +46,7 @@ class CacheGenerator
         $cache = [
             'properties' => []
         ];
-
+        
         $refInstance = new PhpReflectionClass($this->class);
 
         $properties = $refInstance->getProperties();
@@ -107,6 +94,36 @@ class CacheGenerator
     public function get(): array
     {
         $class = str_replace('\\', '_', $this->class);
-        return require __DIR__ . '/../../.cache/' . $class . '.cache.php';
+        return require ClassTransformerConfig::$cachePath . '/' . $class . '.cache.php';
+    }
+
+    /**
+     * @return bool
+     */
+    public function cacheExists(): bool
+    {
+        $class = str_replace('\\', '_', $this->class);
+        return file_exists('./.cache/' . $class . '.cache.php');
+    }
+
+
+    /**
+     * @param string|null $path
+     *
+     * @return void
+     */
+    private function makeCacheDir(?string $path): void
+    {
+        $concurrentDirectory = ClassTransformerConfig::$cachePath;
+        if (
+            empty($path) ||
+            (
+                !file_exists($concurrentDirectory) &&
+                !mkdir($concurrentDirectory, 0777, true) &&
+                !is_dir($concurrentDirectory)
+            )
+        ) {
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+        }
     }
 }

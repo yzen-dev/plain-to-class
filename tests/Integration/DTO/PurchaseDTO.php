@@ -13,4 +13,7 @@ class PurchaseDTO
 
     /** @var UserDTO $user */
     public UserDTO $user;
+
+    /** @var array<UserDTO> $orders Order list */
+    public array $clients;
 }

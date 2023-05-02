@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use PHPUnit\Framework\TestCase;
+use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\UnionTypeDTO;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class UnionTypeTest

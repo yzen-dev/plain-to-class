@@ -44,7 +44,7 @@ final class ValueCasting
             return $this->castArray($value);
         }
 
-        if ($this->property->isEnum() && (is_string($value) || is_int($value))) {
+        if ((is_string($value) || is_int($value)) && $this->property->isEnum()) {
             return $this->castEnum($value);
         }
 
@@ -102,7 +102,9 @@ final class ValueCasting
             /** @var \BackedEnum $propertyClass */
             return $propertyClass::from($value);
         }
-
-        return constant($propertyClass . '::' . $value);
+        if (is_string($propertyClass) && is_string($value)) {
+            return constant($propertyClass . '::' . $value);
+        }
+        return $value;
     }
 }
