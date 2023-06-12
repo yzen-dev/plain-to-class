@@ -3,9 +3,6 @@ name: Coding Standards
 on:
   pull_request:
   push:
-    branches:
-      - main
-      - master
 
 jobs:
   coding-standards:

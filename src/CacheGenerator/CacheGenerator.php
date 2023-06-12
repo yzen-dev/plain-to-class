@@ -46,7 +46,7 @@ class CacheGenerator
         $properties = $refInstance->getProperties();
 
         $cache = [
-            'properties'=>array_map(fn($el) => $this->convertToCacheProperty(new RuntimeReflectionProperty($el)), $properties)
+            'properties' => array_map(fn($el) => $this->convertToCacheProperty(new RuntimeReflectionProperty($el)), $properties)
         ];
 
         $path = ClassTransformerConfig::$cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php';
