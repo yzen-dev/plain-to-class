@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ClassTransformer;
 
 use ClassTransformer\Contracts\ReflectionClass;
-use \ReflectionClass as PhpReflectionClass;
+use ReflectionClass as PhpReflectionClass;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 

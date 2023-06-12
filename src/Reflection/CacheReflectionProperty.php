@@ -36,7 +36,7 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     {
         return $this->type;
     }
-    
+
     /**
      * @return bool
      */
