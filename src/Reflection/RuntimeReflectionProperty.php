@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
+use ClassTransformer\Attributes\FieldAlias;
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionNamedType;
@@ -157,7 +158,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /**
      * @param string|null $name
      *
-     * @return array|null
+     * @return null|array<string>
      */
     public function getAttributeArguments(?string $name = null): ?array
     {
@@ -194,5 +195,18 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getAliases(): array
+    {
+        $aliases = $this->getAttributeArguments(FieldAlias::class);
+        $aliases = $aliases[0];
+        if (is_string($aliases)) {
+            $aliases = [$aliases];
+        }
+        return $aliases;
     }
 }

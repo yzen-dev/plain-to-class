@@ -37,7 +37,7 @@ interface ReflectionProperty
     /**
      * @param string $name
      *
-     * @return ?array
+     * @return null|array<string>
      */
     public function getAttributeArguments(string $name): ?array;
 
@@ -69,4 +69,9 @@ interface ReflectionProperty
      * @return bool
      */
     public function notTransform(): bool;
+
+    /**
+     * @return array<string>
+     */
+    public function getAliases(): array;
 }

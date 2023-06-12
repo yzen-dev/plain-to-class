@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
+use ClassTransformer\Attributes\FieldAlias;
+
 /**
  * Class GenericProperty
  *
@@ -106,7 +108,7 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     /**
      * @param string|null $name
      *
-     * @return mixed|null
+     * @return null|array<string>
      */
     public function getAttributeArguments(?string $name = null): ?array
     {
@@ -119,5 +121,18 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     public function getDocComment(): string
     {
         return $this->docComment;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getAliases(): array
+    {
+        $aliases = $this->getAttributeArguments(FieldAlias::class);
+        $aliases = $aliases[0];
+        if (is_string($aliases)) {
+            $aliases = [$aliases];
+        }
+        return $aliases;
     }
 }

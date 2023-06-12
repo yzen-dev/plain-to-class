@@ -16,8 +16,6 @@ use ClassTransformer\Reflection\RuntimeReflectionProperty;
  * Class CacheGenerator
  *
  * @template TClass
- * @psalm-api
- * @psalm-immutable
  */
 class CacheGenerator
 {
@@ -35,51 +33,54 @@ class CacheGenerator
     }
 
     /**
-     * @psalm-suppress UnusedMethodCall
-     * @return array<string,CacheReflectionProperty[]>
+     * @return array{properties: array<CacheReflectionProperty>}
      * @throws ReflectionException|RuntimeException
      */
     public function generate(): array
     {
         $this->makeCacheDir(ClassTransformerConfig::$cachePath);
         $class = str_replace('\\', '_', $this->class);
-        $path = ClassTransformerConfig::$cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php';
-
-        $cache = ['properties' => []];
 
         $refInstance = new ReflectionClass($this->class);
 
         $properties = $refInstance->getProperties();
 
-        foreach ($properties as $item) {
-            $property = new RuntimeReflectionProperty($item);
-            if ($property->type instanceof ReflectionNamedType) {
-                $type = $property->type->getName();
-            } else {
-                $type = $property->type;
-            }
+        $cache = [
+            'properties'=>array_map(fn($el) => $this->convertToCacheProperty(new RuntimeReflectionProperty($el)), $properties)
+        ];
 
-            $cache['properties'][] = new CacheReflectionProperty(
-                $property->class,
-                $property->name,
-                (string)$type,
-                $property->types,
-                $property->isScalar,
-                $property->hasSetMutator(),
-                $property->isArray(),
-                $property->isEnum(),
-                $property->notTransform(),
-                $property->transformable(),
-                $property->getDocComment(),
-                $this->getArguments($property),
-            );
+        $path = ClassTransformerConfig::$cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php';
+        file_put_contents($path, serialize($cache));
+        return $cache;
+    }
+
+    /**
+     * @param RuntimeReflectionProperty $property
+     *
+     * @return CacheReflectionProperty
+     */
+    private function convertToCacheProperty(RuntimeReflectionProperty $property): CacheReflectionProperty
+    {
+        if ($property->type instanceof ReflectionNamedType) {
+            $type = $property->type->getName();
+        } else {
+            $type = $property->type;
         }
 
-        file_put_contents(
-            $path,
-            serialize($cache)
+        return new CacheReflectionProperty(
+            $property->class,
+            $property->name,
+            (string)$type,
+            $property->types,
+            $property->isScalar,
+            $property->hasSetMutator(),
+            $property->isArray(),
+            $property->isEnum(),
+            $property->notTransform(),
+            $property->transformable(),
+            $property->getDocComment(),
+            $this->getArguments($property),
         );
-        return $cache;
     }
 
     /**

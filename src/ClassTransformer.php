@@ -13,13 +13,13 @@ use ClassTransformer\Reflection\RuntimeReflectionClass;
  * Class ClassTransformer
  *
  * @psalm-api
- * @psalm-immutable
- * @template T of object
  */
 final class ClassTransformer
 {
     /**
      * Class-transformer function to transform our object into a typed object
+     *
+     * @template T of object
      *
      * @param class-string<T> $className
      * @param iterable<mixed>|object ...$args
@@ -53,6 +53,9 @@ final class ClassTransformer
     }
 
     /**
+     *
+     * @template T of object
+     *
      * @param class-string<T> $className
      * @param array<iterable<mixed>> $args
      *
@@ -69,6 +72,9 @@ final class ClassTransformer
     }
 
     /**
+     *
+     * @template T of object
+     *
      * @param array<class-string<T>> $className
      * @param array<iterable<mixed>> $args
      *

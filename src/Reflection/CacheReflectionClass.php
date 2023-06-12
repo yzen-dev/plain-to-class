@@ -10,6 +10,7 @@ use ClassTransformer\Contracts\ReflectionClass;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
+use RuntimeException;
 
 /**
  * Class RuntimeReflectionClass
@@ -42,7 +43,7 @@ final class CacheReflectionClass implements ReflectionClass
 
     /**
      * @return CacheReflectionProperty[]
-     * @throws ReflectionException
+     * @throws ReflectionException|RuntimeException
      */
     public function getProperties(): array
     {

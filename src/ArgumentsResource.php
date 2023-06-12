@@ -27,14 +27,16 @@ final class ArgumentsResource
 
     /**
      *
-     * @param iterable<mixed>|mixed ...$args
+     * @param iterable<mixed>|array ...$args
      */
     public function __construct(...$args)
     {
         // Unpacking named arguments
         $inArgs = sizeof(func_get_args()) === 1 ? $args[0] : $args;
 
-        $inArgs = (array)$inArgs;
+        if (!is_array($inArgs)) {
+            $inArgs = (array)$inArgs;
+        }
 
         $this->args = $inArgs;
     }
@@ -51,13 +53,9 @@ final class ArgumentsResource
             return $this->args[$genericProperty->getName()];
         }
 
-        $aliases = $genericProperty->getAttributeArguments(FieldAlias::class);
+        $aliases = $genericProperty->getAliases();
 
         if (!empty($aliases)) {
-            $aliases = $aliases[0];
-            if (is_string($aliases)) {
-                $aliases = [$aliases];
-            }
             foreach ($aliases as $alias) {
                 if (array_key_exists($alias, $this->args)) {
                     return $this->args[$alias];

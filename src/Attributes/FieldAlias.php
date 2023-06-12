@@ -16,7 +16,7 @@ final class FieldAlias
      * @param string|array<string> $aliases
      */
     public function __construct(
-        public string|array $aliases
+        public array $aliases
     ) {
     }
 }
