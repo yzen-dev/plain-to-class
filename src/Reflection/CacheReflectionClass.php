@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer\Reflection;
 
 use ReflectionProperty;
 use ReflectionException;
 use ClassTransformer\Contracts\ReflectionClass;
-use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
@@ -14,11 +15,11 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
  * Class RuntimeReflectionClass
  *
  * @psalm-api
- * @template T of ClassTransformable
+ * @template T
  */
 final class CacheReflectionClass implements ReflectionClass
 {
-    /** @var class-string<T> $class */
+    /** @var class-string $class */
     private string $class;
 
     /**
@@ -28,7 +29,7 @@ final class CacheReflectionClass implements ReflectionClass
 
 
     /**
-     * @param class-string<T> $class
+     * @param class-string $class
      *
      * @throws ClassNotFoundException
      */
@@ -51,31 +52,14 @@ final class CacheReflectionClass implements ReflectionClass
 
         $cache = new CacheGenerator($this->class);
 
+        /** @var CacheReflectionClass $class */
         if (!$cache->cacheExists()) {
             $class = $cache->generate();
         } else {
             $class = $cache->get();
         }
 
-        $properties = array_map(
-            static fn($item) => new CacheReflectionProperty(
-                $item['class'],
-                $item['name'],
-                $item['type'],
-                $item['types'],
-                $item['isScalar'],
-                $item['hasSetMutator'],
-                $item['isArray'],
-                $item['isEnum'],
-                $item['notTransform'],
-                $item['transformable'],
-                $item['docComment'],
-                $item['attributes'],
-            ),
-            $class['properties']
-        );
-
-        return self::$propertiesTypesCache[$this->class] = $properties;
+        return self::$propertiesTypesCache[$this->class] = $class['properties'];
     }
 
     /**

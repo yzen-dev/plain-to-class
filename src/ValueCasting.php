@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer;
 
 use ClassTransformer\Attributes\ConvertArray;
@@ -37,7 +39,13 @@ final class ValueCasting
     public function castAttribute(mixed $value): mixed
     {
         if ($this->property->isScalar() || $this->property->notTransform()) {
-            return $value;
+            return match ($this->property->getType()) {
+                'string' => (string)$value,
+                'int' => (int)$value,
+                'float' => (float)$value,
+                'bool' => (bool)$value,
+                default => $value
+            };
         }
 
         if ($this->property->isArray()) {
@@ -66,6 +74,7 @@ final class ValueCasting
     private function castArray($value): mixed
     {
         $arrayTypeAttr = $this->property->getAttributeArguments(ConvertArray::class);
+
         if ($arrayTypeAttr !== null && isset($arrayTypeAttr[0])) {
             $arrayType = $arrayTypeAttr[0];
         } else {
@@ -75,17 +84,15 @@ final class ValueCasting
         if (empty($arrayType) || !is_array($value) || $arrayType === 'mixed') {
             return $value;
         }
-
-        if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'mixed'])) {
+        if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'boolean', 'mixed'])) {
             return array_map(static fn($el) => ClassTransformer::transform($arrayType, $el), $value);
-
         }
 
         return array_map(static fn($el) => match ($arrayType) {
             'string' => (string)$el,
             'int' => (int)$el,
             'float' => (float)$el,
-            'bool' => (bool)$el,
+            'bool', 'boolean' => (bool)$el,
             default => $el
         }, $value);
     }

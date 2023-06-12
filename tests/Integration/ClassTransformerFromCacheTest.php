@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
+use Tests\ClearCache;
 use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\ProductDTO;
 use Tests\Integration\DTO\PurchaseDTO;
@@ -19,7 +20,7 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
  */
 class ClassTransformerFromCacheTest extends TestCase
 {
-    use FakerData;
+    use FakerData, ClearCache;
 
     /**
      * @throws ClassNotFoundException
@@ -33,7 +34,7 @@ class ClassTransformerFromCacheTest extends TestCase
         ClassTransformerConfig::$cache = true;
         $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
         ClassTransformerConfig::$cache = false;
-        
+
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);
         self::assertEquals($data->user->id, $purchaseDTO->user->id);
@@ -53,4 +54,10 @@ class ClassTransformerFromCacheTest extends TestCase
             self::assertIsFloat($product->price);
         }
     }
+
+    protected function tearDown(): void
+    {
+        $this->clearCache();
+    }
+
 }

@@ -19,7 +19,7 @@ class ArgumentsResourceTest extends TestCase
         );
         $this->assertEquals($data['id'], $value);
     }
-    
+
     public function testBaseValueNotFoundException(): void
     {
         $this->expectException(ValueNotFoundException::class);
@@ -48,6 +48,15 @@ class ArgumentsResourceTest extends TestCase
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'address_two'))
         );
         $this->assertEquals($data['addressTwo'], $value);
+
+        $data = ['test_case' => 'test2'];
+
+        $this->expectException(ValueNotFoundException::class);
+        $resource2 = new ArgumentsResource($data);
+
+        $resource2->getValue(
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'testCase'))
+        );
     }
 
     public function testSnakeCaseWritingStyleKey(): void
@@ -58,6 +67,15 @@ class ArgumentsResourceTest extends TestCase
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressThree'))
         );
         $this->assertEquals($data['address_three'], $value);
+
+        $data = ['testCase' => 'test2'];
+
+        $this->expectException(ValueNotFoundException::class);
+        $resource2 = new ArgumentsResource($data);
+
+        $resource2->getValue(
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'test_case'))
+        );
     }
 
     public function testFinalValueNotFoundException(): void

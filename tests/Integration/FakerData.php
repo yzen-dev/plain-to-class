@@ -11,7 +11,8 @@ trait FakerData
         return [
             'id' => 1,
             'email' => 'fake@mail.com',
-            'balance' => 128.41
+            'balance' => 128.41,
+            'isBlocked' => false
         ];
     }
 
@@ -63,6 +64,7 @@ trait FakerData
         $data->id = 1;
         $data->email = 'fake@mail.com';
         $data->balance = 128.43;
+        $data->isBlocked = false;
         return $data;
     }
 

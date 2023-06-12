@@ -6,11 +6,14 @@ use ClassTransformer\ClassTransformerConfig;
 use ClassTransformer\Reflection\CacheReflectionClass;
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
+use Tests\ClearCache;
 use Tests\Units\DTO\UserCacheableDTO;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 
 class CacheReflectionClassTest extends TestCase
 {
+    use ClearCache;
+    
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,7 +27,7 @@ class CacheReflectionClassTest extends TestCase
         }
 
         $class = str_replace('\\', '_', UserCacheableDTO::class);
-        $path = ClassTransformerConfig::$cachePath . '/' . $class . '.cache.php';
+        $path = ClassTransformerConfig::$cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php';
 
         if (file_exists($path)) {
             unlink($path);
@@ -46,5 +49,10 @@ class CacheReflectionClassTest extends TestCase
         $this->assertFalse($reflectionProperties[0]->notTransform());
         $this->assertEmpty($reflectionProperties[0]->getDocComment());
         $this->assertEmpty($reflectionProperties[0]->getAttribute('addressThree'));
+    }
+
+    protected function tearDown(): void
+    {
+        $this->clearCache();
     }
 }

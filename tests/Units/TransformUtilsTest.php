@@ -25,7 +25,7 @@ class TransformUtilsTest extends TestCase
         $camelCase = TransformUtils::attributeToCamelCase('example_snake_case');
         $this->assertEquals('exampleSnakeCase', $camelCase);
     }
-    
+
     public function testMutationSetterToCamelCase(): void
     {
         $setter = TransformUtils::mutationSetterToCamelCase('example');
@@ -34,10 +34,10 @@ class TransformUtilsTest extends TestCase
         $setter = TransformUtils::mutationSetterToCamelCase('example');
         $this->assertEquals('setExampleAttribute', $setter);
     }
-    
+
     public function testGetClassFromPhpDoc(): void
     {
-        $type = TransformUtils::getClassFromPhpDoc('/** @var array<\Tests\Integration\DTO\PurchaseDTO> $orders Order list */');
+        $type = TransformUtils::getClassFromPhpDoc('/** ' . PHP_EOL . '* @var array<\Tests\Integration\DTO\PurchaseDTO> $orders Order list ' . PHP_EOL . ' */');
         $this->assertEquals('\Tests\Integration\DTO\PurchaseDTO', $type);
 
         $type = TransformUtils::getClassFromPhpDoc('/** @var array<> $orders Order list */');

@@ -6,6 +6,8 @@ namespace Tests\Integration;
 
 use ReflectionException;
 use PHPUnit\Framework\TestCase;
+use Tests\Integration\DTO\ConstructDto;
+use Tests\Integration\DTO\EmptyClassDto;
 use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\BasketDTO;
 use Tests\Integration\DTO\ProductDTO;
@@ -37,9 +39,33 @@ class ClassTransformerFromArrayTest extends TestCase
         self::assertEquals($data['id'], $userDTO->id);
         self::assertEquals($data['email'], $userDTO->email);
         self::assertEquals($data['balance'], $userDTO->balance);
+        self::assertEquals($data['isBlocked'], $userDTO->isBlocked);
         self::assertIsInt($userDTO->id);
         self::assertIsString($userDTO->email);
         self::assertIsFloat($userDTO->balance);
+        self::assertIsBool($userDTO->isBlocked);
+    }
+    
+    /*public function testConstructFormatArray(): void
+    {
+        $data = $this->getBaseArrayData();
+        $userDTO = ClassTransformer::transform(ConstructDto::class, $data);
+        self::assertInstanceOf(UserDTO::class, $userDTO);
+        self::assertEquals($data['id'], $userDTO->id);
+        self::assertEquals($data['email'], $userDTO->email);
+        self::assertEquals($data['balance'], $userDTO->balance);
+        self::assertIsInt($userDTO->id);
+        self::assertIsString($userDTO->email);
+        self::assertIsFloat($userDTO->balance);
+    }*/
+    
+    /**
+     */
+    public function testEmptyClass(): void
+    {
+        $data = $this->getBaseArrayData();
+        $instance = ClassTransformer::transform(EmptyClassDto::class, $data);
+        self::assertInstanceOf(EmptyClassDto::class, $instance);
     }
 
     /**

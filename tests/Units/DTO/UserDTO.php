@@ -22,4 +22,12 @@ class UserDTO
 
     #[WritingStyle(WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_CAMEL_CASE)]
     public float $balance;
+
+    #[WritingStyle(WritingStyle::STYLE_CAMEL_CASE)]
+    public ?string $testCase;
+
+    #[WritingStyle(WritingStyle::STYLE_SNAKE_CASE)]
+    public ?string $test_case;
+    
+    public ColorEnum $color;
 }

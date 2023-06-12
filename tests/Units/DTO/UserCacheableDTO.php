@@ -26,4 +26,6 @@ class UserCacheableDTO
 
     #[WritingStyle(WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_CAMEL_CASE)]
     public float $balance;
+
+    public ColorEnum $color;
 }

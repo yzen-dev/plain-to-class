@@ -6,7 +6,7 @@
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
          failOnWarning="true"
-         cacheDirectory=".phpunit.cache"
+         cacheDirectory=".tmp/.phpunit/"
          beStrictAboutCoverageMetadata="true"
 >
     <testsuites>

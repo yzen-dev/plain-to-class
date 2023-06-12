@@ -2,14 +2,14 @@
 
 namespace Tests\Benchmark;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\ClassTransformerConfig;
 use PHPUnit\Framework\TestCase;
+use Tests\Benchmark\DTO\UserDto;
 use Tests\Benchmark\DTO\AddressDto;
 use Tests\Benchmark\DTO\ProductDto;
 use Tests\Benchmark\DTO\PurchaseDto;
-use Tests\Benchmark\DTO\UserDto;
 use Tests\Benchmark\DTO\UserTypeEnum;
+use ClassTransformer\ClassTransformer;
+use ClassTransformer\ClassTransformerConfig;
 
 /**
  * Class CheckBench

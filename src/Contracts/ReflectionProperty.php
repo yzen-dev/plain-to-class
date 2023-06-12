@@ -23,6 +23,11 @@ interface ReflectionProperty
     public function getName(): string;
 
     /**
+     * @return string
+     */
+    public function getType(): ?string;
+
+    /**
      * @param string $name
      *
      * @return mixed
@@ -39,7 +44,7 @@ interface ReflectionProperty
     /**
      * @return bool|string
      */
-    public function getDocComment(): bool|string;
+    public function getDocComment(): string;
 
     /**
      * Finds whether a variable is an enum
@@ -59,4 +64,9 @@ interface ReflectionProperty
      * @return bool
      */
     public function hasSetMutator(): bool;
+
+    /**
+     * @return bool
+     */
+    public function notTransform(): bool;
 }

@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer;
 
 use ClassTransformer\Contracts\ReflectionClass;
-use ClassTransformer\Contracts\ClassTransformable;
+use \ReflectionClass as PhpReflectionClass;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
@@ -11,7 +13,7 @@ use ClassTransformer\Exceptions\ValueNotFoundException;
  * Class GenericInstance
  *
  * @psalm-api
- * @template T of ClassTransformable
+ * @template T
  */
 final class GenericInstance
 {

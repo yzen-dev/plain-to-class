@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer\Reflection;
 
 use ClassTransformer\Contracts\ReflectionClass;
-use ClassTransformer\Contracts\ClassTransformable;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass as PhpReflectionClass;
@@ -12,21 +13,21 @@ use ReflectionClass as PhpReflectionClass;
  * Class RuntimeReflectionClass
  *
  * @psalm-api
- * @template T of ClassTransformable
+ * @template T
  */
 final class RuntimeReflectionClass implements ReflectionClass
 {
-    /** @var class-string<T> $class */
+    /** @var class-string $class */
     private string $class;
 
     /**
-     * @var array<string,\ReflectionProperty[]>
+     * @var array<string,RuntimeReflectionProperty[]>
      */
     private static $propertiesTypesCache = [];
 
 
     /**
-     * @param class-string<T> $class
+     * @param class-string $class
      *
      * @throws ClassNotFoundException
      */
@@ -38,7 +39,7 @@ final class RuntimeReflectionClass implements ReflectionClass
     }
 
     /**
-     * @return \ReflectionProperty[]
+     * @return RuntimeReflectionProperty[]
      * @throws \ReflectionException
      */
     public function getProperties(): array
@@ -54,7 +55,7 @@ final class RuntimeReflectionClass implements ReflectionClass
         foreach ($properties as $item) {
             $result [] = new RuntimeReflectionProperty($item);
         }
-        
+
         return static::$propertiesTypesCache[$this->class] = $result;
     }
 

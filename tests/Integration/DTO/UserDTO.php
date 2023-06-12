@@ -9,4 +9,5 @@ class UserDTO
     public ?string $email;
     public float $balance;
     public mixed $mixed;
+    public bool $isBlocked;
 }

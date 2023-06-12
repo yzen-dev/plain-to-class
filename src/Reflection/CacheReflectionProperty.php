@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer\Reflection;
 
 /**
@@ -27,6 +29,14 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     ) {
     }
 
+    /**
+     * @return null|string
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+    
     /**
      * @return bool
      */
@@ -104,10 +114,10 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     }
 
     /**
-     * @return bool|string
+     * @return string
      */
-    public function getDocComment(): bool|string
+    public function getDocComment(): string
     {
-        return !empty($this->docComment) ? $this->docComment : false;
+        return $this->docComment;
     }
 }

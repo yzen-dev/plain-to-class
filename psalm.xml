@@ -1,12 +1,22 @@
 <?xml version="1.0"?>
 <psalm
     errorLevel="8"
+    cacheDirectory=".tmp/psalm"
+    checkForThrowsDocblock="true"
+    checkForThrowsInGlobalScope="true"
+    disableSuppressAll="true"
+    ensureArrayStringOffsetsExist="true"
+    findUnusedBaselineEntry="true"
+    findUnusedCode="true"
+    findUnusedPsalmSuppress="true"
+    findUnusedVariablesAndParams="true"
+    memoizeMethodCallResults="true"
+    reportMixedIssues="true"
+    sealAllMethods="true"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    findUnusedBaselineEntry="true"
-    findUnusedCode="true"
 >
     <projectFiles>
         <directory name="src" />
@@ -14,4 +24,11 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <ImpureStaticProperty>
+            <errorLevel type="suppress">
+                <directory name="/"/>
+            </errorLevel>
+        </ImpureStaticProperty>
+    </issueHandlers>
 </psalm>

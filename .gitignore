@@ -1,8 +1,7 @@
-.DS_Store
 .idea
-.cache
-.psalm
-.phpbench
-vendor
-.phpunit.result.cache
-.phpunit.cache/
+.DS_Store
+infection.json 
+         
+/.cache
+/.tmp
+/vendor

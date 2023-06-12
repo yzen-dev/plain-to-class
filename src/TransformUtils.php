@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer;
 
 use function ucwords;
@@ -75,7 +77,7 @@ final class TransformUtils
     public static function getClassFromPhpDoc($phpDoc): ?string
     {
         if (is_string($phpDoc)) {
-            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $arrayType);
+            preg_match('/array<([a-zA-Z\d\\\]+)>/', $phpDoc, $arrayType);
             return $arrayType[1] ?? null;
         }
         return null;

@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer\Reflection;
 
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionNamedType;
-use ReflectionUnionType;
 use ReflectionAttribute;
 use ClassTransformer\TransformUtils;
 use ClassTransformer\Attributes\NotTransform;
@@ -23,8 +24,8 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var ReflectionProperty */
     public ReflectionProperty $property;
 
-    /** @var ReflectionType|ReflectionNamedType|ReflectionUnionType|null */
-    public ReflectionType|ReflectionNamedType|ReflectionUnionType|null $type;
+    /** @var ReflectionType|ReflectionNamedType|null */
+    public ReflectionType|ReflectionNamedType|null $type;
 
     /** @var array|string[] */
     public array $types;
@@ -58,6 +59,17 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
+     * @return null|string
+     */
+    public function getType(): ?string
+    {
+        if ($this->type instanceof ReflectionNamedType) {
+            return $this->type->getName();
+        }
+        return $this->type;
+    }
+
+    /**
      * @return bool
      */
     public function isEnum(): bool
@@ -85,11 +97,6 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         }
 
         $types = [];
-        if ($this->type instanceof ReflectionUnionType) {
-            foreach ($this->type->getTypes() as $type) {
-                $types [] = $type->getName();
-            }
-        }
 
         if ($this->type instanceof ReflectionNamedType) {
             $types = [$this->type->getName()];
@@ -114,9 +121,10 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
 
     /**
      */
-    public function getDocComment(): bool|string
+    public function getDocComment(): string
     {
-        return $this->property->getDocComment();
+        $doc = $this->property->getDocComment();
+        return $doc !== false ? $doc : '';
     }
 
     /**
@@ -128,7 +136,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
-     * @param class-string<T>|null $name
+     * @param class-string|null $name
      *
      * @template T
      * @return null|ReflectionAttribute
@@ -173,7 +181,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
-     * @return false|class-string
+     * @return false|non-empty-string
      */
     public function transformable(): false|string
     {

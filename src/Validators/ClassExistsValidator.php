@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer\Validators;
 
 use ClassTransformer\Exceptions\ClassNotFoundException;
