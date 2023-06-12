@@ -7,6 +7,9 @@
 ![Packagist Downloads](https://img.shields.io/packagist/dm/yzen.dev/plain-to-class)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/yzen.dev/plain-to-class)
 
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyzen-dev%2Fplain-to-class%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yzen-dev/plain-to-class/master)
+
+
 > Alas, I do not speak English, and the documentation was compiled through google translator :( I will be glad if you can help me describe the documentation more correctly :)
 
 This library will allow you to easily convert any data set into the object you need. You are not required to change the structure of classes, inherit them from external modules, etc. No dancing with tambourines - just data and the right class.
