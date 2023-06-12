@@ -8,6 +8,8 @@
 ![Packagist Downloads](https://img.shields.io/packagist/dt/yzen.dev/plain-to-class)
 
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fyzen-dev%2Fplain-to-class%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/yzen-dev/plain-to-class/master)
+[![type-coverage](https://shepherd.dev/github/yzen.dev/plain-to-class/coverage.svg)](https://shepherd.dev/github/yzen.dev/plain-to-class)
+[![psalm-level](https://shepherd.dev/github/yzen.dev/plain-to-class/level.svg)](https://shepherd.dev/github/yzen.dev/plain-to-class)
 
 
 > Alas, I do not speak English, and the documentation was compiled through google translator :( I will be glad if you can help me describe the documentation more correctly :)

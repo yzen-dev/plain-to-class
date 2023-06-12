@@ -51,7 +51,7 @@
     "phpunit": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml",
     "infection": "./vendor/bin/roave-infection-static-analysis-plugin",
     "infection-html": "./vendor/bin/roave-infection-static-analysis-plugin --logger-html='.tmp/mutation-report.html'",
-    "psalm": "./vendor/bin/psalm --show-info=true",
+    "psalm": "./vendor/bin/psalm",
     "phpcs": "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s",
     "phpcbf": "./vendor/bin/phpcbf --standard=./phpcs.xml -n --no-cache -s",
     "coverage": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-text --colors=never --coverage-clover coverage.xml",
