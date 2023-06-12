@@ -42,7 +42,7 @@ interface ReflectionProperty
     public function getAttributeArguments(string $name): ?array;
 
     /**
-     * @return bool|string
+     * @return string
      */
     public function getDocComment(): string;
 

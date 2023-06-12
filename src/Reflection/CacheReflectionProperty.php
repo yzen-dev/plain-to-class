@@ -129,6 +129,11 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     public function getAliases(): array
     {
         $aliases = $this->getAttributeArguments(FieldAlias::class);
+        
+        if (empty($aliases)) {
+            return [];
+        }
+        
         $aliases = $aliases[0];
         if (is_string($aliases)) {
             $aliases = [$aliases];

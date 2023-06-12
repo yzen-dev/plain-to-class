@@ -21,11 +21,11 @@ class CacheGenerator
 {
     private const DIR_PERMISSION = 0777;
 
-    /** @psalm-param class-string $class */
+    /** @psalm-param class-string<TClass> $class */
     private string $class;
 
     /**
-     * @param class-string $class
+     * @param class-string<TClass> $class
      */
     public function __construct(string $class)
     {

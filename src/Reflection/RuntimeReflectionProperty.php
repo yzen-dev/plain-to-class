@@ -40,7 +40,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var bool */
     public bool $isScalar;
 
-    /** @var array<class-string,<array<string,array<string>>>> */
+    /** @var array<string,array<string,array<string>>> */
     private static array $attributeTypesCache = [];
 
     /** @var array<class-string,array<string, array<ReflectionAttribute>>> */
@@ -67,7 +67,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         if ($this->type instanceof ReflectionNamedType) {
             return $this->type->getName();
         }
-        return $this->type;
+        return (string)$this->type;
     }
 
     /**
@@ -121,6 +121,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
+     * @return string
      */
     public function getDocComment(): string
     {
@@ -137,12 +138,12 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
-     * @param class-string|null $name
+     * @param string $name
      *
      * @template T
      * @return null|ReflectionAttribute
      */
-    public function getAttribute(?string $name = null): ?ReflectionAttribute
+    public function getAttribute(string $name): ?ReflectionAttribute
     {
         if (isset(self::$attributesCache[$this->class][$this->name][$name])) {
             return self::$attributesCache[$this->class][$this->name][$name];
@@ -182,7 +183,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
-     * @return false|non-empty-string
+     * @return false|class-string
      */
     public function transformable(): false|string
     {
@@ -203,6 +204,11 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     public function getAliases(): array
     {
         $aliases = $this->getAttributeArguments(FieldAlias::class);
+
+        if (empty($aliases)) {
+            return [];
+        }
+
         $aliases = $aliases[0];
         if (is_string($aliases)) {
             $aliases = [$aliases];

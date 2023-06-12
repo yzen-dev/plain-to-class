@@ -24,7 +24,7 @@ final class CacheReflectionClass implements ReflectionClass
     private string $class;
 
     /**
-     * @var array<string,ReflectionProperty[]>
+     * @var array<string,CacheReflectionProperty[]>
      */
     private static array $propertiesTypesCache = [];
 
