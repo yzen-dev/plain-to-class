@@ -91,20 +91,13 @@ class CacheGenerator
      */
     private function convertToCacheProperty(RuntimeReflectionProperty $property): CacheReflectionProperty
     {
-        if ($property->type instanceof ReflectionNamedType) {
-            $type = $property->type->getName();
-        } else {
-            $type = $property->type;
-        }
 
         return new CacheReflectionProperty(
             $property->class,
             $property->name,
-            (string)$type,
-            $property->types,
+            $property->type,
             $property->isScalar,
             $property->hasSetMutator(),
-            $property->isArray(),
             $property->isEnum(),
             $property->notTransform(),
             $property->transformable(),

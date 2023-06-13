@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
+use ClassTransformer\Reflection\Types\TypeEnums;
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionNamedType;
@@ -25,8 +26,8 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var ReflectionProperty */
     public ReflectionProperty $property;
 
-    /** @var ReflectionType|ReflectionNamedType|null */
-    public ReflectionType|ReflectionNamedType|null $type;
+    /** @var string */
+    public string $type;
 
     /** @var array|string[] */
     public array $types;
@@ -40,8 +41,8 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var bool */
     public bool $isScalar;
 
-    /** @var array<string,array<string,array<string>>> */
-    private static array $attributeTypesCache = [];
+    /** @var bool */
+    public bool $nullable;
 
     /** @var array<class-string,array<string, array<ReflectionAttribute>>> */
     private static array $attributesCache = [];
@@ -53,21 +54,31 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     {
         $this->property = $property;
         $this->class = $property->class;
-        $this->type = $this->property->getType();
+        $type = $this->property->getType();
+        
+        if ($type === null) {
+            $this->type = TypeEnums::TYPE_MIXED;
+            $this->nullable = true;
+            $this->isScalar = true;
+        } else if ($type instanceof ReflectionNamedType) {
+            $this->type = $type->getName();
+            $this->nullable = $type->allowsNull();
+            $this->isScalar = $type->isBuiltin();
+        } else {
+            $this->isScalar = $type->isBuiltin();
+            $this->nullable = $type->allowsNull();
+            $this->type = (string)$type;
+        }
+
         $this->name = $this->property->name;
-        $this->types = $this->initTypes();
-        $this->isScalar = sizeof(array_intersect($this->types, ['int', 'float', 'double', 'string', 'bool', 'mixed'])) > 0;
+
+        
     }
 
-    /**
-     * @return null|string
-     */
+
     public function getType(): ?string
     {
-        if ($this->type instanceof ReflectionNamedType) {
-            return $this->type->getName();
-        }
-        return (string)$this->type;
+        return $this->type;
     }
 
     /**
@@ -78,46 +89,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         if (!function_exists('enum_exists')) {
             return false;
         }
-        if ($this->type instanceof ReflectionNamedType) {
-            return enum_exists($this->type->getName());
-        }
-        return false;
-    }
-
-    /**
-     * @return array<string>
-     */
-    private function initTypes(): array
-    {
-        if (isset(self::$attributeTypesCache[$this->class][$this->name])) {
-            return self::$attributeTypesCache[$this->class][$this->name];
-        }
-
-        if ($this->type === null) {
-            return [];
-        }
-
-        $types = [];
-
-        if ($this->type instanceof ReflectionNamedType) {
-            $types = [$this->type->getName()];
-        }
-
-        if ($this->type->allowsNull()) {
-            $types [] = 'null';
-        }
-
-        return self::$attributeTypesCache[$this->class][$this->name] = $types;
-    }
-
-    /**
-     * Finds whether a variable is an array
-     *
-     * @return bool
-     */
-    public function isArray(): bool
-    {
-        return in_array('array', $this->types, true);
+        return !$this->isScalar && enum_exists($this->type);
     }
 
     /**
@@ -183,11 +155,11 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     }
 
     /**
-     * @return false|class-string
+     * @return bool
      */
-    public function transformable(): false|string
+    public function transformable(): bool
     {
-        return $this->type instanceof ReflectionNamedType ? $this->type->getName() : false;
+        return !$this->isScalar && $this->type !== TypeEnums::TYPE_ARRAY;
     }
 
     /**
@@ -210,7 +182,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         }
 
         $aliases = $aliases[0];
-        
+
         if (is_string($aliases)) {
             $aliases = [$aliases];
         }

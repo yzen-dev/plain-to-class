@@ -71,7 +71,6 @@ class CacheGeneratorTest extends TestCase
         $this->assertEquals('int', $property->type);
         $this->assertTrue($property->isScalar);
         $this->assertFalse($property->hasSetMutator);
-        $this->assertFalse($property->isArray);
         $this->assertFalse($property->isEnum);
         $this->assertFalse($property->notTransform);
         $this->assertEmpty($property->docComment);

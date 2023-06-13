@@ -21,15 +21,13 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
         public string $class,
         public string $name,
         public ?string $type,
-        public array $types,
         public bool $isScalar,
         public bool $hasSetMutator,
-        public bool $isArray,
         public bool $isEnum,
         public bool $notTransform,
-        public false|string $transformable,
+        public bool $transformable,
         public string $docComment,
-        public array $attributes,
+        public array $attributes
     ) {
     }
 
@@ -60,23 +58,15 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     /**
      * @return bool
      */
-    public function isArray(): bool
-    {
-        return $this->isArray;
-    }
-
-    /**
-     * @return bool
-     */
     public function notTransform(): bool
     {
         return $this->notTransform;
     }
 
     /**
-     * @return false|class-string
+     * @return bool
      */
-    public function transformable(): false|string
+    public function transformable(): bool
     {
         return $this->transformable;
     }

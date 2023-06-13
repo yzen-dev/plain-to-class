@@ -75,12 +75,14 @@ class ClassTransformerFromArrayTest extends TestCase
     {
         $data = [
             'stringList' => [100, 200, 300],
-            'intList' => [100, 200, 300]
+            'intList' => [400, 500, 600]
         ];
         $dto = ClassTransformer::transform(ArrayScalarDTO::class, $data);
         self::assertInstanceOf(ArrayScalarDTO::class, $dto);
         self::assertIsString($dto->stringList[0]);
+        self::assertEquals($dto->stringList[0], '100');
         self::assertIsInt($dto->intList[0]);
+        self::assertEquals($dto->intList[0], 400);
     }
 
     /**

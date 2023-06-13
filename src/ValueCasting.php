@@ -8,6 +8,7 @@ use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Contracts\ReflectionProperty;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
+use ClassTransformer\Reflection\Types\TypeEnums;
 use function method_exists;
 use function is_array;
 use function in_array;
@@ -19,6 +20,9 @@ use function array_map;
 final class ValueCasting
 {
 
+    /**
+     * @var HydratorConfig
+     */
     private HydratorConfig $config;
 
     /** @var ReflectionProperty $property */
@@ -42,17 +46,11 @@ final class ValueCasting
      */
     public function castAttribute(mixed $value): mixed
     {
-        if ($this->property->isScalar() || $this->property->notTransform()) {
-            return match ($this->property->getType()) {
-                'string' => (string)$value,
-                'int' => (int)$value,
-                'float' => (float)$value,
-                'bool' => (bool)$value,
-                default => $value
-            };
+        if (($this->property->isScalar() && $this->property->getType() !== TypeEnums::TYPE_ARRAY) || $this->property->notTransform()) {
+            return $this->castScalar($this->property->getType(), $value);
         }
 
-        if ($this->property->isArray()) {
+        if ($this->property->getType() === TypeEnums::TYPE_ARRAY) {
             return $this->castArray($value);
         }
 
@@ -60,15 +58,31 @@ final class ValueCasting
             return $this->castEnum($value);
         }
 
-        $propertyClass = $this->property->transformable();
-        if ($propertyClass) {
+        if ($this->property->transformable()) {
             return (new Hydrator($this->config))
-                ->create($propertyClass, $value);
+                ->create($this->property->getType(), $value);
         }
 
         return $value;
     }
 
+
+    /**
+     * @param string $type
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    private function castScalar(string $type, mixed $value): mixed
+    {
+        return match ($type) {
+            TypeEnums::TYPE_STRING => (string)$value,
+            TypeEnums::TYPE_INTEGER => (int)$value,
+            TypeEnums::TYPE_FLOAT => (float)$value,
+            TypeEnums::TYPE_BOOLEAN => (bool)$value,
+            default => $value
+        };
+    }
 
     /**
      * @param array<mixed>|mixed $value
@@ -89,17 +103,11 @@ final class ValueCasting
         if (empty($arrayType) || !is_array($value) || $arrayType === 'mixed') {
             return $value;
         }
-        if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'boolean', 'mixed'])) {
+        if (!in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED])) {
             return array_map(fn($el) => (new Hydrator($this->config))->create($arrayType, $el), $value);
         }
 
-        return array_map(static fn($el) => match ($arrayType) {
-            'string' => (string)$el,
-            'int' => (int)$el,
-            'float' => (float)$el,
-            'bool', 'boolean' => (bool)$el,
-            default => $el
-        }, $value);
+        return array_map(fn($item) => $this->castScalar($arrayType, $item), $value);
     }
 
     /**
@@ -109,7 +117,7 @@ final class ValueCasting
      */
     private function castEnum(int|string $value): mixed
     {
-        $propertyClass = $this->property->transformable();
+        $propertyClass = $this->property->getType();
         if ($propertyClass && method_exists($propertyClass, 'from')) {
             /** @var \BackedEnum $propertyClass */
             return $propertyClass::from($value);

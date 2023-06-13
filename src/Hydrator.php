@@ -33,6 +33,13 @@ class Hydrator
     }
 
     /**
+     */
+    public static function init(HydratorConfig $config = null)
+    {
+        return new self($config);
+    }
+
+    /**
      * Create instance T class
      *
      * @param class-string<T> $class

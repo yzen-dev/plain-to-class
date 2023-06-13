@@ -17,7 +17,6 @@ class RuntimeReflectionPropertyTest extends TestCase
         $this->assertTrue($property->isScalar());
         $this->assertTrue($property->hasSetMutator());
         $this->assertFalse($property->isEnum());
-        $this->assertFalse($property->isArray());
         $this->assertEquals('email', $property->getName());
 
         $property = new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'color'));

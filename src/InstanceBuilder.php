@@ -16,7 +16,7 @@ use ClassTransformer\Exceptions\ValueNotFoundException;
 final class InstanceBuilder
 {
     private HydratorConfig $config;
-    
+
     /** @var ClassRepository $classRepository */
     private ClassRepository $class;
 
@@ -60,6 +60,7 @@ final class InstanceBuilder
 
             $caster = new ValueCasting($property, $this->config);
             $genericInstance->{$property->getName()} = $caster->castAttribute($value);
+
         }
         return $genericInstance;
     }

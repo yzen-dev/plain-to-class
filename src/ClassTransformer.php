@@ -10,6 +10,7 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
  * Class ClassTransformer
  *
  * @psalm-api
+ * @deprecated
  */
 final class ClassTransformer
 {

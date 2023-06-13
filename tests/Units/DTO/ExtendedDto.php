@@ -40,7 +40,7 @@ class ExtendedDto
     /** @var array<bool>  */
     public array $boolItems;
 
-    /** @var array<boolean>  */
+    /** @var array<bool>  */
     public array $booleanItems;
     
     /** @var array<mixed>  */

@@ -13,9 +13,9 @@ interface ReflectionProperty
     public function isScalar(): bool;
 
     /**
-     * @return false|class-string
+     * @return bool
      */
-    public function transformable(): false|string;
+    public function transformable(): bool;
 
     /**
      * @return string
@@ -52,13 +52,6 @@ interface ReflectionProperty
      * @return bool
      */
     public function isEnum(): bool;
-
-    /**
-     * Finds whether a variable is an array
-     *
-     * @return bool
-     */
-    public function isArray(): bool;
 
     /**
      * @return bool
