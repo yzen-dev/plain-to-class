@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace ClassTransformer;
 
-use ClassTransformer\Reflection\CacheReflectionClass;
-use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\Reflection\RuntimeReflectionClass;
 
 /**
  * Class ClassTransformer
@@ -29,27 +26,8 @@ final class ClassTransformer
      */
     public static function transform(string $className, ...$args): mixed
     {
-        new ClassExistsValidator($className);
-
-        if (method_exists($className, 'transform')) {
-            $instance = new $className();
-            $instance->transform(...$args);
-        } else {
-            if (ClassTransformerConfig::$cache) {
-                $reflection = new CacheReflectionClass($className);
-            } else {
-                $reflection = new RuntimeReflectionClass($className);
-            }
-            $generic = new GenericInstance($reflection, new ArgumentsResource(...$args));
-            /** @var T $instance */
-            $instance = $generic->transform();
-        }
-
-        if (method_exists($instance, 'afterTransform')) {
-            $instance->afterTransform();
-        }
-
-        return $instance;
+        return (new Hydrator())
+            ->create($className, ...$args);
     }
 
     /**

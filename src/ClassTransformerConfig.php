@@ -11,7 +11,9 @@ namespace ClassTransformer;
  */
 final class ClassTransformerConfig
 {
-    /** @var bool */
-    public static bool $cache = false;
+    /** @var bool Cache mode enabled */
+    public static bool $cacheEnabled = false;
+    
+    /** @var string Path to the cache directory */
     public static string $cachePath = __DIR__ . '/../.cache';
 }

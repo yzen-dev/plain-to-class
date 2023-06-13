@@ -2,9 +2,11 @@
 
 namespace ClassTransformer\Exceptions;
 
+use Exception;
+
 /**
  * @psalm-api
  */
-class InvalidArgumentException extends \Exception
+class InvalidArgumentException extends Exception
 {
 }

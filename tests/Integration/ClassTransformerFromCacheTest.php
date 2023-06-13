@@ -31,9 +31,9 @@ class ClassTransformerFromCacheTest extends TestCase
         //return;
         $data = $this->getRecursiveObject();
         $data->orders = $this->getArrayUsers();
-        ClassTransformerConfig::$cache = true;
+        ClassTransformerConfig::$cacheEnabled = true;
         $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
-        ClassTransformerConfig::$cache = false;
+        ClassTransformerConfig::$cacheEnabled = false;
 
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);

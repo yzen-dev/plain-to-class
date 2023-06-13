@@ -2,12 +2,12 @@
 
 namespace Tests\Benchmark;
 
-use ReflectionNamedType;
-use PHPUnit\Framework\TestCase;
 use ClassTransformer\ClassTransformerConfig;
 use ClassTransformer\Reflection\CacheReflectionProperty;
 use ClassTransformer\Reflection\RuntimeReflectionProperty;
-use Tests\Benchmark\DTO\UserDto;
+use PHPUnit\Framework\TestCase;
+use ReflectionNamedType;
+use Tests\Benchmark\Bid\Dto\UserDto;
 
 /**
  * Class CheckBench
@@ -18,7 +18,11 @@ use Tests\Benchmark\DTO\UserDto;
  */
 class SerializeVsArrayBench extends TestCase
 {
-
+    public function __construct()
+    {
+        parent::__construct('bench');
+    }
+    
 
     /**
      * @Revs(10000)
@@ -69,13 +73,14 @@ class SerializeVsArrayBench extends TestCase
                 $attributes,
             );
         }
-        
+
         file_put_contents(
             $path,
             serialize($cache)
         );
-        
+
     }
+
     public function benchArrayReflection(): void
     {
         $class = str_replace('\\', '_', UserDto::class);
@@ -127,6 +132,6 @@ class SerializeVsArrayBench extends TestCase
             $path,
             '<?php ' . PHP_EOL . 'return ' . var_export($cache, true) . ';'
         );
-        
+
     }
 }

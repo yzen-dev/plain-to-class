@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ClassTransformer;
 
+use function ucfirst;
 use function ucwords;
 use function lcfirst;
 use function is_string;
@@ -11,7 +12,6 @@ use function strtolower;
 use function preg_match;
 use function str_replace;
 use function preg_replace;
-use function array_key_exists;
 
 /**
  *

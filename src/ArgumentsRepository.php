@@ -4,23 +4,22 @@ declare(strict_types=1);
 
 namespace ClassTransformer;
 
-use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\Contracts\ReflectionProperty;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
-use function is_string;
+use function sizeof;
+use function is_array;
+use function func_get_args;
 use function array_intersect;
 use function array_key_exists;
-use function func_get_args;
-use function sizeof;
 
 /**
  * Class GenericProperty
  *
  * @psalm-api
  */
-final class ArgumentsResource
+final class ArgumentsRepository
 {
     /** @var array<mixed> $args */
     private array $args;
@@ -44,7 +43,7 @@ final class ArgumentsResource
     /**
      * @param ReflectionProperty $genericProperty
      *
-     * @return mixed|object|array<mixed>|null
+     * @return mixed
      * @throws ValueNotFoundException
      */
     public function getValue(ReflectionProperty $genericProperty): mixed

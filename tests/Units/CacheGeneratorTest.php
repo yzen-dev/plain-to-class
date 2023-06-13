@@ -50,7 +50,7 @@ class CacheGeneratorTest extends TestCase
 
     public function testGenerateCache(): void
     {
-        $cacheGenerator = new CacheGenerator(UserCacheableDTO::class);
+        $cacheGenerator = new CacheGenerator(UserCacheableDTO::class, );
 
         $class = str_replace('\\', '_', UserCacheableDTO::class);
         $this->assertFileDoesNotExist(ClassTransformerConfig::$cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php');

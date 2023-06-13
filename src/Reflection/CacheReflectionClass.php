@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
-use ReflectionProperty;
+use RuntimeException;
 use ReflectionException;
-use ClassTransformer\Contracts\ReflectionClass;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use RuntimeException;
+use ClassTransformer\Contracts\ReflectionClassRepository;
 
 /**
  * Class RuntimeReflectionClass
@@ -18,27 +17,22 @@ use RuntimeException;
  * @psalm-api
  * @template T
  */
-final class CacheReflectionClass implements ReflectionClass
+final class CacheReflectionClass implements ReflectionClassRepository
 {
     /** @var class-string $class */
     private string $class;
-
-    /**
-     * @var array<string,CacheReflectionProperty[]>
-     */
-    private static array $propertiesTypesCache = [];
-
+    
+    private array $properties;
 
     /**
      * @param class-string $class
      *
      * @throws ClassNotFoundException
      */
-    public function __construct(string $class)
+    public function __construct(string $class, array $properties)
     {
-        new ClassExistsValidator($class);
-
         $this->class = $class;
+        $this->properties = $properties;
     }
 
     /**
@@ -47,20 +41,7 @@ final class CacheReflectionClass implements ReflectionClass
      */
     public function getProperties(): array
     {
-        if (isset(self::$propertiesTypesCache[$this->class])) {
-            return self::$propertiesTypesCache[$this->class];
-        }
-
-        $cache = new CacheGenerator($this->class);
-
-        /** @var CacheReflectionClass $class */
-        if (!$cache->cacheExists()) {
-            $class = $cache->generate();
-        } else {
-            $class = $cache->get();
-        }
-
-        return self::$propertiesTypesCache[$this->class] = $class['properties'];
+        return $this->properties;
     }
 
     /**

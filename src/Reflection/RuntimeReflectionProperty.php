@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Attributes\FieldAlias;
 use ReflectionType;
 use ReflectionProperty;
 use ReflectionNamedType;
 use ReflectionAttribute;
 use ClassTransformer\TransformUtils;
+use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\NotTransform;
 
+use function sizeof;
+use function in_array;
 use function method_exists;
 use function array_intersect;
-use function in_array;
-use function sizeof;
 
 /**
  * Class GenericProperty
@@ -210,6 +210,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
         }
 
         $aliases = $aliases[0];
+        
         if (is_string($aliases)) {
             $aliases = [$aliases];
         }

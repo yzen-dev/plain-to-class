@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Benchmark\DTO;
+namespace Tests\Benchmark\Bid\Dto;
 
 /**
  * Class ColorEnum

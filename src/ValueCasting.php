@@ -18,16 +18,20 @@ use function array_map;
  */
 final class ValueCasting
 {
+
+    private HydratorConfig $config;
+
     /** @var ReflectionProperty $property */
     private ReflectionProperty $property;
 
-
     /**
      * @param ReflectionProperty $property
+     * @param HydratorConfig|null $config
      */
-    public function __construct(ReflectionProperty $property)
+    public function __construct(ReflectionProperty $property, HydratorConfig $config = null)
     {
         $this->property = $property;
+        $this->config = $config ?? new HydratorConfig();
     }
 
     /**
@@ -58,7 +62,8 @@ final class ValueCasting
 
         $propertyClass = $this->property->transformable();
         if ($propertyClass) {
-            return ClassTransformer::transform($propertyClass, $value);
+            return (new Hydrator($this->config))
+                ->create($propertyClass, $value);
         }
 
         return $value;
@@ -85,7 +90,7 @@ final class ValueCasting
             return $value;
         }
         if (!in_array($arrayType, ['int', 'float', 'string', 'bool', 'boolean', 'mixed'])) {
-            return array_map(static fn($el) => ClassTransformer::transform($arrayType, $el), $value);
+            return array_map(fn($el) => (new Hydrator($this->config))->create($arrayType, $el), $value);
         }
 
         return array_map(static fn($el) => match ($arrayType) {

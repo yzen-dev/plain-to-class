@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Benchmark\DTO;
+namespace Tests\Benchmark\Bid\Dto;
 
 class ProductDto
 {

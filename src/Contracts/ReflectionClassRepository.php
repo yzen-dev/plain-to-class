@@ -5,7 +5,7 @@ namespace ClassTransformer\Contracts;
 /**
  * @psalm-api
  */
-interface ReflectionClass
+interface ReflectionClassRepository
 {
     /**
      * @return array<ReflectionProperty>

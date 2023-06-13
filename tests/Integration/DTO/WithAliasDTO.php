@@ -8,9 +8,10 @@ use ClassTransformer\Attributes\FieldAlias;
 
 class WithAliasDTO
 {
+    #[FieldAlias(['email', 'phone'])]
+    public string $contact;
     #[FieldAlias('userFio')]
     public string $fio;
 
-    #[FieldAlias(['email', 'phone'])]
-    public string $contact;
+    
 }

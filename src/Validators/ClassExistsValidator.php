@@ -6,6 +6,8 @@ namespace ClassTransformer\Validators;
 
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
+use function class_exists;
+
 /**
  * Class ClassExistsValidator
  */

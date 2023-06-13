@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace ClassTransformer;
 
-use ClassTransformer\Contracts\ReflectionClass;
-use ReflectionClass as PhpReflectionClass;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 
@@ -15,31 +13,34 @@ use ClassTransformer\Exceptions\ValueNotFoundException;
  * @psalm-api
  * @template T
  */
-final class GenericInstance
+final class InstanceBuilder
 {
-    /** @var ReflectionClass $class */
-    private ReflectionClass $class;
+    private HydratorConfig $config;
+    
+    /** @var ClassRepository $classRepository */
+    private ClassRepository $class;
 
-    /** @var ArgumentsResource $argumentsResource */
-    private ArgumentsResource $argumentsResource;
+    /** @var ArgumentsRepository $argumentsRepository */
+    private ArgumentsRepository $argumentsRepository;
 
 
     /**
-     * @param ReflectionClass $class
-     * @param ArgumentsResource $argumentsResource
+     * @param ClassRepository $class
+     * @param ArgumentsRepository $argumentsRepository
      */
-    public function __construct(ReflectionClass $class, ArgumentsResource $argumentsResource)
+    public function __construct(ClassRepository $class, ArgumentsRepository $argumentsRepository, HydratorConfig $config = null)
     {
         $this->class = $class;
+        $this->config = $config ?? new HydratorConfig();
 
-        $this->argumentsResource = $argumentsResource;
+        $this->argumentsRepository = $argumentsRepository;
     }
 
     /**
      * @return T
      * @throws ClassNotFoundException
      */
-    public function transform(): mixed
+    public function build(): mixed
     {
         $properties = $this->class->getProperties();
         /** @var T $genericInstance */
@@ -47,7 +48,7 @@ final class GenericInstance
 
         foreach ($properties as $property) {
             try {
-                $value = $this->argumentsResource->getValue($property);
+                $value = $this->argumentsRepository->getValue($property);
             } catch (ValueNotFoundException) {
                 continue;
             }
@@ -57,7 +58,7 @@ final class GenericInstance
                 continue;
             }
 
-            $caster = new ValueCasting($property);
+            $caster = new ValueCasting($property, $this->config);
             $genericInstance->{$property->getName()} = $caster->castAttribute($value);
         }
         return $genericInstance;

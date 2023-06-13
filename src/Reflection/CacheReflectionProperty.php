@@ -6,6 +6,8 @@ namespace ClassTransformer\Reflection;
 
 use ClassTransformer\Attributes\FieldAlias;
 
+use function is_string;
+
 /**
  * Class GenericProperty
  *
@@ -135,6 +137,7 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
         }
 
         $aliases = $aliases[0];
+
         if (is_string($aliases)) {
             $aliases = [$aliases];
         }

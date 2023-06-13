@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Contracts\ReflectionClass;
-use ClassTransformer\Validators\ClassExistsValidator;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ReflectionClass as PhpReflectionClass;
+use ReflectionClass;
+use ReflectionException;
+use InvalidArgumentException;
+use ClassTransformer\Contracts\ReflectionClassRepository;
+
+use function array_map;
 
 /**
  * Class RuntimeReflectionClass
@@ -15,48 +17,34 @@ use ReflectionClass as PhpReflectionClass;
  * @psalm-api
  * @template T
  */
-final class RuntimeReflectionClass implements ReflectionClass
+final class RuntimeReflectionClass implements ReflectionClassRepository
 {
     /** @var class-string $class */
     private string $class;
 
     /**
-     * @var array<string,RuntimeReflectionProperty[]>
-     */
-    private static $propertiesTypesCache = [];
-
-
-    /**
      * @param class-string $class
-     *
-     * @throws ClassNotFoundException
      */
     public function __construct(string $class)
     {
-        new ClassExistsValidator($class);
-
         $this->class = $class;
     }
 
     /**
      * @return RuntimeReflectionProperty[]
-     * @throws \ReflectionException
+     * @throws ReflectionException|InvalidArgumentException
      */
     public function getProperties(): array
     {
-        if (isset(static::$propertiesTypesCache[$this->class])) {
-            return static::$propertiesTypesCache[$this->class];
-        }
+        $refInstance = new ReflectionClass($this->class);
 
-        $refInstance = new PhpReflectionClass($this->class);
+        if (!$refInstance->isInstantiable()) {
+            throw new InvalidArgumentException('Class ' . $this->class . ' is not instantiable.');
+        }
 
         $properties = $refInstance->getProperties();
-        $result = [];
-        foreach ($properties as $item) {
-            $result [] = new RuntimeReflectionProperty($item);
-        }
 
-        return static::$propertiesTypesCache[$this->class] = $result;
+        return array_map(static fn($item) => new RuntimeReflectionProperty($item), $properties);
     }
 
     /**

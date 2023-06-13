@@ -2,7 +2,7 @@
 
 namespace Tests\Units;
 
-use ClassTransformer\ArgumentsResource;
+use ClassTransformer\ArgumentsRepository;
 use ClassTransformer\Exceptions\ValueNotFoundException;
 use ClassTransformer\Reflection\RuntimeReflectionProperty;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +13,7 @@ class ArgumentsResourceTest extends TestCase
     public function testBaseKey(): void
     {
         $data = ['id' => 1];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'id'))
         );
@@ -23,7 +23,7 @@ class ArgumentsResourceTest extends TestCase
     public function testBaseValueNotFoundException(): void
     {
         $this->expectException(ValueNotFoundException::class);
-        $resource = new ArgumentsResource(['test' => 1]);
+        $resource = new ArgumentsRepository(['test' => 1]);
         $resource->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'id'))
         );
@@ -33,7 +33,7 @@ class ArgumentsResourceTest extends TestCase
     {
         $this->expectException(ValueNotFoundException::class);
         $data = ['id' => 1];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressOne'))
         );
@@ -43,7 +43,7 @@ class ArgumentsResourceTest extends TestCase
     public function testCamelCaseWritingStyleKey(): void
     {
         $data = ['addressTwo' => 'test'];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'address_two'))
         );
@@ -52,7 +52,7 @@ class ArgumentsResourceTest extends TestCase
         $data = ['test_case' => 'test2'];
 
         $this->expectException(ValueNotFoundException::class);
-        $resource2 = new ArgumentsResource($data);
+        $resource2 = new ArgumentsRepository($data);
 
         $resource2->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'testCase'))
@@ -62,7 +62,7 @@ class ArgumentsResourceTest extends TestCase
     public function testSnakeCaseWritingStyleKey(): void
     {
         $data = ['address_three' => 'test'];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressThree'))
         );
@@ -71,7 +71,7 @@ class ArgumentsResourceTest extends TestCase
         $data = ['testCase' => 'test2'];
 
         $this->expectException(ValueNotFoundException::class);
-        $resource2 = new ArgumentsResource($data);
+        $resource2 = new ArgumentsRepository($data);
 
         $resource2->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'test_case'))
@@ -81,7 +81,7 @@ class ArgumentsResourceTest extends TestCase
     public function testFinalValueNotFoundException(): void
     {
         $this->expectException(ValueNotFoundException::class);
-        $resource = new ArgumentsResource(['test' => 1]);
+        $resource = new ArgumentsRepository(['test' => 1]);
         $resource->getValue(
             new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'balance'))
         );
