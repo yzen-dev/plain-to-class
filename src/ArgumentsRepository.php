@@ -48,8 +48,8 @@ final class ArgumentsRepository
      */
     public function getValue(ReflectionProperty $genericProperty): mixed
     {
-        if (array_key_exists($genericProperty->getName(), $this->args)) {
-            return $this->args[$genericProperty->getName()];
+        if (array_key_exists($genericProperty->name, $this->args)) {
+            return $this->args[$genericProperty->name];
         }
 
         $aliases = $genericProperty->getAliases();
@@ -68,12 +68,12 @@ final class ArgumentsRepository
             throw new ValueNotFoundException();
         }
 
-        $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->getName());
+        $snakeCase = TransformUtils::attributeToSnakeCase($genericProperty->name);
         if (array_key_exists($snakeCase, $this->args) && sizeof(array_intersect([WritingStyle::STYLE_SNAKE_CASE, WritingStyle::STYLE_ALL], $styles)) > 0) {
             return $this->args[$snakeCase];
         }
 
-        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->getName());
+        $camelCase = TransformUtils::attributeToCamelCase($genericProperty->name);
         if (array_key_exists($camelCase, $this->args) && sizeof(array_intersect([WritingStyle::STYLE_CAMEL_CASE, WritingStyle::STYLE_ALL], $styles)) > 0) {
             return $this->args[$camelCase];
         }

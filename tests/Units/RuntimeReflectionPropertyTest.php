@@ -14,14 +14,14 @@ class RuntimeReflectionPropertyTest extends TestCase
     public function testCreatePropery(): void
     {
         $property = new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'email'));
-        $this->assertEquals('string', $property->getType()->getTypeStr());
-        $this->assertTrue($property->getType()->isScalar());
+        $this->assertEquals('string', $property->type->name);
+        $this->assertTrue($property->type->isScalar);
         $this->assertTrue($property->hasSetMutator());
-        $this->assertEquals('email', $property->getName());
+        $this->assertEquals('email', $property->name);
 
         $property = new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'color'));
         
-        $this->assertInstanceOf(EnumType::class,$property->getType());
-        $this->assertEquals(ColorEnum::class,$property->getType()->getTypeStr());
+        $this->assertInstanceOf(EnumType::class,$property->type);
+        $this->assertEquals(ColorEnum::class,$property->type->name);
     }
 }

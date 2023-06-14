@@ -2,12 +2,12 @@
 
 namespace ClassTransformer;
 
+use ReflectionException;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Reflection\RuntimeReflectionClass;
 
-use ReflectionException;
 use function method_exists;
 
 /**
@@ -129,8 +129,7 @@ class Hydrator
         }
 
         if ($this->config->cacheEnabled) {
-            $cache = new CacheGenerator($class, $this->config);
-            $repository = $cache->getClass();
+            $repository = CacheGenerator::create($class, $this->config)->getClass();
         } else {
             $repository = new RuntimeReflectionClass($class);
         }

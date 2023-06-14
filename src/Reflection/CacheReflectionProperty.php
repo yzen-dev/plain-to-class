@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Attributes\FieldAlias;
-
 use ClassTransformer\Reflection\Types\PropertyType;
-use function is_string;
 
 /**
  * Class GenericProperty
  *
  * @psalm-api
  */
-final class CacheReflectionProperty implements \ClassTransformer\Contracts\ReflectionProperty
+final class CacheReflectionProperty extends \ClassTransformer\Contracts\ReflectionProperty
 {
     /**
      */
@@ -25,16 +22,9 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
         public bool $hasSetMutator,
         public bool $notTransform,
         public string $docComment,
-        public array $attributes
+        public array $attributes,
+        public array $aliases,
     ) {
-    }
-
-    /**
-     * @return PropertyType
-     */
-    public function getType(): PropertyType
-    {
-        return $this->type;
     }
 
     /**
@@ -43,14 +33,6 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     public function hasSetMutator(): bool
     {
         return $this->hasSetMutator;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnum(): bool
-    {
-        return $this->isEnum;
     }
 
     /**
@@ -102,17 +84,6 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
      */
     public function getAliases(): array
     {
-        $aliases = $this->getAttributeArguments(FieldAlias::class);
-
-        if (empty($aliases)) {
-            return [];
-        }
-
-        $aliases = $aliases[0];
-
-        if (is_string($aliases)) {
-            $aliases = [$aliases];
-        }
-        return $aliases;
+        return $this->aliases;
     }
 }

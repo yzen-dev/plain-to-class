@@ -54,12 +54,12 @@ final class InstanceBuilder
             }
 
             if ($property->hasSetMutator()) {
-                $genericInstance->{TransformUtils::mutationSetterToCamelCase($property->getName())}($value);
+                $genericInstance->{TransformUtils::mutationSetterToCamelCase($property->name)}($value);
                 continue;
             }
 
             $caster = new ValueCasting($property, $this->config);
-            $genericInstance->{$property->getName()} = $caster->castAttribute($value);
+            $genericInstance->{$property->name} = $caster->castAttribute($value);
 
         }
         return $genericInstance;

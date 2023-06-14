@@ -7,51 +7,48 @@ use ClassTransformer\Reflection\Types\PropertyType;
 /**
  * @psalm-api
  */
-interface ReflectionProperty
+abstract class ReflectionProperty
 {
+    /** @var class-string|string $propertyClass */
+    public string $name;
 
-    /**
-     * @return string
-     */
-    public function getName(): string;
+    /** @var class-string */
+    public string $class;
 
-    /**
-     * @return PropertyType
-     */
-    public function getType(): PropertyType;
+    /** @var PropertyType */
+    public PropertyType $type;
 
     /**
      * @param string $name
      *
      * @return mixed
      */
-    public function getAttribute(string $name): mixed;
+    abstract public function getAttribute(string $name): mixed;
 
     /**
      * @param string $name
      *
      * @return null|array<string>
      */
-    public function getAttributeArguments(string $name): ?array;
+    abstract public function getAttributeArguments(string $name): ?array;
 
     /**
      * @return string
      */
-    public function getDocComment(): string;
+    abstract public function getDocComment(): string;
     
+    /**
+     * @return bool
+     */
+    abstract public function hasSetMutator(): bool;
 
     /**
      * @return bool
      */
-    public function hasSetMutator(): bool;
-
-    /**
-     * @return bool
-     */
-    public function notTransform(): bool;
+    abstract public function notTransform(): bool;
 
     /**
      * @return array<string>
      */
-    public function getAliases(): array;
+    abstract public function getAliases(): array;
 }

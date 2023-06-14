@@ -1,8 +1,8 @@
 <?php
 
-namespace ClassTransformer\Reflection\Types;
+declare(strict_types=1);
 
-use ClassTransformer\Enums\TypeEnums;
+namespace ClassTransformer\Reflection\Types;
 
 /**
  * Class ArrayType
@@ -13,20 +13,4 @@ class ArrayType extends PropertyType
 {
     public string $itemsType;
     public bool $isScalarItems;
-
-    /**
-     * @return string
-     */
-    public function getItemsType(): string
-    {
-        return $this->itemsType;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isScalarItems(): bool
-    {
-        return $this->isScalarItems;
-    }
 }

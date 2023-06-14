@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ClassTransformer\CacheGenerator;
 
+use ClassTransformer\Attributes\FieldAlias;
+use ClassTransformer\Attributes\WritingStyle;
 use ReflectionClass;
 use RuntimeException;
 use ReflectionException;
@@ -34,14 +36,26 @@ class CacheGenerator
 
     /** @psalm-param class-string<TClass> $class */
     private string $class;
+    private string $cacheFile;
+    private string $path;
 
     /**
      * @param class-string<TClass> $class
      */
     public function __construct(string $class, HydratorConfig $config = null)
     {
-        $this->class = $class;
         $this->config = $config ?? new HydratorConfig();
+        $this->class = $class;
+        $this->cacheFile = str_replace('\\', '_', $this->class);
+        $this->path = $this->config->cachePath . DIRECTORY_SEPARATOR . $this->cacheFile . '.cache.php';
+    }
+
+    /**
+     * @param class-string<TClass> $class
+     */
+    public static function create(string $class, HydratorConfig $config = null): CacheGenerator
+    {
+        return new self($class, $config);
     }
 
 
@@ -68,8 +82,7 @@ class CacheGenerator
      */
     public function generate(): array
     {
-        $this->makeCacheDir($this->config->cachePath);
-        $class = str_replace('\\', '_', $this->class);
+        $this->makeCacheDir();
 
         $refInstance = new ReflectionClass($this->class);
 
@@ -78,9 +91,8 @@ class CacheGenerator
         $cache = [
             'properties' => array_map(fn($el) => $this->convertToCacheProperty(new RuntimeReflectionProperty($el)), $properties)
         ];
-
-        $path = $this->config->cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php';
-        file_put_contents($path, serialize($cache));
+        
+        file_put_contents($this->path, serialize($cache));
         return $cache;
     }
 
@@ -91,17 +103,38 @@ class CacheGenerator
      */
     private function convertToCacheProperty(RuntimeReflectionProperty $property): CacheReflectionProperty
     {
+        $args = $this->getArguments($property);
+        
         return new CacheReflectionProperty(
             $property->class,
             $property->name,
-            $property->getType(),
+            $property->type,
             $property->hasSetMutator(),
             $property->notTransform(),
             $property->getDocComment(),
-            $this->getArguments($property),
+            $args,
+            $this->getAliases($args),
         );
     }
+    /**
+     * @return array<string>
+     */
+    public function getAliases( $args): array
+    {
+        $aliases = $args[FieldAlias::class] ?? null;
+        
+        if (empty($aliases)) {
+            return [];
+        }
 
+        $aliases = $aliases[0];
+
+        if (is_string($aliases)) {
+            $aliases = [$aliases];
+        }
+        return $aliases;
+    }
+    
     /**
      * @param RuntimeReflectionProperty $property
      *
@@ -109,7 +142,7 @@ class CacheGenerator
      */
     private function getArguments(RuntimeReflectionProperty $property): array
     {
-        $attrs = $property->property->getAttributes();
+        $attrs = $property->reflectionProperty->getAttributes();
         $attributes = [];
         foreach ($attrs as $attr) {
             $attributes[$attr->getName()] = $attr->getArguments();
@@ -122,8 +155,7 @@ class CacheGenerator
      */
     public function get(): array
     {
-        $class = str_replace('\\', '_', $this->class);
-        return unserialize(file_get_contents($this->config->cachePath . DIRECTORY_SEPARATOR . $class . '.cache.php'));
+        return unserialize(file_get_contents($this->path));
     }
 
     /**
@@ -131,8 +163,7 @@ class CacheGenerator
      */
     public function cacheExists(): bool
     {
-        $class = str_replace('\\', '_', $this->class);
-        return file_exists('./.cache/' . $class . '.cache.php');
+        return file_exists($this->path);
     }
 
     /**
@@ -141,18 +172,14 @@ class CacheGenerator
      * @return void
      * @throws RuntimeException
      */
-    private function makeCacheDir(?string $path): void
+    private function makeCacheDir(): void
     {
-        $concurrentDirectory = $this->config->cachePath;
         if (
-            empty($path) ||
-            (
-                !file_exists($concurrentDirectory) &&
-                !mkdir($concurrentDirectory, self::DIR_PERMISSION, true) &&
-                !is_dir($concurrentDirectory)
-            )
+            !file_exists($this->config->cachePath) &&
+            !mkdir($this->config->cachePath, self::DIR_PERMISSION, true) &&
+            !is_dir($this->config->cachePath)
         ) {
-            throw new RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
+            throw new RuntimeException(sprintf('Directory "%s" was not created', $this->config->cachePath));
         }
     }
 }

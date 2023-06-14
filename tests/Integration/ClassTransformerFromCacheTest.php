@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use ClassTransformer\Hydrator;
+use ClassTransformer\HydratorConfig;
 use PHPUnit\Framework\TestCase;
 use Tests\ClearCache;
 use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\ProductDTO;
 use Tests\Integration\DTO\PurchaseDTO;
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\ClassTransformerConfig;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
@@ -27,13 +27,11 @@ class ClassTransformerFromCacheTest extends TestCase
      */
     public function testRecursiveObject(): void
     {
-        //$this->markTestSkipped('cache');
-        //return;
         $data = $this->getRecursiveObject();
         $data->orders = $this->getArrayUsers();
-        ClassTransformerConfig::$cacheEnabled = true;
-        $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
-        ClassTransformerConfig::$cacheEnabled = false;
+        
+        $purchaseDTO = (new Hydrator(new HydratorConfig(true)))
+            ->create(PurchaseDto::class, $data);
 
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);

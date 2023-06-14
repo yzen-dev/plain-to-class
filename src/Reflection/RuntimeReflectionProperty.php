@@ -4,33 +4,26 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
+use ReflectionProperty;
+use ReflectionAttribute;
+use ClassTransformer\TransformUtils;
 use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\NotTransform;
-use ClassTransformer\Enums\TypeEnums;
 use ClassTransformer\Reflection\Types\PropertyType;
 use ClassTransformer\Reflection\Types\PropertyTypeFactory;
-use ClassTransformer\TransformUtils;
-use ReflectionAttribute;
-use ReflectionNamedType;
-use ReflectionProperty;
+
 use function method_exists;
 
 /**
  * Class GenericProperty
  */
-final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\ReflectionProperty
+final class RuntimeReflectionProperty extends \ClassTransformer\Contracts\ReflectionProperty
 {
     /** @var ReflectionProperty */
-    public ReflectionProperty $property;
+    public ReflectionProperty $reflectionProperty;
 
     /** @var PropertyType */
-    private PropertyType $type;
-
-    /** @var class-string|string $propertyClass */
-    public string $name;
-
-    /** @var class-string */
-    public string $class;
+    public PropertyType $type;
 
 
     /** @var array<class-string,array<string, array<ReflectionAttribute>>> */
@@ -39,18 +32,12 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /**
      * @param ReflectionProperty $property
      */
-    public function __construct(ReflectionProperty $property)
+    public function __construct(ReflectionProperty $reflectionProperty)
     {
-        $this->property = $property;
-        $this->class = $property->class;
-        $this->name = $this->property->name;
-
+        $this->reflectionProperty = $reflectionProperty;
+        $this->class = $reflectionProperty->class;
+        $this->name = $this->reflectionProperty->name;
         $this->type = PropertyTypeFactory::create($this);
-    }
-
-    public function getType(): PropertyType
-    {
-        return $this->type;
     }
 
     /**
@@ -58,7 +45,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
      */
     public function getDocComment(): string
     {
-        $doc = $this->property->getDocComment();
+        $doc = $this->reflectionProperty->getDocComment();
         return $doc !== false ? $doc : '';
     }
 
@@ -82,7 +69,7 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
             return self::$attributesCache[$this->class][$this->name][$name];
         }
 
-        $attr = $this->property->getAttributes($name);
+        $attr = $this->reflectionProperty->getAttributes($name);
         if (!empty($attr)) {
             return self::$attributesCache[$this->class][$this->name][$name] = $attr[0];
         }
@@ -105,14 +92,6 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     public function hasSetMutator(): bool
     {
         return method_exists($this->class, TransformUtils::mutationSetterToCamelCase($this->name));
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     /**

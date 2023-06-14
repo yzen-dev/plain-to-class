@@ -6,8 +6,6 @@ namespace ClassTransformer\Reflection;
 
 use RuntimeException;
 use ReflectionException;
-use ClassTransformer\CacheGenerator\CacheGenerator;
-use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Contracts\ReflectionClassRepository;
 

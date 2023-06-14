@@ -1,10 +1,8 @@
 <?php
 
-namespace ClassTransformer\Reflection\Types;
+declare(strict_types=1);
 
-use ClassTransformer\Enums\TypeEnums;
-use ReflectionNamedType;
-use ReflectionType;
+namespace ClassTransformer\Reflection\Types;
 
 /**
  * Class PropertyType
@@ -14,24 +12,9 @@ use ReflectionType;
 class PropertyType
 {
     public function __construct(
-        private bool $nullable,
-        private string $typeStr,
-        private bool $isScalar
+        public string $name,
+        public bool $isScalar,
+        public bool $nullable,
     ) {
-    }
-
-    public function isNullable()
-    {
-        return $this->nullable;
-    }
-
-    public function isScalar(): bool
-    {
-        return $this->isScalar;
-    }
-
-    public function getTypeStr()
-    {
-        return $this->typeStr;
     }
 }

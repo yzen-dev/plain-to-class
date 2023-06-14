@@ -12,17 +12,17 @@ namespace ClassTransformer;
 final class HydratorConfig
 {
     /** @var bool Cache mode enabled */
-    public bool $cacheEnabled = false;
+    public bool $cacheEnabled;
     
     /** @var string Path to the cache directory */
-    public string $cachePath = __DIR__ . '/../.cache';
+    public string $cachePath;
     
     public function __construct(
         ?bool $cacheEnabled = null,
         ?string $cachePath = null
     )
     {
-        $this->cacheEnabled = $cacheEnabled ?? ClassTransformerConfig::$cacheEnabled;
-        $this->cachePath = $cachePath ?? ClassTransformerConfig::$cachePath;
+        $this->cacheEnabled = $cacheEnabled ?? false;
+        $this->cachePath = $cachePath ?? __DIR__ . '/../.cache';
     }
 }
