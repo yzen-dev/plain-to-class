@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Units\DTO;
 
+use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\WritingStyle;
 
 class UserCacheableDTO
 {
     public int $id;
     public ?string $email;
+    
+    #[FieldAlias('contact')]
     public $phone;
 
     /** @var array<int> $orders Order list */

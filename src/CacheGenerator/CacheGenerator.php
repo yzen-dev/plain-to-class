@@ -68,6 +68,7 @@ class CacheGenerator
      */
     public function getClass(): CacheReflectionClass
     {
+        /** @infection-ignore-all */
         if (!$this->cacheExists()) {
             $classCache = $this->generate();
         } else {
@@ -91,7 +92,7 @@ class CacheGenerator
         $cache = [
             'properties' => array_map(fn($el) => $this->convertToCacheProperty(new RuntimeReflectionProperty($el)), $properties)
         ];
-        
+
         file_put_contents($this->path, serialize($cache));
         return $cache;
     }
@@ -104,7 +105,7 @@ class CacheGenerator
     private function convertToCacheProperty(RuntimeReflectionProperty $property): CacheReflectionProperty
     {
         $args = $this->getArguments($property);
-        
+
         return new CacheReflectionProperty(
             $property->class,
             $property->name,
@@ -116,14 +117,15 @@ class CacheGenerator
             $this->getAliases($args),
         );
     }
+
     /**
      * @return array<string>
      */
-    public function getAliases( $args): array
+    public function getAliases($args): array
     {
         $aliases = $args[FieldAlias::class] ?? null;
-        
-        if (empty($aliases)) {
+
+        if (empty($aliases) || !is_array($aliases)) {
             return [];
         }
 
@@ -134,7 +136,7 @@ class CacheGenerator
         }
         return $aliases;
     }
-    
+
     /**
      * @param RuntimeReflectionProperty $property
      *
@@ -175,8 +177,11 @@ class CacheGenerator
     private function makeCacheDir(): void
     {
         if (
-            !file_exists($this->config->cachePath) &&
-            !mkdir($this->config->cachePath, self::DIR_PERMISSION, true) &&
+            (
+                !file_exists($this->config->cachePath) &&
+                !mkdir($this->config->cachePath, self::DIR_PERMISSION, true)
+            ) 
+            ||
             !is_dir($this->config->cachePath)
         ) {
             throw new RuntimeException(sprintf('Directory "%s" was not created', $this->config->cachePath));

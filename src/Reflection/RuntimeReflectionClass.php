@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
+use ClassTransformer\Exceptions\InstantiableClassException;
 use ReflectionClass;
 use ReflectionException;
 use InvalidArgumentException;
@@ -39,7 +40,7 @@ final class RuntimeReflectionClass implements ReflectionClassRepository
         $refInstance = new ReflectionClass($this->class);
 
         if (!$refInstance->isInstantiable()) {
-            throw new InvalidArgumentException('Class ' . $this->class . ' is not instantiable.');
+            throw new InstantiableClassException($this->class);
         }
 
         $properties = $refInstance->getProperties();

@@ -2,6 +2,7 @@
 
 namespace Tests\Units;
 
+use ClassTransformer\Enums\TypeEnums;
 use RuntimeException;
 use Tests\ClearCache;
 use Tests\Units\DTO\ColorEnum;
@@ -18,7 +19,7 @@ class CacheGeneratorTest extends TestCase
     use ClearCache;
 
     private HydratorConfig $config;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,15 +43,13 @@ class CacheGeneratorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    /*public function testGenerateException(): void
+    public function testGenerateException(): void
     {
         $this->expectException(RuntimeException::class);
-        $class = new ReflectionClass(CacheGenerator::class);
-        $class->
-        $method = $class->getMethod('makeCacheDir');
-        $method->setAccessible(true);
-        $method->invoke(new CacheGenerator(UserCacheableDTO::class),[]);
-    }*/
+        $dir = __DIR__ . '/CacheGeneratorTest.php';
+        $generator = new CacheGenerator(UserCacheableDTO::class, new HydratorConfig(true, $dir));
+        $dto = $generator->generate();
+    }
 
     public function testGenerateCache(): void
     {
@@ -78,6 +77,13 @@ class CacheGeneratorTest extends TestCase
         $this->assertEmpty($property->docComment);
         $this->assertIsArray($property->attributes);
         $this->assertEmpty($property->attributes);
+
+        $property = $cache['properties'][2];
+
+        $this->assertEquals(UserCacheableDTO::class, $property->class);
+        $this->assertEquals('phone', $property->name);
+        $this->assertEquals(TypeEnums::TYPE_MIXED, $property->type->name);
+        $this->assertCount(1, $property->aliases);
 
         $property = $cache['properties'][5];
         $this->assertIsArray($property->attributes);

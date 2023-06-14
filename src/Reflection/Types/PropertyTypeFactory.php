@@ -35,17 +35,9 @@ class PropertyTypeFactory
             $isNullable = $reflectionType->allowsNull();
             $isScalar = $reflectionType->isBuiltin();
         } else {
-            $type = (string)$reflectionType;
+            $type = $reflectionType;
             $isScalar = $reflectionType->isBuiltin();
             $isNullable = $reflectionType->allowsNull();
-        }
-
-        if (($isScalar && $type !== TypeEnums::TYPE_ARRAY) || $property->notTransform()) {
-            return new ScalarType(
-                $type,
-                $isScalar,
-                $isNullable,
-            );
         }
 
         if ($type === TypeEnums::TYPE_ARRAY) {
@@ -68,6 +60,14 @@ class PropertyTypeFactory
             return $type;
         }
 
+        if ($isScalar || $property->notTransform()) {
+            return new ScalarType(
+                $type,
+                $isScalar,
+                $isNullable,
+            );
+        }
+
         if (function_exists('enum_exists') && !$isScalar && enum_exists($type)) {
             return new EnumType(
                 $type,
@@ -76,15 +76,7 @@ class PropertyTypeFactory
             );
         }
 
-        if (!$isScalar) {
-            return new TransformableType(
-                $type,
-                $isScalar,
-                $isNullable,
-            );
-        }
-
-        return new PropertyType(
+        return new TransformableType(
             $type,
             $isScalar,
             $isNullable,

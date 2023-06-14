@@ -10,7 +10,7 @@ use ClassTransformer\Reflection\RuntimeReflectionProperty;
 class ValueCastingTest extends TestCase
 {
 
-    public function testCreatePropery(): void
+    public function testCreateProperty(): void
     {
         $caster = new ValueCasting(
             new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'color'))
@@ -48,7 +48,7 @@ class ValueCastingTest extends TestCase
         $this->assertEquals(1, $value);
     }
 
-    public function testCreateArrayPropery(): void
+    public function testCreateArrayProperty(): void
     {
         // Array check
 
@@ -86,7 +86,7 @@ class ValueCastingTest extends TestCase
         $value = $caster->castAttribute([0]);
         $this->assertIsBool($value[0]);
         $this->assertFalse($value[0]);
-        
+
         $caster = new ValueCasting(
             new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'mixedItems'))
         );

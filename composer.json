@@ -56,5 +56,14 @@
     "phpcbf": "./vendor/bin/phpcbf --standard=./phpcs.xml -n --no-cache -s",
     "coverage": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-text --colors=never --coverage-clover coverage.xml",
     "coverage-html": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-html public/coverage --coverage-text"
+  },
+  "scripts-descriptions": {
+    "phpunit": "Run tests",
+    "infection": "Run mutation tests",
+    "infection-html": "Generate mutation tests report",
+    "psalm": "Run static analyze",
+    "phpcs": "Checking codestyle",
+    "coverage": "Checking code coverage",
+    "coverage-html": "Generate code coverage report"
   }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use ClassTransformer\Hydrator;
 use ReflectionException;
 use PHPUnit\Framework\TestCase;
 use Tests\Integration\DTO\ConstructDto;
@@ -34,7 +35,9 @@ class ClassTransformerFromArrayTest extends TestCase
     public function testBaseArray(): void
     {
         $data = $this->getBaseArrayData();
-        $userDTO = ClassTransformer::transform(UserDTO::class, $data);
+
+        $userDTO = Hydrator::init()->create(UserDTO::class, $data);
+        
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);
         self::assertEquals($data['email'], $userDTO->email);
@@ -64,7 +67,7 @@ class ClassTransformerFromArrayTest extends TestCase
     public function testEmptyClass(): void
     {
         $data = $this->getBaseArrayData();
-        $instance = ClassTransformer::transform(EmptyClassDto::class, $data);
+        $instance = Hydrator::init()->create(EmptyClassDto::class, $data);
         self::assertInstanceOf(EmptyClassDto::class, $instance);
     }
 
@@ -77,7 +80,7 @@ class ClassTransformerFromArrayTest extends TestCase
             'stringList' => [100, 200, 300],
             'intList' => [400, 500, 600]
         ];
-        $dto = ClassTransformer::transform(ArrayScalarDTO::class, $data);
+        $dto = Hydrator::init()->create(ArrayScalarDTO::class, $data);
         self::assertInstanceOf(ArrayScalarDTO::class, $dto);
         self::assertIsString($dto->stringList[0]);
         self::assertEquals($dto->stringList[0], '100');
@@ -94,7 +97,9 @@ class ClassTransformerFromArrayTest extends TestCase
             'id' => 1,
             'products' => null
         ];
-        $userDTO = ClassTransformer::transform(ArrayScalarDTO::class, $data);
+
+        $userDTO = Hydrator::init()->create(ArrayScalarDTO::class, $data);
+        
         self::assertInstanceOf(ArrayScalarDTO::class, $userDTO);
     }
 
@@ -104,8 +109,11 @@ class ClassTransformerFromArrayTest extends TestCase
     public function testTransformCollection(): void
     {
         $data = $this->getArrayUsers();
-
+        
         $users = ClassTransformer::transformCollection(UserDTO::class, $data);
+        self::assertCount(count($data), $users);
+        
+        $users = Hydrator::init()->createCollection(UserDTO::class, $data);
 
         self::assertCount(count($data), $users);
         foreach ($users as $key => $user) {
@@ -125,6 +133,11 @@ class ClassTransformerFromArrayTest extends TestCase
         $purchaseData = $this->getRecursiveArrayData();
 
         $result = ClassTransformer::transformMultiple([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
+        [$user, $purchase] = $result;
+        self::assertInstanceOf(UserDTO::class, $user);
+        self::assertInstanceOf(PurchaseDTO::class, $purchase);
+        
+        $result = Hydrator::init()->createMultiple([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
 
         [$user, $purchase] = $result;
 
@@ -142,7 +155,8 @@ class ClassTransformerFromArrayTest extends TestCase
     public function testRecursiveArray(): void
     {
         $data = $this->getRecursiveArrayData();
-        $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+        $purchaseDTO = Hydrator::init()->create(PurchaseDTO::class, $data);
+        
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);
         self::assertEquals($data['user']['id'], $purchaseDTO->user->id);
@@ -169,7 +183,9 @@ class ClassTransformerFromArrayTest extends TestCase
     public function testTripleRecursiveArray(): void
     {
         $data = $this->getTripleRecursiveArray();
-        $basketDTO = ClassTransformer::transform(BasketDTO::class, $data);
+        
+        $basketDTO = Hydrator::init()->create(BasketDTO::class, $data);
+        
         foreach ($basketDTO->orders as $key => $purchase) {
             self::assertInstanceOf(PurchaseDTO::class, $purchase);
             self::assertInstanceOf(UserDTO::class, $purchase->user);
@@ -197,7 +213,9 @@ class ClassTransformerFromArrayTest extends TestCase
     public function testEmptyTypeObject(): void
     {
         $data = $this->getBaseArrayData();
-        $userDTO = ClassTransformer::transform(UserEmptyTypeDTO::class, $data);
+        
+        $userDTO = Hydrator::init()->create(UserEmptyTypeDTO::class, $data);
+        
         self::assertInstanceOf(UserEmptyTypeDTO::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);
         self::assertEquals($data['email'], $userDTO->email);

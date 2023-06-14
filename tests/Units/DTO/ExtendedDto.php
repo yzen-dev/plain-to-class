@@ -8,6 +8,8 @@ use ClassTransformer\Attributes\WritingStyle;
 
 class ExtendedDto
 {
+    public AbstractClass $mixed;
+    
     public int $id;
 
     public ?string $email;
@@ -45,6 +47,8 @@ class ExtendedDto
     
     /** @var array<mixed>  */
     public array $mixedItems;
+    
+    public UserDto $user;
 
     public function setEmailAttribute($value)
     {
