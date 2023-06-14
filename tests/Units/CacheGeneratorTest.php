@@ -6,6 +6,7 @@ use ClassTransformer\Attributes\WritingStyle;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\ClassTransformerConfig;
 use ClassTransformer\Reflection\CacheReflectionProperty;
+use ClassTransformer\Reflection\Types\EnumType;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use RuntimeException;
@@ -68,10 +69,8 @@ class CacheGeneratorTest extends TestCase
 
         $this->assertEquals(UserCacheableDTO::class, $property->class);
         $this->assertEquals('id', $property->name);
-        $this->assertEquals('int', $property->type);
-        $this->assertTrue($property->isScalar);
+        $this->assertEquals('int', $property->getType()->getTypeStr());
         $this->assertFalse($property->hasSetMutator);
-        $this->assertFalse($property->isEnum);
         $this->assertFalse($property->notTransform);
         $this->assertEmpty($property->docComment);
         $this->assertIsArray($property->attributes);
@@ -85,8 +84,8 @@ class CacheGeneratorTest extends TestCase
 
         /** @var CacheReflectionProperty $property */
         $property = $cache['properties'][8];
-        $this->assertIsString($property->getType());
-        $this->assertEquals(ColorEnum::class, $property->getType());
+        $this->assertInstanceOf(EnumType::class, $property->getType());
+        $this->assertEquals(ColorEnum::class, $property->getType()->getTypeStr());
 
         $cacheGenerator->generate();
     }

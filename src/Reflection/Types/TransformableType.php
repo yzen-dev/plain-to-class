@@ -3,11 +3,10 @@
 namespace ClassTransformer\Reflection\Types;
 
 /**
- * Class ArrayType
+ * Class TransformableType
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class TransformableType
+class TransformableType extends PropertyType
 {
-    public string $class;
 }

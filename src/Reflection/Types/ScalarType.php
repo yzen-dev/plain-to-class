@@ -3,11 +3,10 @@
 namespace ClassTransformer\Reflection\Types;
 
 /**
- * Class EnumType
+ * Class ScalarType
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class EnumType extends PropertyType
+class ScalarType extends PropertyType
 {
-
 }

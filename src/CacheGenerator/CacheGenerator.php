@@ -91,16 +91,12 @@ class CacheGenerator
      */
     private function convertToCacheProperty(RuntimeReflectionProperty $property): CacheReflectionProperty
     {
-
         return new CacheReflectionProperty(
             $property->class,
             $property->name,
-            $property->type,
-            $property->isScalar,
+            $property->getType(),
             $property->hasSetMutator(),
-            $property->isEnum(),
             $property->notTransform(),
-            $property->transformable(),
             $property->getDocComment(),
             $this->getArguments($property),
         );

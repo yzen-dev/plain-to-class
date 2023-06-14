@@ -6,6 +6,7 @@ namespace ClassTransformer\Reflection;
 
 use ClassTransformer\Attributes\FieldAlias;
 
+use ClassTransformer\Reflection\Types\PropertyType;
 use function is_string;
 
 /**
@@ -20,21 +21,18 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     public function __construct(
         public string $class,
         public string $name,
-        public ?string $type,
-        public bool $isScalar,
+        public PropertyType $type,
         public bool $hasSetMutator,
-        public bool $isEnum,
         public bool $notTransform,
-        public bool $transformable,
         public string $docComment,
         public array $attributes
     ) {
     }
 
     /**
-     * @return null|string
+     * @return PropertyType
      */
-    public function getType(): ?string
+    public function getType(): PropertyType
     {
         return $this->type;
     }
@@ -61,22 +59,6 @@ final class CacheReflectionProperty implements \ClassTransformer\Contracts\Refle
     public function notTransform(): bool
     {
         return $this->notTransform;
-    }
-
-    /**
-     * @return bool
-     */
-    public function transformable(): bool
-    {
-        return $this->transformable;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isScalar(): bool
-    {
-        return $this->isScalar;
     }
 
     /**

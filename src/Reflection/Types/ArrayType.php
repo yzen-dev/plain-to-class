@@ -2,13 +2,31 @@
 
 namespace ClassTransformer\Reflection\Types;
 
+use ClassTransformer\Enums\TypeEnums;
+
 /**
  * Class ArrayType
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class ArrayType
+class ArrayType extends PropertyType
 {
     public string $itemsType;
-    public string $isScalar;
+    public bool $isScalarItems;
+
+    /**
+     * @return string
+     */
+    public function getItemsType(): string
+    {
+        return $this->itemsType;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isScalarItems(): bool
+    {
+        return $this->isScalarItems;
+    }
 }

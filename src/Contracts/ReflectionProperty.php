@@ -2,20 +2,13 @@
 
 namespace ClassTransformer\Contracts;
 
+use ClassTransformer\Reflection\Types\PropertyType;
+
 /**
  * @psalm-api
  */
 interface ReflectionProperty
 {
-    /**
-     * @return bool
-     */
-    public function isScalar(): bool;
-
-    /**
-     * @return bool
-     */
-    public function transformable(): bool;
 
     /**
      * @return string
@@ -23,9 +16,9 @@ interface ReflectionProperty
     public function getName(): string;
 
     /**
-     * @return string
+     * @return PropertyType
      */
-    public function getType(): ?string;
+    public function getType(): PropertyType;
 
     /**
      * @param string $name
@@ -45,13 +38,7 @@ interface ReflectionProperty
      * @return string
      */
     public function getDocComment(): string;
-
-    /**
-     * Finds whether a variable is an enum
-     *
-     * @return bool
-     */
-    public function isEnum(): bool;
+    
 
     /**
      * @return bool

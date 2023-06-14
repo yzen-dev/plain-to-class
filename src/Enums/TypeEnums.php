@@ -1,6 +1,6 @@
 <?php
 
-namespace ClassTransformer\Reflection\Types;
+namespace ClassTransformer\Enums;
 
 /**
  * Class TypeEnums

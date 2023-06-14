@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Reflection\Types\TypeEnums;
-use ReflectionType;
-use ReflectionProperty;
-use ReflectionNamedType;
-use ReflectionAttribute;
-use ClassTransformer\TransformUtils;
 use ClassTransformer\Attributes\FieldAlias;
 use ClassTransformer\Attributes\NotTransform;
-
-use function sizeof;
-use function in_array;
+use ClassTransformer\Enums\TypeEnums;
+use ClassTransformer\Reflection\Types\PropertyType;
+use ClassTransformer\Reflection\Types\PropertyTypeFactory;
+use ClassTransformer\TransformUtils;
+use ReflectionAttribute;
+use ReflectionNamedType;
+use ReflectionProperty;
 use function method_exists;
-use function array_intersect;
 
 /**
  * Class GenericProperty
@@ -26,11 +23,8 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var ReflectionProperty */
     public ReflectionProperty $property;
 
-    /** @var string */
-    public string $type;
-
-    /** @var array|string[] */
-    public array $types;
+    /** @var PropertyType */
+    private PropertyType $type;
 
     /** @var class-string|string $propertyClass */
     public string $name;
@@ -38,11 +32,6 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     /** @var class-string */
     public string $class;
 
-    /** @var bool */
-    public bool $isScalar;
-
-    /** @var bool */
-    public bool $nullable;
 
     /** @var array<class-string,array<string, array<ReflectionAttribute>>> */
     private static array $attributesCache = [];
@@ -54,42 +43,14 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     {
         $this->property = $property;
         $this->class = $property->class;
-        $type = $this->property->getType();
-        
-        if ($type === null) {
-            $this->type = TypeEnums::TYPE_MIXED;
-            $this->nullable = true;
-            $this->isScalar = true;
-        } else if ($type instanceof ReflectionNamedType) {
-            $this->type = $type->getName();
-            $this->nullable = $type->allowsNull();
-            $this->isScalar = $type->isBuiltin();
-        } else {
-            $this->isScalar = $type->isBuiltin();
-            $this->nullable = $type->allowsNull();
-            $this->type = (string)$type;
-        }
-
         $this->name = $this->property->name;
 
-        
+        $this->type = PropertyTypeFactory::create($this);
     }
 
-
-    public function getType(): ?string
+    public function getType(): PropertyType
     {
         return $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnum(): bool
-    {
-        if (!function_exists('enum_exists')) {
-            return false;
-        }
-        return !$this->isScalar && enum_exists($this->type);
     }
 
     /**
@@ -144,22 +105,6 @@ final class RuntimeReflectionProperty implements \ClassTransformer\Contracts\Ref
     public function hasSetMutator(): bool
     {
         return method_exists($this->class, TransformUtils::mutationSetterToCamelCase($this->name));
-    }
-
-    /**
-     * @return bool
-     */
-    public function isScalar(): bool
-    {
-        return $this->isScalar;
-    }
-
-    /**
-     * @return bool
-     */
-    public function transformable(): bool
-    {
-        return !$this->isScalar && $this->type !== TypeEnums::TYPE_ARRAY;
     }
 
     /**
