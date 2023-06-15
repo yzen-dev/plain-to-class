@@ -20,7 +20,12 @@ Common use case:
         'email' => 'test@mail.com',
         'balance' => 128.41,
     ];
-    $dto = ClassTransformer::transform(CreateUserDTO::class, $data);
+    $dto = (new Hydrator())->create(CreateUserDTO::class, $data);
+    
+    // or static init        
+    
+    $dto = Hydrator::init()->create(CreateUserDTO::class, $data);
+
     var_dump($dto);
 
 Output:
@@ -34,7 +39,7 @@ Also for php 8 you can pass named arguments:
 
 .. code-block:: php
 
-    $dto = ClassTransformer::transform(CreateUserDTO::class,
+    $dto = Hydrator::init()->create(CreateUserDTO::class,
             email: 'test@mail.com',
             balance: 128.41
           );
@@ -60,7 +65,7 @@ If the property is not of a scalar type, but a class of another DTO is allowed, 
         'cost' => 10012.23,
     ];
     
-    $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+    $purchaseDTO = Hydrator::init()->create(PurchaseDTO::class, $data);
     var_dump($purchaseDTO);
 
 .. code-block:: bash
@@ -101,14 +106,14 @@ Example:
             ['id' => 2, 'name' => 'bread',],
         ],
     ];
-    $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+    $purchaseDTO = Hydrator::init()->create(PurchaseDTO::class, $data);
 
 
 Anonymous array
 ---------------
 
 In case you need to convert an array of data into an array of class objects, you can implement this using
-the `transformCollection` method.
+the `createCollection` method.
 
 .. code-block:: php
 
@@ -116,7 +121,7 @@ the `transformCollection` method.
       ['id' => 1, 'name' => 'phone'],
       ['id' => 2, 'name' => 'bread'],
     ];
-    $products = ClassTransformer::transformCollection(ProductDTO::class, $data);
+    $products = Hydrator::init()->createCollection(ProductDTO::class, $data);
 
 
 As a result of this execution, you will get an array of ProductDTO objects
@@ -150,7 +155,7 @@ which can then be easily unpacked.
         'user' => ['id' => 3, 'email' => 'fake@mail.com', 'balance' => 10012.23,],
     ];
 
-    $result = ClassTransformer::transformMultiple([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
+    $result = Hydrator::init()->createMultiple([UserDTO::class, PurchaseDTO::class], [$userData, $purchaseData]);
     
     [$user, $purchase] = $result;
     var_dump($user);
@@ -209,7 +214,7 @@ A constant problem with the style of writing, for example, in the database it is
       'contactFio' => 'yzen.dev',
       'contactEmail' => 'test@mail.com',
     ];
-    $model = ClassTransformer::transform(WritingStyleSnakeCaseDTO::class, $data);
+    $model = Hydrator::init()->create(WritingStyleSnakeCaseDTO::class, $data);
     var_dump($model);
 
 Output:
@@ -294,3 +299,15 @@ If you need to completely transform yourself, then you can create a transform me
             $this->username = $args['fio'];
         }
     }
+
+Cache
+----------------
+
+The package supports a class caching mechanism to avoid the cost of reflection. This functionality is recommended to be used only if you have very voluminous classes, or there is a cyclic transformation of multiple entities. On ordinary lightweight DTO, there will be only 5-10%, and this will be unnecessary access in the file system.
+
+You can enable caching by passing the config to the hydrator constructor:
+
+.. code-block:: php
+
+    (new Hydrator(new HydratorConfig(true)))
+        ->create(PurchaseDto::class, $data);

@@ -2,11 +2,10 @@
 
 namespace Tests\Units;
 
-use ClassTransformer\Attributes\WritingStyle;
-use PHPUnit\Framework\TestCase;
-use ClassTransformer\GenericProperty;
-use ClassTransformer\ArgumentsResource;
+use ClassTransformer\ArgumentsRepository;
 use ClassTransformer\Exceptions\ValueNotFoundException;
+use ClassTransformer\Reflection\RuntimeReflectionProperty;
+use PHPUnit\Framework\TestCase;
 use Tests\Units\DTO\UserDTO;
 
 class ArgumentsResourceTest extends TestCase
@@ -14,19 +13,19 @@ class ArgumentsResourceTest extends TestCase
     public function testBaseKey(): void
     {
         $data = ['id' => 1];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'id'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'id'))
         );
         $this->assertEquals($data['id'], $value);
     }
-    
+
     public function testBaseValueNotFoundException(): void
     {
         $this->expectException(ValueNotFoundException::class);
-        $resource = new ArgumentsResource(['test' => 1]);
+        $resource = new ArgumentsRepository(['test' => 1]);
         $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'id'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'id'))
         );
     }
 
@@ -34,9 +33,9 @@ class ArgumentsResourceTest extends TestCase
     {
         $this->expectException(ValueNotFoundException::class);
         $data = ['id' => 1];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'addressOne'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressOne'))
         );
         $this->assertEquals($data['id'], $value);
     }
@@ -44,29 +43,47 @@ class ArgumentsResourceTest extends TestCase
     public function testCamelCaseWritingStyleKey(): void
     {
         $data = ['addressTwo' => 'test'];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'address_two'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'address_two'))
         );
         $this->assertEquals($data['addressTwo'], $value);
+
+        $data = ['test_case' => 'test2'];
+
+        $this->expectException(ValueNotFoundException::class);
+        $resource2 = new ArgumentsRepository($data);
+
+        $resource2->getValue(
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'testCase'))
+        );
     }
 
     public function testSnakeCaseWritingStyleKey(): void
     {
         $data = ['address_three' => 'test'];
-        $resource = new ArgumentsResource($data);
+        $resource = new ArgumentsRepository($data);
         $value = $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'addressThree'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'addressThree'))
         );
         $this->assertEquals($data['address_three'], $value);
+
+        $data = ['testCase' => 'test2'];
+
+        $this->expectException(ValueNotFoundException::class);
+        $resource2 = new ArgumentsRepository($data);
+
+        $resource2->getValue(
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'test_case'))
+        );
     }
 
     public function testFinalValueNotFoundException(): void
     {
         $this->expectException(ValueNotFoundException::class);
-        $resource = new ArgumentsResource(['test' => 1]);
+        $resource = new ArgumentsRepository(['test' => 1]);
         $resource->getValue(
-            new GenericProperty(new \ReflectionProperty(UserDTO::class, 'balance'))
+            new RuntimeReflectionProperty(new \ReflectionProperty(UserDTO::class, 'balance'))
         );
     }
 }

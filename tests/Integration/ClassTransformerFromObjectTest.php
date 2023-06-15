@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use PHPUnit\Framework\TestCase;
+use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\BasketDTO;
 use Tests\Integration\DTO\ProductDTO;
+use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\PurchaseDTO;
-use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\UserEmptyTypeDTO;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class ClassTransformerTest

@@ -1,6 +1,6 @@
 {
   "name": "yzen.dev/plain-to-class",
-  "version": "2.0",
+  "version": "3.0",
   "description": "Class-transformer to transform your dataset into a structured object",
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -17,7 +17,10 @@
     "source": "https://github.com/yzen-dev/plain-to-class"
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "infection/extension-installer": true
+    }
   },
   "autoload": {
     "psr-4": {
@@ -30,39 +33,37 @@
     }
   },
   "require": {
-    "php": "^8.0"
+    "php": "^8.1"
   },
   "require-dev": {
     "mockery/mockery": "1.5.1",
     "phpbench/phpbench": "1.2.8",
-    "phpstan/phpstan": "1.9.12",
-    "phpunit/phpunit": "9.5.28",
-    "squizlabs/php_codesniffer": "3.7.1"
+    "phpunit/phpunit": "10.2.1",
+    "roave/infection-static-analysis-plugin": "1.32",
+    "squizlabs/php_codesniffer": "3.7.1",
+    "symfony/var-dumper": "6.3",
+    "vimeo/psalm": "5.12.0"
   },
+  "bin": [
+    "bin/plain-to-class-clear"
+  ],
   "scripts": {
-    "phpunit": [
-      "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml"
-    ],
-    "phpstan": [
-      "./vendor/bin/phpstan analyse -c ./phpstan.neon src"
-    ],
-    "phpcs": [
-      "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s"
-    ],
-    "phpcbf": [
-      "./vendor/bin/phpcbf --standard=./phpcs.xml -n --no-cache -s"
-    ],
-    "coverage": [
-      "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-text --colors=never --coverage-clover coverage.xml"
-    ],
-    "coverage-html": [
-      "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-html public/coverage --coverage-text"
-    ]
+    "phpunit": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml",
+    "infection": "./vendor/bin/roave-infection-static-analysis-plugin",
+    "infection-html": "./vendor/bin/roave-infection-static-analysis-plugin --logger-html='.tmp/mutation-report.html'",
+    "psalm": "./vendor/bin/psalm",
+    "phpcs": "./vendor/bin/phpcs --standard=./phpcs.xml -n --no-cache -s",
+    "phpcbf": "./vendor/bin/phpcbf --standard=./phpcs.xml -n --no-cache -s",
+    "coverage": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-text --colors=never --coverage-clover coverage.xml",
+    "coverage-html": "./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml --coverage-html public/coverage --coverage-text"
   },
   "scripts-descriptions": {
     "phpunit": "Run tests",
+    "infection": "Run mutation tests",
+    "infection-html": "Generate mutation tests report",
+    "psalm": "Run static analyze",
+    "phpcs": "Checking codestyle",
     "coverage": "Checking code coverage",
-    "phpstan": "Run static analyze",
-    "phpcs": "Checking codestyle"
+    "coverage-html": "Generate code coverage report"
   }
 }

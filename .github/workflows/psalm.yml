@@ -1,0 +1,37 @@
+name: psalm
+
+on:
+  push:
+  
+  pull_request:
+
+jobs:
+  psalm:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    # Setup PHP versions, run checks
+    - name: PHP setup
+      uses: shivammathur/setup-php@v2
+      with:
+        php: >-
+          ['8.0', '8.1', '8.2']
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    - name: Install dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Static analysis.
+      run: vendor/bin/psalm --shepherd --stats --output-format=github --php-version=${{ matrix.php }}
+  

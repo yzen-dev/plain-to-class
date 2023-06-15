@@ -2,6 +2,11 @@
 
 namespace ClassTransformer\Exceptions;
 
-class ValueNotFoundException extends \Exception
+use RuntimeException;
+
+/**
+ * @psalm-api
+ */
+class ValueNotFoundException extends RuntimeException
 {
 }

@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use PHPUnit\Framework\TestCase;
+use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\WithAliasDTO;
-use Tests\Integration\DTO\WritingStyleCamelCaseDTO;
 use Tests\Integration\DTO\WritingStyleEmpyDTO;
+use Tests\Integration\DTO\WritingStyleCamelCaseDTO;
 use Tests\Integration\DTO\WritingStyleSnakeCaseDTO;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class UnionTypeTest
+ *
  * @package Tests
  */
 class WritingStyleTest extends TestCase
@@ -34,9 +35,9 @@ class WritingStyleTest extends TestCase
         self::assertTrue(!isset($model->contactFio));
         self::assertTrue(!isset($model->contactEmail));
     }
-    
+
     /**
-     * @throws ReflectionException|ClassNotFoundException
+     * @throws ClassNotFoundException
      */
     public function testSnakeCaseTransform(): void
     {

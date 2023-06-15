@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer;
 
+use function ucfirst;
 use function ucwords;
 use function lcfirst;
 use function is_string;
@@ -9,7 +12,6 @@ use function strtolower;
 use function preg_match;
 use function str_replace;
 use function preg_replace;
-use function array_key_exists;
 
 /**
  *
@@ -32,11 +34,11 @@ final class TransformUtils
      */
     public static function attributeToSnakeCase(string $key): string
     {
-        if (isset(static::$snakeCache[$key])) {
-            return static::$snakeCache[$key];
+        if (isset(self::$snakeCache[$key])) {
+            return self::$snakeCache[$key];
         }
         $str = preg_replace('/(?<=\d)(?=[A-Za-z])|(?<=[A-Za-z])(?=\d)|(?<=[a-z])(?=[A-Z])/', '_', $key) ?? '';
-        return static::$snakeCache[$key] = strtolower($str);
+        return self::$snakeCache[$key] = strtolower($str);
     }
 
     /**
@@ -46,11 +48,11 @@ final class TransformUtils
      */
     public static function attributeToCamelCase(string $key): string
     {
-        if (isset(static::$camelCache[$key])) {
-            return static::$camelCache[$key];
+        if (isset(self::$camelCache[$key])) {
+            return self::$camelCache[$key];
         }
         $str = lcfirst(str_replace('_', '', ucwords($key, '_')));
-        return static::$camelCache[$key] = $str;
+        return self::$camelCache[$key] = $str;
     }
 
     /**
@@ -60,11 +62,11 @@ final class TransformUtils
      */
     public static function mutationSetterToCamelCase(string $key): string
     {
-        if (isset(static::$mutationSetterCache[$key])) {
-            return static::$mutationSetterCache[$key];
+        if (isset(self::$mutationSetterCache[$key])) {
+            return self::$mutationSetterCache[$key];
         }
         $str = 'set' . ucfirst(self::attributeToCamelCase($key)) . 'Attribute';
-        return static::$mutationSetterCache[$key] = $str;
+        return self::$mutationSetterCache[$key] = $str;
     }
 
     /**
@@ -75,7 +77,7 @@ final class TransformUtils
     public static function getClassFromPhpDoc($phpDoc): ?string
     {
         if (is_string($phpDoc)) {
-            preg_match('/array<([a-zA-Z\d\\\]+)>/m', $phpDoc, $arrayType);
+            preg_match('/array<([a-zA-Z\d\\\]+)>/', $phpDoc, $arrayType);
             return $arrayType[1] ?? null;
         }
         return null;

@@ -2,6 +2,11 @@
 
 namespace ClassTransformer\Exceptions;
 
-class ClassNotFoundException extends \Exception
+use Exception;
+
+/**
+ * @psalm-api
+ */
+class ClassNotFoundException extends Exception
 {
 }

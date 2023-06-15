@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+function deleteDir($dirPath)
+{
+    if (!str_ends_with($dirPath, '/')) {
+        $dirPath .= '/';
+    }
+    $files = glob($dirPath . '*', GLOB_MARK);
+
+    foreach ($files as $file) {
+        echo 'Remove' . $file . PHP_EOL;
+        if (is_dir($file)) {
+            deleteDir($file);
+        } else {
+            unlink($file);
+        }
+    }
+    rmdir($dirPath);
+}
+
+if (file_exists(__DIR__ . '/../.cache')) {
+    deleteDir(__DIR__ . '/../.cache');
+} elseif (file_exists(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache')) {
+    deleteDir(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache');
+}
+exit(0);

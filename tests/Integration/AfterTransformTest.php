@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
 use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\UserAfterTransformDTO;
@@ -16,13 +17,17 @@ use ClassTransformer\Exceptions\ClassNotFoundException;
 class AfterTransformTest extends TestCase
 {
     use FakerData;
+
     /**
      * @throws ClassNotFoundException
      */
     public function testAfterTransformStyle(): void
     {
         $data = $this->getBaseObject();
-        $userDTO = ClassTransformer::transform(UserAfterTransformDTO::class, $data);
+        
+        $userDTO = (new Hydrator())
+            ->create(UserAfterTransformDTO::class, $data);
+        
         self::assertInstanceOf(UserAfterTransformDTO::class, $userDTO);
         self::assertEquals($data->id, $userDTO->id);
         self::assertEquals($data->email, $userDTO->email);

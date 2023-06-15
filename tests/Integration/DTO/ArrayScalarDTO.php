@@ -7,10 +7,11 @@ use ClassTransformer\Attributes\ConvertArray;
 
 class ArrayScalarDTO
 {
-    public $id;
-    
     #[ConvertArray('string')]
     public ?array $stringList;
+    public $id;
+    
+  
     #[ConvertArray('int')]
     public ?array $intList;
 }
