@@ -70,7 +70,7 @@ final class TransformUtils
     }
 
     /**
-     * @param string|bool $phpDoc
+     * @param string $phpDoc
      *
      * @return string|null
      */
