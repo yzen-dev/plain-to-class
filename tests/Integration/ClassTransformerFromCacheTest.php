@@ -8,6 +8,7 @@ use ClassTransformer\Hydrator;
 use ClassTransformer\HydratorConfig;
 use PHPUnit\Framework\TestCase;
 use Tests\ClearCache;
+use Tests\Integration\DTO\PurchaseForCacheDto;
 use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\ProductDTO;
 use Tests\Integration\DTO\PurchaseDTO;
@@ -31,9 +32,9 @@ class ClassTransformerFromCacheTest extends TestCase
         $data->orders = $this->getArrayUsers();
         
         $purchaseDTO = (new Hydrator(new HydratorConfig(true)))
-            ->create(PurchaseDto::class, $data);
+            ->create(PurchaseForCacheDto::class, $data);
 
-        self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
+        self::assertInstanceOf(PurchaseForCacheDto::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);
         self::assertEquals($data->user->id, $purchaseDTO->user->id);
         self::assertEquals($data->user->email, $purchaseDTO->user->email);

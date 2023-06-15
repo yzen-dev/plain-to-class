@@ -42,15 +42,7 @@ final class CacheReflectionProperty extends \ClassTransformer\Contracts\Reflecti
     {
         return $this->notTransform;
     }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
+    
     /**
      * @param string $name
      *

@@ -3,6 +3,7 @@
 namespace Tests\Units;
 
 use ClassTransformer\Enums\TypeEnums;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 use RuntimeException;
 use Tests\ClearCache;
 use Tests\Units\DTO\ColorEnum;
@@ -43,11 +44,18 @@ class CacheGeneratorTest extends TestCase
     /**
      * @throws \ReflectionException
      */
-    public function testGenerateException(): void
+    public function testGenerateRuntimeException(): void
     {
         $this->expectException(RuntimeException::class);
         $dir = __DIR__ . '/CacheGeneratorTest.php';
         $generator = new CacheGenerator(UserCacheableDTO::class, new HydratorConfig(true, $dir));
+        $dto = $generator->generate();
+    }
+    
+    public function testGenerateClassNotFoundException(): void
+    {
+        $this->expectException(ClassNotFoundException::class);
+        $generator = new CacheGenerator('FakeTestClass');
         $dto = $generator->generate();
     }
 
@@ -72,31 +80,33 @@ class CacheGeneratorTest extends TestCase
         $this->assertEquals(UserCacheableDTO::class, $property->class);
         $this->assertEquals('id', $property->name);
         $this->assertEquals('int', $property->type->name);
-        $this->assertFalse($property->hasSetMutator);
-        $this->assertFalse($property->notTransform);
-        $this->assertEmpty($property->docComment);
-        $this->assertIsArray($property->attributes);
-        $this->assertEmpty($property->attributes);
+        $this->assertFalse($property->hasSetMutator());
+        $this->assertFalse($property->notTransform());
+        $this->assertEmpty($property->getDocComment());
 
         $property = $cache['properties'][2];
 
         $this->assertEquals(UserCacheableDTO::class, $property->class);
         $this->assertEquals('phone', $property->name);
         $this->assertEquals(TypeEnums::TYPE_MIXED, $property->type->name);
-        $this->assertCount(1, $property->aliases);
+        $this->assertCount(1, $property->getAliases());
 
         $property = $cache['properties'][5];
         $this->assertIsArray($property->attributes);
         $this->assertCount(1, $property->attributes);
         $this->assertIsArray($property->attributes[WritingStyle::class]);
         $this->assertEquals(WritingStyle::STYLE_CAMEL_CASE, $property->attributes[WritingStyle::class][0]);
+        $this->assertIsArray($property->getAttribute(WritingStyle::class));
+        $this->assertIsArray($property->getAttributeArguments(WritingStyle::class));
 
         /** @var CacheReflectionProperty $property */
         $property = $cache['properties'][8];
         $this->assertInstanceOf(EnumType::class, $property->type);
         $this->assertEquals(ColorEnum::class, $property->type->name);
 
-        $cacheGenerator->generate();
+        $cacheClass = $cacheGenerator->getClass();
+        $this->assertEquals(UserCacheableDTO::class, $cacheClass->getClass());
+        
     }
 
     protected function tearDown(): void

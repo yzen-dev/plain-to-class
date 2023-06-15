@@ -50,7 +50,13 @@ class ValueCastingTest extends TestCase
 
     public function testCreateArrayProperty(): void
     {
-        // Array check
+
+        $caster = new ValueCasting(
+            new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'intItems'))
+        );
+        $value = $caster->castAttribute('1');
+        $this->assertIsString($value);
+        $this->assertEquals('1', $value);
 
         $caster = new ValueCasting(
             new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'intItems'))
@@ -72,7 +78,7 @@ class ValueCastingTest extends TestCase
         $value = $caster->castAttribute([10]);
         $this->assertIsString($value[0]);
         $this->assertEquals('10', $value[0]);
-        
+
         $caster = new ValueCasting(
             new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'boolItems'))
         );

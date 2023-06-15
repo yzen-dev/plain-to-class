@@ -74,12 +74,9 @@ final class TransformUtils
      *
      * @return string|null
      */
-    public static function getClassFromPhpDoc($phpDoc): ?string
+    public static function getClassFromPhpDoc(string $phpDoc): ?string
     {
-        if (is_string($phpDoc)) {
-            preg_match('/array<([a-zA-Z\d\\\]+)>/', $phpDoc, $arrayType);
-            return $arrayType[1] ?? null;
-        }
-        return null;
+        preg_match('/array<([a-zA-Z\d\\\]+)>/', $phpDoc, $arrayType);
+        return $arrayType[1] ?? null;
     }
 }

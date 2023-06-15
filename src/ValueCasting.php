@@ -59,12 +59,8 @@ final class ValueCasting
             return $this->castEnum($value);
         }
 
-        if ($this->property->type instanceof TransformableType) {
-            return (new Hydrator($this->config))
-                ->create($this->property->type->name, $value);
-        }
-
-        return $value;
+        return (new Hydrator($this->config))
+            ->create($this->property->type->name, $value);
     }
 
 
