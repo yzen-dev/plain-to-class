@@ -9,6 +9,7 @@ use ClassTransformer\TransformUtils;
 use ClassTransformer\Enums\TypeEnums;
 use ClassTransformer\Attributes\ConvertArray;
 use ClassTransformer\Reflection\RuntimeReflectionProperty;
+use ReflectionType;
 
 /**
  * Class PropertyTypeFactory
@@ -25,19 +26,16 @@ class PropertyTypeFactory
     public static function create(RuntimeReflectionProperty $property)
     {
         $reflectionType = $property->reflectionProperty->getType();
-        
-        if ($reflectionType === null) {
-            $type = TypeEnums::TYPE_MIXED;
-            $isNullable = true;
-            $isScalar = true;
-        } elseif ($reflectionType instanceof ReflectionNamedType) {
-            $type = $reflectionType->getName();
-            $isNullable = $reflectionType->allowsNull();
-            $isScalar = $reflectionType->isBuiltin();
-        } else {
+
+        $type = TypeEnums::TYPE_MIXED;
+        $isScalar = true;
+
+        if ($reflectionType instanceof ReflectionType) {
             $type = $reflectionType;
+        }
+        if ($reflectionType instanceof ReflectionNamedType) {
+            $type = $reflectionType->getName();
             $isScalar = $reflectionType->isBuiltin();
-            $isNullable = $reflectionType->allowsNull();
         }
 
         if ($type === TypeEnums::TYPE_ARRAY) {
@@ -51,8 +49,7 @@ class PropertyTypeFactory
             $arrayType ??= TypeEnums::TYPE_MIXED;
             $type = new ArrayType(
                 $type,
-                $isScalar,
-                $isNullable,
+                $isScalar
             );
             $type->itemsType = $arrayType ?? TypeEnums::TYPE_MIXED;
             $type->isScalarItems = in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED]);
@@ -63,23 +60,20 @@ class PropertyTypeFactory
         if ($isScalar || $property->notTransform()) {
             return new ScalarType(
                 $type,
-                $isScalar,
-                $isNullable,
+                $isScalar
             );
         }
 
-        if (function_exists('enum_exists') && !$isScalar && enum_exists($type)) {
+        if (function_exists('enum_exists') && enum_exists($type)) {
             return new EnumType(
                 $type,
-                $isScalar,
-                $isNullable,
+                $isScalar
             );
         }
 
         return new TransformableType(
             $type,
-            $isScalar,
-            $isNullable,
+            $isScalar
         );
     }
 }

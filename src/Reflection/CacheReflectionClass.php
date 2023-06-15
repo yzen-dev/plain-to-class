@@ -19,13 +19,12 @@ final class CacheReflectionClass implements ReflectionClassRepository
 {
     /** @var class-string $class */
     private string $class;
-    
+
+    /** @var array CacheReflectionProperty[] */
     private array $properties;
 
     /**
      * @param class-string $class
-     *
-     * @throws ClassNotFoundException
      */
     public function __construct(string $class, array $properties)
     {
@@ -35,7 +34,6 @@ final class CacheReflectionClass implements ReflectionClassRepository
 
     /**
      * @return CacheReflectionProperty[]
-     * @throws ReflectionException|RuntimeException
      */
     public function getProperties(): array
     {

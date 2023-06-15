@@ -30,7 +30,7 @@ final class RuntimeReflectionProperty extends \ClassTransformer\Contracts\Reflec
     private static array $attributesCache = [];
 
     /**
-     * @param ReflectionProperty $property
+     * @param ReflectionProperty $reflectionProperty
      */
     public function __construct(ReflectionProperty $reflectionProperty)
     {

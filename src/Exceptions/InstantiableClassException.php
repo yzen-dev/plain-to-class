@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ClassTransformer\Exceptions;
 
 use LogicException;
 
 /**
+ * @psalm-api
  * @infection-ignore-all
  */
 class InstantiableClassException extends LogicException

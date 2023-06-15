@@ -1,27 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
-use InvalidArgumentException;
-
+/**
+ *
+ */
 trait ClearCache
 {
-    public function clearCache()
+    /**
+     * @return void
+     */
+    public function clearCache(): void
     {
         if (file_exists(__DIR__ . '/../.cache')) {
             $this->deleteDir(__DIR__ . '/../.cache');
-        } else {
-            if (file_exists(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache')) {
-                $this->deleteDir(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache');
-            }
+        } elseif (file_exists(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache')) {
+            $this->deleteDir(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache');
         }
     }
 
-    private function deleteDir($dirPath)
+    /**
+     * @param string $dirPath
+     *
+     * @return void
+     */
+    private function deleteDir(string $dirPath): void
     {
-        if (!is_dir($dirPath)) {
-            throw new InvalidArgumentException("$dirPath must be a directory");
-        }
         if (!str_ends_with($dirPath, '/')) {
             $dirPath .= '/';
         }

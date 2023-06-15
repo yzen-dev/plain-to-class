@@ -9,5 +9,4 @@ namespace ClassTransformer\Reflection\Types;
  */
 class EnumType extends PropertyType
 {
-
 }

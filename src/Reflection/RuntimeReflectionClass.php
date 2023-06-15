@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
-use ClassTransformer\Exceptions\InstantiableClassException;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 use ReflectionClass;
 use ReflectionException;
-use InvalidArgumentException;
 use ClassTransformer\Contracts\ReflectionClassRepository;
+use ClassTransformer\Exceptions\InstantiableClassException;
 
 use function array_map;
 
@@ -33,10 +33,13 @@ final class RuntimeReflectionClass implements ReflectionClassRepository
 
     /**
      * @return RuntimeReflectionProperty[]
-     * @throws ReflectionException|InvalidArgumentException
+     * @throws InstantiableClassException|ClassNotFoundException
      */
     public function getProperties(): array
     {
+        if (!class_exists($this->class)) {
+            throw new ClassNotFoundException("Class $this->class not found. Please check the class path you specified.");
+        }
         $refInstance = new ReflectionClass($this->class);
 
         if (!$refInstance->isInstantiable()) {

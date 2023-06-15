@@ -11,10 +11,13 @@ namespace ClassTransformer\Reflection\Types;
  */
 class PropertyType
 {
+    /**
+     * @param string $name Name of type
+     * @param bool $isScalar
+     */
     public function __construct(
         public string $name,
-        public bool $isScalar,
-        public bool $nullable,
+        public bool $isScalar
     ) {
     }
 }

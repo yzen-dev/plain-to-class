@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ClassTransformer;
 
 use ClassTransformer\Exceptions\ClassNotFoundException;
+use RuntimeException;
 
 /**
  * Class ClassTransformer
@@ -23,7 +24,7 @@ final class ClassTransformer
      * @param iterable<mixed>|object ...$args
      *
      * @return null|T
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|RuntimeException
      */
     public static function transform(string $className, ...$args): mixed
     {

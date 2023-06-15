@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ClassTransformer;
 
-use ClassTransformer\Attributes\ConvertArray;
-use ClassTransformer\Contracts\ReflectionProperty;
+use RuntimeException;
 use ClassTransformer\Enums\TypeEnums;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\Reflection\Types\ArrayType;
 use ClassTransformer\Reflection\Types\EnumType;
+use ClassTransformer\Reflection\Types\ArrayType;
+use ClassTransformer\Contracts\ReflectionProperty;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Reflection\Types\TransformableType;
+
 use function array_map;
-use function in_array;
 use function is_array;
 use function method_exists;
 
@@ -21,7 +21,6 @@ use function method_exists;
  */
 final class ValueCasting
 {
-
     /**
      * @var HydratorConfig
      */
@@ -44,7 +43,7 @@ final class ValueCasting
      * @param mixed $value
      *
      * @return mixed
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|RuntimeException
      */
     public function castAttribute(mixed $value): mixed
     {
@@ -94,7 +93,7 @@ final class ValueCasting
      */
     private function castArray($value): mixed
     {
-        if (!is_array($value) || $this->property->type->name === TypeEnums::TYPE_MIXED) {
+        if (!is_array($value) || $this->property->type->name === TypeEnums::TYPE_MIXED || !$this->property->type instanceof ArrayType) {
             return $value;
         }
         if (!$this->property->type->isScalarItems) {
@@ -116,7 +115,7 @@ final class ValueCasting
             /** @var \BackedEnum $propertyClass */
             return $propertyClass::from($value);
         }
-        if (is_string($propertyClass) && is_string($value)) {
+        if (is_string($value)) {
             return constant($propertyClass . '::' . $value);
         }
         return $value;

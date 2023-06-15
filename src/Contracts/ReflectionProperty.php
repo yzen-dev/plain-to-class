@@ -36,7 +36,7 @@ abstract class ReflectionProperty
      * @return string
      */
     abstract public function getDocComment(): string;
-    
+
     /**
      * @return bool
      */

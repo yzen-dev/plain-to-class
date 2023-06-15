@@ -60,7 +60,6 @@ final class InstanceBuilder
 
             $caster = new ValueCasting($property, $this->config);
             $genericInstance->{$property->name} = $caster->castAttribute($value);
-
         }
         return $genericInstance;
     }

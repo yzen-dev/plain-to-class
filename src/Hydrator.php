@@ -2,6 +2,7 @@
 
 namespace ClassTransformer;
 
+use RuntimeException;
 use ReflectionException;
 use ClassTransformer\CacheGenerator\CacheGenerator;
 use ClassTransformer\Validators\ClassExistsValidator;
@@ -13,15 +14,19 @@ use function method_exists;
 /**
  * Class ClassRepository
  *
- * @template T of object
+ * @psalm-api
+ * @template T
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class Hydrator
+final class Hydrator
 {
+    /**
+     * @var HydratorConfig
+     */
     private HydratorConfig $config;
 
     /**
-     * @var array<string,ClassRepository[]>
+     * @var array<string,ClassRepository>
      */
     private static array $classRepositoryCache = [];
 
@@ -33,8 +38,11 @@ class Hydrator
     }
 
     /**
+     * @param HydratorConfig|null $config
+     *
+     * @return Hydrator
      */
-    public static function init(HydratorConfig $config = null)
+    public static function init(HydratorConfig $config = null): self
     {
         return new self($config);
     }
@@ -46,9 +54,9 @@ class Hydrator
      * @param iterable<mixed>|object ...$args
      *
      * @return null|T
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|RuntimeException
      */
-    public function create(string $class, ...$args)
+    public function create(string $class, ...$args): mixed
     {
         new ClassExistsValidator($class);
 
@@ -66,7 +74,7 @@ class Hydrator
      * @param array<iterable<mixed>> $args
      *
      * @return null|array<null>|array<T>
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|ReflectionException
      */
     public function createCollection(string $class, array $args): ?array
     {
@@ -82,7 +90,7 @@ class Hydrator
      * @param array<iterable<mixed>> $args
      *
      * @return null|array<null>|array<T>
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|ReflectionException
      */
     public function createMultiple(array $classes, array $args): ?array
     {
@@ -95,12 +103,12 @@ class Hydrator
 
     /**
      * @param class-string<T> $class
-     * @param ...$args
+     * @param iterable<mixed>|object ...$args
      *
      * @return mixed
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException|RuntimeException
      */
-    private function getInstance(string $class, ...$args)
+    private function getInstance(string $class, ...$args): mixed
     {
         if (method_exists($class, 'transform')) {
             $instance = new $class();
@@ -120,7 +128,7 @@ class Hydrator
      * @param class-string<T> $class
      *
      * @return ClassRepository
-     * @throws ClassNotFoundException|ReflectionException
+     * @throws ClassNotFoundException|RuntimeException
      */
     private function createClassRepository(string $class): ClassRepository
     {

@@ -3,10 +3,7 @@
 
 function deleteDir($dirPath)
 {
-    if (!is_dir($dirPath)) {
-        throw new InvalidArgumentException("$dirPath must be a directory");
-    }
-    if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+    if (!str_ends_with($dirPath, '/')) {
         $dirPath .= '/';
     }
     $files = glob($dirPath . '*', GLOB_MARK);
@@ -24,9 +21,7 @@ function deleteDir($dirPath)
 
 if (file_exists(__DIR__ . '/../.cache')) {
     deleteDir(__DIR__ . '/../.cache');
-} else {
-    if (file_exists(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache')) {
-        deleteDir(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache');
-    }
+} elseif (file_exists(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache')) {
+    deleteDir(__DIR__ . '/../vendor/yzen.dev/plain-to-class/.cache');
 }
 exit(0);
