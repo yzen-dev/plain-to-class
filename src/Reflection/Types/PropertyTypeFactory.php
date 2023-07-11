@@ -29,13 +29,16 @@ class PropertyTypeFactory
 
         $type = TypeEnums::TYPE_MIXED;
         $isScalar = true;
+        $isNullable = true;
 
         if ($reflectionType instanceof ReflectionType) {
             $type = $reflectionType;
+            $isNullable = $reflectionType->allowsNull();
         }
         if ($reflectionType instanceof ReflectionNamedType) {
             $type = $reflectionType->getName();
             $isScalar = $reflectionType->isBuiltin();
+            $isNullable = $reflectionType->allowsNull();
         }
 
         if ($type === TypeEnums::TYPE_ARRAY) {
@@ -49,7 +52,8 @@ class PropertyTypeFactory
             $arrayType ??= TypeEnums::TYPE_MIXED;
             $type = new ArrayType(
                 $type,
-                $isScalar
+                $isScalar,
+                $isNullable
             );
             $type->itemsType = $arrayType ?? TypeEnums::TYPE_MIXED;
             $type->isScalarItems = in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED]);
@@ -60,20 +64,23 @@ class PropertyTypeFactory
         if ($isScalar || $property->notTransform()) {
             return new ScalarType(
                 $type,
-                $isScalar
+                $isScalar,
+                $isNullable
             );
         }
 
         if (function_exists('enum_exists') && enum_exists($type)) {
             return new EnumType(
                 $type,
-                $isScalar
+                $isScalar,
+                $isNullable
             );
         }
 
         return new TransformableType(
             $type,
-            $isScalar
+            $isScalar,
+            $isNullable
         );
     }
 }

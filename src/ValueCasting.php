@@ -47,6 +47,10 @@ final class ValueCasting
      */
     public function castAttribute(mixed $value): mixed
     {
+        if ($this->property->type->isNullable && empty($value)) {
+            return null;
+        }
+
         if (($this->property->type->isScalar && !$this->property->type instanceof ArrayType) || $this->property->notTransform()) {
             return $this->castScalar($this->property->type->name, $value);
         }

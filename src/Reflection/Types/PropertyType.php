@@ -14,10 +14,12 @@ class PropertyType
     /**
      * @param string $name Name of type
      * @param bool $isScalar
+     * @param bool $isNullable
      */
     public function __construct(
         public string $name,
-        public bool $isScalar
+        public bool $isScalar,
+        public bool $isNullable
     ) {
     }
 }

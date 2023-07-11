@@ -6,6 +6,7 @@ use ClassTransformer\ValueCasting;
 use PHPUnit\Framework\TestCase;
 use Tests\Units\DTO\ExtendedDto;
 use ClassTransformer\Reflection\RuntimeReflectionProperty;
+use Tests\Units\DTO\TypesDto;
 
 class ValueCastingTest extends TestCase
 {
@@ -46,6 +47,23 @@ class ValueCastingTest extends TestCase
         $value = $caster->castAttribute('1');
         $this->assertIsInt($value);
         $this->assertEquals(1, $value);
+        
+        
+        $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableInt')));
+        $value = $caster->castAttribute('');
+        $this->assertNull($value);
+
+        $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableString')));
+        $value = $caster->castAttribute('');
+        $this->assertNull($value);
+
+        $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableFloat')));
+        $value = $caster->castAttribute('');
+        $this->assertNull($value);
+
+        $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableBool')));
+        $value = $caster->castAttribute('');
+        $this->assertNull($value);
     }
 
     public function testCreateArrayProperty(): void
