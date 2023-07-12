@@ -50,19 +50,19 @@ class ValueCastingTest extends TestCase
         
         
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableInt')));
-        $value = $caster->castAttribute('');
+        $value = $caster->castAttribute(null);
         $this->assertNull($value);
 
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableString')));
-        $value = $caster->castAttribute('');
+        $value = $caster->castAttribute(null);
         $this->assertNull($value);
 
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableFloat')));
-        $value = $caster->castAttribute('');
+        $value = $caster->castAttribute(null);
         $this->assertNull($value);
 
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableBool')));
-        $value = $caster->castAttribute('');
+        $value = $caster->castAttribute(null);
         $this->assertNull($value);
     }
 

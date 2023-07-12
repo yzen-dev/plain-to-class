@@ -47,7 +47,7 @@ final class ValueCasting
      */
     public function castAttribute(mixed $value): mixed
     {
-        if ($this->property->type->isNullable && empty($value)) {
+        if ($this->property->type->isNullable && $value === null) {
             return null;
         }
 
