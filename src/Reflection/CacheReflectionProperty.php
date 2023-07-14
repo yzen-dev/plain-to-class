@@ -52,7 +52,7 @@ final class CacheReflectionProperty extends \ClassTransformer\Contracts\Reflecti
     {
         return $this->notTransform;
     }
-    
+
     /**
      * @return bool
      */

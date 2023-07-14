@@ -14,5 +14,4 @@ class ArrayType extends PropertyType
     /** @var string|class-string */
     public string $itemsType;
     public bool $isScalarItems;
-    
 }

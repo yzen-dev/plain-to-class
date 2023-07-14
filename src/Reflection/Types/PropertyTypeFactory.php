@@ -58,7 +58,7 @@ class PropertyTypeFactory
                 $arrayType = TransformUtils::getClassFromPhpDoc($property->getDocComment());
             }
             $arrayType ??= TypeEnums::TYPE_MIXED;
-            
+
             $typeInstance = new ArrayType(
                 $type,
                 $isScalar,
