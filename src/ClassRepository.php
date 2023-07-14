@@ -3,8 +3,6 @@
 namespace ClassTransformer;
 
 use ClassTransformer\Contracts\ReflectionProperty;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\Reflection\CacheReflectionProperty;
 use ClassTransformer\Contracts\ReflectionClassRepository;
 
 /**
@@ -14,22 +12,21 @@ use ClassTransformer\Contracts\ReflectionClassRepository;
  */
 final class ClassRepository
 {
-    /** @var class-string $class */
+    /** @var string $class */
     private string $class;
 
     /** @var ReflectionClassRepository $class */
     private ReflectionClassRepository $classRepository;
 
     /**
-     * @var array<string,CacheReflectionProperty[]>
+     * @var array<string,ReflectionProperty[]>
      */
     private static array $propertiesTypesCache = [];
 
 
     /**
-     * @param class-string $class
-     *
-     * @throws ClassNotFoundException
+     * @param string $class
+     * @param ReflectionClassRepository $classRepository
      */
     public function __construct(
         string $class,

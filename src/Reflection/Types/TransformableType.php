@@ -11,4 +11,14 @@ namespace ClassTransformer\Reflection\Types;
  */
 class TransformableType extends PropertyType
 {
+    /**
+     * @param class-string $name Name of type
+     * @param bool $isNullable
+     */
+    public function __construct(
+        public string $name,
+        public bool $isNullable
+    ) {
+        parent::__construct($this->name, false, $isNullable);
+    }
 }

@@ -120,6 +120,7 @@ final class CacheGenerator
             $property->type,
             $property->hasSetMutator(),
             $property->notTransform(),
+            $property->convertEmptyToNull(),
             $property->getDocComment(),
             $args,
             $this->getAliases($args),

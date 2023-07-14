@@ -32,13 +32,21 @@ class PropertyTypeFactory
         $isNullable = true;
 
         if ($reflectionType instanceof ReflectionType) {
-            $type = $reflectionType;
+            $type = (string)$reflectionType;
             $isNullable = $reflectionType->allowsNull();
         }
         if ($reflectionType instanceof ReflectionNamedType) {
             $type = $reflectionType->getName();
             $isScalar = $reflectionType->isBuiltin();
             $isNullable = $reflectionType->allowsNull();
+        }
+
+        if ($property->notTransform()) {
+            return new ScalarType(
+                $type,
+                $isScalar,
+                $isNullable
+            );
         }
 
         if ($type === TypeEnums::TYPE_ARRAY) {
@@ -50,18 +58,19 @@ class PropertyTypeFactory
                 $arrayType = TransformUtils::getClassFromPhpDoc($property->getDocComment());
             }
             $arrayType ??= TypeEnums::TYPE_MIXED;
-            $type = new ArrayType(
+            
+            $typeInstance = new ArrayType(
                 $type,
                 $isScalar,
                 $isNullable
             );
-            $type->itemsType = $arrayType ?? TypeEnums::TYPE_MIXED;
-            $type->isScalarItems = in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED]);
+            $typeInstance->itemsType = $arrayType ?? TypeEnums::TYPE_MIXED;
+            $typeInstance->isScalarItems = in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED]);
 
-            return $type;
+            return $typeInstance;
         }
 
-        if ($isScalar || $property->notTransform()) {
+        if ($isScalar) {
             return new ScalarType(
                 $type,
                 $isScalar,
@@ -80,7 +89,6 @@ class PropertyTypeFactory
         return new TransformableType(
             $type,
             $isScalar,
-            $isNullable
         );
     }
 }

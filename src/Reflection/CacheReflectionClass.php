@@ -17,14 +17,15 @@ use ClassTransformer\Contracts\ReflectionClassRepository;
  */
 final class CacheReflectionClass implements ReflectionClassRepository
 {
-    /** @var class-string $class */
+    /** @var string $class */
     private string $class;
 
     /** @var array CacheReflectionProperty[] */
     private array $properties;
 
     /**
-     * @param class-string $class
+     * @param string $class
+     * @param CacheReflectionProperty[] $properties
      */
     public function __construct(string $class, array $properties)
     {

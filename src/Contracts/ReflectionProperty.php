@@ -19,14 +19,14 @@ abstract class ReflectionProperty
     public PropertyType $type;
 
     /**
-     * @param string $name
+     * @param class-string $name
      *
      * @return mixed
      */
     abstract public function getAttribute(string $name): mixed;
 
     /**
-     * @param string $name
+     * @param class-string $name
      *
      * @return null|array<string>
      */
@@ -46,6 +46,11 @@ abstract class ReflectionProperty
      * @return bool
      */
     abstract public function notTransform(): bool;
+
+    /**
+     * @return bool
+     */
+    abstract public function convertEmptyToNull(): bool;
 
     /**
      * @return array<string>

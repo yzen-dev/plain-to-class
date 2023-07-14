@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection;
 
+use ClassTransformer\Attributes\EmptyToNull;
 use ReflectionProperty;
 use ReflectionAttribute;
 use ClassTransformer\TransformUtils;
@@ -58,7 +59,15 @@ final class RuntimeReflectionProperty extends \ClassTransformer\Contracts\Reflec
     }
 
     /**
-     * @param string $name
+     * @return bool
+     */
+    public function convertEmptyToNull(): bool
+    {
+        return $this->getAttribute(EmptyToNull::class) !== null;
+    }
+
+    /**
+     * @param class-string $name
      *
      * @template T
      * @return null|ReflectionAttribute
@@ -77,11 +86,11 @@ final class RuntimeReflectionProperty extends \ClassTransformer\Contracts\Reflec
     }
 
     /**
-     * @param string|null $name
+     * @param class-string $name
      *
      * @return null|array<string>
      */
-    public function getAttributeArguments(?string $name = null): ?array
+    public function getAttributeArguments(string $name): ?array
     {
         return $this->getAttribute($name)?->getArguments();
     }

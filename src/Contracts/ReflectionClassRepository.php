@@ -8,7 +8,7 @@ namespace ClassTransformer\Contracts;
 interface ReflectionClassRepository
 {
     /**
-     * @return array<ReflectionProperty>
+     * @return ReflectionProperty[]
      */
     public function getProperties(): array;
 

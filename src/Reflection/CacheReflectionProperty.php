@@ -14,6 +14,15 @@ use ClassTransformer\Reflection\Types\PropertyType;
 final class CacheReflectionProperty extends \ClassTransformer\Contracts\ReflectionProperty
 {
     /**
+     * @param class-string  $class
+     * @param class-string|string  $name
+     * @param PropertyType $type
+     * @param bool $hasSetMutator
+     * @param bool $notTransform
+     * @param bool $convertEmptyToNull
+     * @param string $docComment
+     * @param array $attributes
+     * @param array $aliases
      */
     public function __construct(
         public string $class,
@@ -21,6 +30,7 @@ final class CacheReflectionProperty extends \ClassTransformer\Contracts\Reflecti
         public PropertyType $type,
         public bool $hasSetMutator,
         public bool $notTransform,
+        public bool $convertEmptyToNull,
         public string $docComment,
         public array $attributes,
         public array $aliases,
@@ -41,6 +51,14 @@ final class CacheReflectionProperty extends \ClassTransformer\Contracts\Reflecti
     public function notTransform(): bool
     {
         return $this->notTransform;
+    }
+    
+    /**
+     * @return bool
+     */
+    public function convertEmptyToNull(): bool
+    {
+        return $this->convertEmptyToNull;
     }
 
     /**

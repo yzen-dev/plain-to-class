@@ -26,7 +26,7 @@ final class ArgumentsRepository
 
     /**
      *
-     * @param iterable<mixed>|array ...$args
+     * @param iterable<mixed>|object ...$args
      */
     public function __construct(...$args)
     {

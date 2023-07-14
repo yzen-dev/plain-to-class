@@ -2,6 +2,7 @@
 
 namespace Tests\Units;
 
+use ClassTransformer\Exceptions\InvalidArgumentException;
 use ClassTransformer\ValueCasting;
 use PHPUnit\Framework\TestCase;
 use Tests\Units\DTO\ExtendedDto;
@@ -11,6 +12,15 @@ use Tests\Units\DTO\TypesDto;
 class ValueCastingTest extends TestCase
 {
 
+    public function testCreateNotValidProperty(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $caster = new ValueCasting(
+            new RuntimeReflectionProperty(new \ReflectionProperty(ExtendedDto::class, 'id'))
+        );
+        $caster->castAttribute([1,2]);
+    }
+    
     public function testCreateProperty(): void
     {
         $caster = new ValueCasting(
@@ -56,6 +66,10 @@ class ValueCastingTest extends TestCase
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableString')));
         $value = $caster->castAttribute(null);
         $this->assertNull($value);
+        
+        $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'emptyString')));
+        $value = $caster->castAttribute('');
+        $this->assertNull($value);
 
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableFloat')));
         $value = $caster->castAttribute(null);
@@ -64,6 +78,7 @@ class ValueCastingTest extends TestCase
         $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableBool')));
         $value = $caster->castAttribute(null);
         $this->assertNull($value);
+        
     }
 
     public function testCreateArrayProperty(): void
