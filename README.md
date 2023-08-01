@@ -84,7 +84,7 @@ var_dump($dto);
 Result:
 
 ```php
-object(\LoginDTO)
+object(\CreateUserDTO)
   'email' => string(13) "test@mail.com"
   'balance' => float(128.41) 
 ```
