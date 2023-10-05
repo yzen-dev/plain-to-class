@@ -145,6 +145,7 @@ class ClassTransformer
             }
 
             if (self::propertyIsScalar($propertyClassTypeName)) {
+                settype($value, $propertyClassTypeName[0]);
                 $instance->{$item->name} = $value;
                 continue;
             }
