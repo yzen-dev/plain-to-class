@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use ClassTransformer\Hydrator;
 use ReflectionException;
 use PHPUnit\Framework\TestCase;
 use Tests\Integration\DTO\UserDTO;
 use Tests\Integration\DTO\BasketDTO;
 use Tests\Integration\DTO\ProductDTO;
-use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\PurchaseDTO;
 use Tests\Integration\DTO\UserEmptyTypeDTO;
 use ClassTransformer\Exceptions\ClassNotFoundException;
@@ -28,7 +28,7 @@ class ClassTransformerFromObjectTest extends TestCase
      */
     public function testEmptyData(): void
     {
-        $userDTO = ClassTransformer::transform(UserDTO::class);
+        $userDTO = (new Hydrator())->create(UserDTO::class);
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertTrue(!isset($userDTO->id));
     }
@@ -39,7 +39,7 @@ class ClassTransformerFromObjectTest extends TestCase
     public function testBaseObject(): void
     {
         $data = $this->getBaseObject();
-        $userDTO = ClassTransformer::transform(UserDTO::class, $data);
+        $userDTO = (new Hydrator())->create(UserDTO::class, $data);
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data->id, $userDTO->id);
         self::assertEquals($data->email, $userDTO->email);
@@ -55,7 +55,7 @@ class ClassTransformerFromObjectTest extends TestCase
     public function testBaseObjectPhp8(): void
     {
         $data = $this->getBaseObject();
-        $userDTO = ClassTransformer::transform(UserDTO::class, id: $data->id, email: $data->email, balance: $data->balance);
+        $userDTO = (new Hydrator())->create(UserDTO::class, id: $data->id, email: $data->email, balance: $data->balance);
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data->id, $userDTO->id);
         self::assertEquals($data->email, $userDTO->email);
@@ -76,7 +76,7 @@ class ClassTransformerFromObjectTest extends TestCase
             'balance'=>1,
             'mixed'=> ['1'],
         ];
-        $userDTO = ClassTransformer::transform(UserDTO::class,$data);
+        $userDTO = (new Hydrator())->create(UserDTO::class,$data);
         self::assertInstanceOf(UserDTO::class, $userDTO);
     }
 
@@ -86,7 +86,7 @@ class ClassTransformerFromObjectTest extends TestCase
     public function testRecursiveObject(): void
     {
         $data = $this->getRecursiveObject();
-        $purchaseDTO = ClassTransformer::transform(PurchaseDTO::class, $data);
+        $purchaseDTO = (new Hydrator())->create(PurchaseDTO::class, $data);
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);
         self::assertEquals($data->user->id, $purchaseDTO->user->id);
@@ -112,7 +112,7 @@ class ClassTransformerFromObjectTest extends TestCase
     public function testTripleRecursiveObject(): void
     {
         $data = $this->getTripleRecursiveObject();
-        $basketDTO = ClassTransformer::transform(BasketDTO::class, $data);
+        $basketDTO = (new Hydrator())->create(BasketDTO::class, $data);
         foreach ($basketDTO->orders as $key => $purchase) {
             self::assertInstanceOf(PurchaseDTO::class, $purchase);
             self::assertInstanceOf(UserDTO::class, $purchase->user);
@@ -140,7 +140,7 @@ class ClassTransformerFromObjectTest extends TestCase
     public function testEmptyTypeObject(): void
     {
         $data = $this->getBaseObject();
-        $userDTO = ClassTransformer::transform(UserEmptyTypeDTO::class, $data);
+        $userDTO = (new Hydrator())->create(UserEmptyTypeDTO::class, $data);
         self::assertInstanceOf(UserEmptyTypeDTO::class, $userDTO);
         self::assertEquals($data->id, $userDTO->id);
         self::assertEquals($data->email, $userDTO->email);

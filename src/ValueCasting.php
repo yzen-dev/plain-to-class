@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace ClassTransformer;
 
-use RuntimeException;
+use ReflectionException;
 use ClassTransformer\Enums\TypeEnums;
+use ClassTransformer\Reflection\ClassProperty;
 use ClassTransformer\Reflection\Types\EnumType;
 use ClassTransformer\Reflection\Types\ArrayType;
-use ClassTransformer\Contracts\ReflectionProperty;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 use ClassTransformer\Exceptions\InvalidArgumentException;
-
-use function array_map;
+use ClassTransformer\Exceptions\InstantiableClassException;
 use function is_array;
+use function array_map;
 use function method_exists;
 
 /**
@@ -21,30 +21,22 @@ use function method_exists;
  */
 final class ValueCasting
 {
-    /**
-     * @var HydratorConfig
-     */
-    private HydratorConfig $config;
-
-    /** @var ReflectionProperty $property */
-    private ReflectionProperty $property;
+    /** @var ClassProperty $property */
+    private ClassProperty $property;
 
     /**
-     * @param ReflectionProperty $property
-     * @param HydratorConfig|null $config
+     * @param ClassProperty $property
      */
-    public function __construct(ReflectionProperty $property, HydratorConfig $config = null)
+    public function __construct(ClassProperty $property)
     {
         $this->property = $property;
-        $this->config = $config ?? new HydratorConfig();
     }
 
     /**
      * @param mixed $value
      *
      * @return mixed
-     * @throws ClassNotFoundException|RuntimeException
-     * @throws InvalidArgumentException
+     * @throws ClassNotFoundException|InvalidArgumentException|InstantiableClassException|ReflectionException
      */
     public function castAttribute(mixed $value): mixed
     {
@@ -72,7 +64,8 @@ final class ValueCasting
             return $this->castEnum($value);
         }
 
-        return (new Hydrator($this->config))
+        /** @psalm-suppress ArgumentTypeCoercion */
+        return (new Hydrator())
             ->create($this->property->type->name, $value);
     }
 
@@ -106,8 +99,7 @@ final class ValueCasting
      * @param array<mixed>|mixed $value
      *
      * @return array<mixed>|mixed
-     * @throws ClassNotFoundException
-     * @throws InvalidArgumentException
+     * @throws ClassNotFoundException|InstantiableClassException|ReflectionException|InvalidArgumentException
      */
     private function castArray($value): mixed
     {
@@ -115,14 +107,15 @@ final class ValueCasting
             return $value;
         }
         if (!$this->property->type->isScalarItems) {
-            return array_map(fn($el) => (new Hydrator($this->config))->create($this->property->type->itemsType, $el), $value);
+            /** @psalm-suppress ArgumentTypeCoercion */
+            return array_map(fn($el): mixed => (new Hydrator())->create($this->property->type->itemsType, $el), $value);
         }
 
         if ($this->property->type->itemsType === TypeEnums::TYPE_MIXED) {
             return $value;
         }
 
-        return array_map(fn($item) => $this->castScalar($this->property->type->itemsType, $item), $value);
+        return array_map(fn($item): mixed => $this->castScalar($this->property->type->itemsType, $item), $value);
     }
 
     /**
@@ -133,6 +126,7 @@ final class ValueCasting
     private function castEnum(int|string $value): mixed
     {
         $propertyClass = $this->property->type->name;
+        /** @psalm-suppress ArgumentTypeCoercion */
         if ($propertyClass && method_exists($propertyClass, 'from')) {
             /** @var \BackedEnum $propertyClass */
             return $propertyClass::from($value);

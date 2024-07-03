@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
-use ClassTransformer\ClassTransformer;
-use ClassTransformer\Exceptions\ClassNotFoundException;
-use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use ClassTransformer\Hydrator;
+use PHPUnit\Framework\TestCase;
 use Tests\Integration\DTO\ColorEnum;
 use Tests\Integration\DTO\ColorScalarEnum;
 use Tests\Integration\DTO\ExampleWithEnumDTO;
+use ClassTransformer\Exceptions\ClassNotFoundException;
 
 /**
  * Class EnumTest
@@ -32,7 +32,7 @@ class EnumTest extends TestCase
             'colorEnum' => 'Red',
             'colorScalarEnum' => 'R',
         ];
-        $model = ClassTransformer::transform(ExampleWithEnumDTO::class, $data);
+        $model = (new Hydrator())->create(ExampleWithEnumDTO::class, $data);
 
         self::assertInstanceOf(ExampleWithEnumDTO::class, $model);
         self::assertInstanceOf(ColorEnum::class, $model->colorEnum);

@@ -2,13 +2,10 @@
 
 namespace ClassTransformer;
 
-use RuntimeException;
 use ReflectionException;
-use ClassTransformer\CacheGenerator\CacheGenerator;
-use ClassTransformer\Validators\ClassExistsValidator;
 use ClassTransformer\Exceptions\ClassNotFoundException;
-use ClassTransformer\Reflection\RuntimeReflectionClass;
-
+use ClassTransformer\Exceptions\InvalidArgumentException;
+use ClassTransformer\Exceptions\InstantiableClassException;
 use function method_exists;
 
 /**
@@ -20,47 +17,28 @@ use function method_exists;
  */
 final class Hydrator
 {
-    /**
-     * @var HydratorConfig
-     */
-    private HydratorConfig $config;
-
-    /**
-     * @var array<string,ClassRepository>
-     */
-    private static array $classRepositoryCache = [];
+    /** @var InstanceFactory */
+    private InstanceFactory $instanceFactory;
 
     /**
      */
-    public function __construct(HydratorConfig $config = null)
+    public function __construct()
     {
-        $this->config = $config ?? new HydratorConfig();
-    }
-
-    /**
-     * @param HydratorConfig|null $config
-     *
-     * @return Hydrator
-     */
-    public static function init(HydratorConfig $config = null): self
-    {
-        return new self($config);
+        $this->instanceFactory = new InstanceFactory();
     }
 
     /**
      * Create instance T class
      *
      * @param class-string<T> $class
-     * @param iterable<mixed>|object ...$args
+     * @param iterable<mixed>|object|string ...$args
      *
      * @return null|T
-     * @throws ClassNotFoundException|RuntimeException
+     * @throws ClassNotFoundException|InstantiableClassException|ReflectionException|InvalidArgumentException
      */
     public function create(string $class, ...$args): mixed
     {
-        new ClassExistsValidator($class);
-
-        $instance = $this->getInstance($class, ...$args);
+        $instance = $this->instanceFactory->getInstance($class, ...$args);
 
         if (method_exists($instance, 'afterTransform')) {
             $instance->afterTransform();
@@ -74,7 +52,7 @@ final class Hydrator
      * @param array<iterable<mixed>> $args
      *
      * @return null|array<null>|array<T>
-     * @throws ClassNotFoundException|ReflectionException
+     * @throws ClassNotFoundException|InstantiableClassException|ReflectionException|InvalidArgumentException
      */
     public function createCollection(string $class, array $args): ?array
     {
@@ -86,11 +64,11 @@ final class Hydrator
     }
 
     /**
-     * @param array<class-string<T>> $className
+     * @param array<class-string<T>> $classes
      * @param array<iterable<mixed>> $args
      *
      * @return null|array<null>|array<T>
-     * @throws ClassNotFoundException|ReflectionException
+     * @throws ClassNotFoundException|InstantiableClassException|ReflectionException|InvalidArgumentException
      */
     public function createMultiple(array $classes, array $args): ?array
     {
@@ -99,52 +77,5 @@ final class Hydrator
             $result [] = $this->create($class, $args[$key]);
         }
         return $result;
-    }
-
-    /**
-     * @param class-string<T> $class
-     * @param iterable<mixed>|object ...$args
-     *
-     * @return mixed
-     * @throws ClassNotFoundException|RuntimeException
-     */
-    private function getInstance(string $class, ...$args): mixed
-    {
-        if (method_exists($class, 'transform')) {
-            $instance = new $class();
-            $instance->transform(...$args);
-            return $instance;
-        }
-
-        return (new InstanceBuilder(
-            $this->createClassRepository($class),
-            new ArgumentsRepository(...$args),
-            $this->config
-        ))
-            ->build();
-    }
-
-    /**
-     * @param class-string<T> $class
-     *
-     * @return ClassRepository
-     * @throws ClassNotFoundException|RuntimeException
-     */
-    private function createClassRepository(string $class): ClassRepository
-    {
-        if (isset(self::$classRepositoryCache[$class])) {
-            return self::$classRepositoryCache[$class];
-        }
-
-        if ($this->config->cacheEnabled) {
-            $repository = CacheGenerator::create($class, $this->config)->getClass();
-        } else {
-            $repository = new RuntimeReflectionClass($class);
-        }
-
-        return self::$classRepositoryCache[$class] = new ClassRepository(
-            $class,
-            $repository
-        );
     }
 }

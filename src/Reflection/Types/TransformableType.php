@@ -9,10 +9,10 @@ namespace ClassTransformer\Reflection\Types;
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class TransformableType extends PropertyType
+final class TransformableType extends PropertyType
 {
     /**
-     * @param class-string $name Name of type
+     * @param class-string|string $name Name of type
      * @param bool $isNullable
      */
     public function __construct(

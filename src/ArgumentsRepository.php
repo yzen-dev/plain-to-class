@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace ClassTransformer;
 
 use ClassTransformer\Attributes\WritingStyle;
-use ClassTransformer\Contracts\ReflectionProperty;
+use ClassTransformer\Reflection\ClassProperty;
 use ClassTransformer\Exceptions\ValueNotFoundException;
-
 use function sizeof;
 use function is_array;
 use function func_get_args;
@@ -26,27 +25,31 @@ final class ArgumentsRepository
 
     /**
      *
-     * @param iterable<mixed>|object ...$args
+     * @param iterable<mixed>|object|string ...$args
      */
     public function __construct(...$args)
     {
         // Unpacking named arguments
-        $inArgs = sizeof(func_get_args()) === 1 ? $args[0] : $args;
+        $input = sizeof(func_get_args()) === 1 ? $args[0] : $args;
 
-        if (!is_array($inArgs)) {
-            $inArgs = (array)$inArgs;
+        if (!is_array($input)) {
+            if (is_string($input)) {
+                $input = json_decode($input, true);
+            } else {
+                $input = (array)$input;
+            }
         }
 
-        $this->args = $inArgs;
+        $this->args = $input;
     }
 
     /**
-     * @param ReflectionProperty $genericProperty
+     * @param ClassProperty $genericProperty
      *
      * @return mixed
      * @throws ValueNotFoundException
      */
-    public function getValue(ReflectionProperty $genericProperty): mixed
+    public function getValue(ClassProperty $genericProperty): mixed
     {
         if (array_key_exists($genericProperty->name, $this->args)) {
             return $this->args[$genericProperty->name];

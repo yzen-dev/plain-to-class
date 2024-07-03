@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace ClassTransformer\Reflection\Types;
 
+use ReflectionType;
 use ReflectionNamedType;
 use ClassTransformer\TransformUtils;
 use ClassTransformer\Enums\TypeEnums;
 use ClassTransformer\Attributes\ConvertArray;
-use ClassTransformer\Reflection\RuntimeReflectionProperty;
-use ReflectionType;
+use ClassTransformer\Reflection\ClassProperty;
 
 /**
  * Class PropertyTypeFactory
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class PropertyTypeFactory
+final class PropertyTypeFactory
 {
     /**
-     * @param RuntimeReflectionProperty $property
+     * @param ClassProperty $property
      *
      * @return ArrayType|EnumType|PropertyType|ScalarType|TransformableType
      */
-    public static function create(RuntimeReflectionProperty $property)
+    public static function create(ClassProperty $property)
     {
         $reflectionType = $property->reflectionProperty->getType();
 
@@ -54,6 +54,9 @@ class PropertyTypeFactory
 
             if ($arrayTypeAttr !== null && isset($arrayTypeAttr[0])) {
                 $arrayType = $arrayTypeAttr[0];
+                if (is_array($arrayType)) {
+                    $arrayType = $arrayType[0];
+                }
             } else {
                 $arrayType = TransformUtils::getClassFromPhpDoc($property->getDocComment());
             }
@@ -62,10 +65,10 @@ class PropertyTypeFactory
             $typeInstance = new ArrayType(
                 $type,
                 $isScalar,
-                $isNullable
+                $isNullable,
+                $arrayType,
+                in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED])
             );
-            $typeInstance->itemsType = $arrayType ?? TypeEnums::TYPE_MIXED;
-            $typeInstance->isScalarItems = in_array($arrayType, [TypeEnums::TYPE_INTEGER, TypeEnums::TYPE_FLOAT, TypeEnums::TYPE_STRING, TypeEnums::TYPE_BOOLEAN, TypeEnums::TYPE_MIXED]);
 
             return $typeInstance;
         }

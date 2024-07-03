@@ -9,9 +9,21 @@ namespace ClassTransformer\Reflection\Types;
  *
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class ArrayType extends PropertyType
+final class ArrayType extends PropertyType
 {
-    /** @var string|class-string */
-    public string $itemsType;
-    public bool $isScalarItems;
+    /**
+     * @param string|class-string $name Name of type
+     * @param bool $isScalar
+     * @param bool $isNullable
+     * @param string|class-string $itemsType
+     * @param bool $isScalarItems
+     */
+    public function __construct(
+        public string $name,
+        public bool $isScalar,
+        public bool $isNullable,
+        public string $itemsType,
+        public bool $isScalarItems,
+    ) {
+    }
 }

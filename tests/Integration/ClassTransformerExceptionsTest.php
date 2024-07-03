@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
 use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\FakeClassDTO;
@@ -21,13 +22,13 @@ class ClassTransformerExceptionsTest extends TestCase
     public function testClassNotFound(): void
     {
         $this->expectException(ClassNotFoundException::class);
-        ClassTransformer::transform(FakeClassDTO::class, ['fake' => ['exception']]);
+        (new Hydrator())->create(FakeClassDTO::class, ['fake' => ['exception']]);
     }
 
     public function testClassNotFoundPhp8(): void
     {
         $this->expectException(ClassNotFoundException::class);
 
-        ClassTransformer::transform(FakeClassDTO::class, fake: ['exception']);
+        (new Hydrator())->create(FakeClassDTO::class, fake: ['exception']);
     }
 }

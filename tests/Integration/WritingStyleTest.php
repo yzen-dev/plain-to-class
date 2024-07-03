@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use ReflectionException;
+use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
-use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\WithAliasDTO;
 use Tests\Integration\DTO\WritingStyleEmpyDTO;
 use Tests\Integration\DTO\WritingStyleCamelCaseDTO;
@@ -29,7 +29,7 @@ class WritingStyleTest extends TestCase
             'contact_fio' => 'corey',
             'contact_email' => 'test@mail.com',
         ];
-        $model = ClassTransformer::transform(WritingStyleEmpyDTO::class, $data);
+        $model = (new Hydrator())->create(WritingStyleEmpyDTO::class, $data);
 
         self::assertInstanceOf(WritingStyleEmpyDTO::class, $model);
         self::assertTrue(!isset($model->contactFio));
@@ -45,7 +45,7 @@ class WritingStyleTest extends TestCase
             'contact_fio' => 'corey',
             'contact_email' => 'test@mail.com',
         ];
-        $model = ClassTransformer::transform(WritingStyleCamelCaseDTO::class, $data);
+        $model = (new Hydrator())->create(WritingStyleCamelCaseDTO::class, $data);
 
         self::assertInstanceOf(WritingStyleCamelCaseDTO::class, $model);
 
@@ -62,7 +62,7 @@ class WritingStyleTest extends TestCase
             'contactFio' => 'corey',
             'contactEmail' => 'test@mail.com',
         ];
-        $model = ClassTransformer::transform(WritingStyleSnakeCaseDTO::class, $data);
+        $model = (new Hydrator())->create(WritingStyleSnakeCaseDTO::class, $data);
 
         self::assertInstanceOf(WritingStyleSnakeCaseDTO::class, $model);
 
@@ -79,7 +79,7 @@ class WritingStyleTest extends TestCase
             'userFio' => 'corey',
             'phone' => '10101010',
         ];
-        $model = ClassTransformer::transform(WithAliasDTO::class, $data);
+        $model = (new Hydrator())->create(WithAliasDTO::class, $data);
 
         self::assertInstanceOf(WithAliasDTO::class, $model);
 

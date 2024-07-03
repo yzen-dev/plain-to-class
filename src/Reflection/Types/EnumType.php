@@ -8,6 +8,6 @@ namespace ClassTransformer\Reflection\Types;
  * @psalm-api
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class EnumType extends PropertyType
+final class EnumType extends PropertyType
 {
 }

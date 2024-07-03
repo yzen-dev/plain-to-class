@@ -16,15 +16,22 @@ use ClassTransformer\Reflection\Types\PropertyTypeFactory;
 use function method_exists;
 
 /**
- * Class GenericProperty
+ * Class ReflectionProperty
  */
-final class RuntimeReflectionProperty extends \ClassTransformer\Contracts\ReflectionProperty
+final class ClassProperty
 {
-    /** @var ReflectionProperty */
-    public ReflectionProperty $reflectionProperty;
+    /** @var class-string|string $propertyClass */
+    public string $name;
+
+    /** @var class-string */
+    public string $class;
 
     /** @var PropertyType */
     public PropertyType $type;
+
+    /** @var ReflectionProperty */
+    public ReflectionProperty $reflectionProperty;
+
 
 
     /** @var array<class-string,array<string, array<ReflectionAttribute>>> */
@@ -88,7 +95,7 @@ final class RuntimeReflectionProperty extends \ClassTransformer\Contracts\Reflec
     /**
      * @param class-string $name
      *
-     * @return null|array<string>
+     * @return null|array<string|array<string>>
      */
     public function getAttributeArguments(string $name): ?array
     {

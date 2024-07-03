@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use ReflectionException;
+use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
-use ClassTransformer\ClassTransformer;
+use Tests\Integration\DTO\UserConstructorProperties;
 use Tests\Integration\DTO\UserNoTypeArrayDTO;
 use Tests\Integration\DTO\CustomTransformUserDTO;
 use Tests\Integration\DTO\CustomTransformUserDTOArray;
@@ -27,7 +28,7 @@ class CustomTransformerTest extends TestCase
             'login' => 'test-login',
             'fio' => 'Corey',
         ];
-        $userDTO = ClassTransformer::transform(CustomTransformUserDTOArray::class, $data);
+        $userDTO = (new Hydrator())->create(CustomTransformUserDTOArray::class, $data);
 
         self::assertInstanceOf(CustomTransformUserDTOArray::class, $userDTO);
 
@@ -36,6 +37,21 @@ class CustomTransformerTest extends TestCase
 
         self::assertEquals('test-login', $userDTO->email);
         self::assertEquals('Corey', $userDTO->username);
+    }
+    
+    public function testConstructProperties(): void
+    {
+        $data = new \stdClass();
+        $data->id = 1;
+        $data->email = 'fake@mail.com';
+        $data->balance = 128.43;
+        $data->isBlocked = false;
+        
+        $userDTO = (new Hydrator())->create(UserConstructorProperties::class, $data);
+
+        self::assertInstanceOf(UserConstructorProperties::class, $userDTO);
+        self::assertEquals($data->email, $userDTO->email);
+        self::assertEquals($data->balance, $userDTO->balance);
     }
 
     /**
@@ -50,7 +66,7 @@ class CustomTransformerTest extends TestCase
                 ['id' => 2, 'price' => 10.56,],
             ],
         ];
-        $userDTO = ClassTransformer::transform(UserNoTypeArrayDTO::class, $data);
+        $userDTO = (new Hydrator())->create(UserNoTypeArrayDTO::class, $data);
 
         self::assertInstanceOf(UserNoTypeArrayDTO::class, $userDTO);
 
@@ -69,7 +85,7 @@ class CustomTransformerTest extends TestCase
      */
     public function testCustomTransformPhp8(): void
     {
-        $userDTO = ClassTransformer::transform(CustomTransformUserDTO::class, login: 'test-login', fio: 'Corey');
+        $userDTO = (new Hydrator())->create(CustomTransformUserDTO::class, login: 'test-login', fio: 'Corey');
 
         self::assertInstanceOf(CustomTransformUserDTO::class, $userDTO);
 

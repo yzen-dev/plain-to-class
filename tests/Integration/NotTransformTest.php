@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use ReflectionException;
+use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
-use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\UserNotTransformDTO;
 use Tests\Integration\DTO\UserNotTransformRelationDTO;
 use ClassTransformer\Exceptions\ClassNotFoundException;
@@ -27,7 +27,7 @@ class NotTransformTest extends TestCase
             'fio' => 'corey',
             'relation' => new UserNotTransformRelationDTO(),
         ];
-        $model = ClassTransformer::transform(UserNotTransformDTO::class, $data);
+        $model = (new Hydrator())->create(UserNotTransformDTO::class, $data);
         $this->assertTrue(true);
     }
 

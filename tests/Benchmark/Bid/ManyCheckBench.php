@@ -4,7 +4,6 @@ namespace Tests\Benchmark\Bid;
 
 use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
-use ClassTransformer\HydratorConfig;
 use Tests\Benchmark\Bid\Dto\Address\AddressClean;
 use Tests\Benchmark\Bid\Dto\Address\MetroDto;
 use Tests\Benchmark\Bid\Dto\UserDto;
@@ -147,21 +146,6 @@ class ManyCheckBench extends TestCase
                 $newProduct->count = $product['count'];
                 $purchase->products [] = $newProduct;
             }
-
-            $this->assertEquals($data['user']['id'], $purchase->user->id);
-        }
-    }
-
-    /**
-     * @Revs(10000)
-     */
-    public function benchTransformCacheReflection(): void
-    {
-        $data = $this->getPurcheseObject();
-
-        for ($i = 0; $i < 10; ++$i) {
-            $purchase = (new Hydrator(new HydratorConfig(true)))
-                ->create(PurchaseDto::class, $data);
 
             $this->assertEquals($data['user']['id'], $purchase->user->id);
         }

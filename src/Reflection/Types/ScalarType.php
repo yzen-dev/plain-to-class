@@ -10,6 +10,6 @@ namespace ClassTransformer\Reflection\Types;
  * @psalm-api
  * @author yzen.dev <yzen.dev@gmail.com>
  */
-class ScalarType extends PropertyType
+final class ScalarType extends PropertyType
 {
 }

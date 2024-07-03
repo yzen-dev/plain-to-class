@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Integration;
 
 use ReflectionException;
+use ClassTransformer\Hydrator;
 use PHPUnit\Framework\TestCase;
-use ClassTransformer\ClassTransformer;
 use Tests\Integration\DTO\CustomSetterAttibuteDTO;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
@@ -29,7 +29,7 @@ class CustomSetterAttributeTest extends TestCase
             'real_address' => 'TEST ADDRESS',
             'userName' => 'yzen',
         ];
-        $userDTO = ClassTransformer::transform(CustomSetterAttibuteDTO::class, $data);
+        $userDTO = (new Hydrator())->create(CustomSetterAttibuteDTO::class, $data);
         self::assertInstanceOf(CustomSetterAttibuteDTO::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);
         self::assertEquals(strtolower($data['real_address']), $userDTO->real_address);

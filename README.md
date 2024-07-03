@@ -38,7 +38,6 @@ This is where this package comes to the rescue, which takes care of all the work
   - [After Transform](#after-transform)
   - [Custom transform](#custom-transform)
   - [Comparison](#Comparison)
-  - [Cache](#Cache)
 
 ## **Installation**
 
@@ -347,17 +346,6 @@ class CustomTransformUserDTOArray
         $this->username = $args['fio'];
     }
 }
-```
-
-### **Cache**
-
-The package supports a class caching mechanism to avoid the cost of reflection. This functionality is recommended to be used only if you have very voluminous classes, or there is a cyclic transformation of multiple entities. On ordinary lightweight DTO, there will be only 5-10%, and this will be unnecessary access in the file system.
-
-You can enable caching by passing the config to the hydrator constructor:
-
-```php
-(new Hydrator(new HydratorConfig(true)))
-    ->create(PurchaseDto::class, $data);
 ```
 
 ### Comparison

@@ -13,7 +13,7 @@ class ConstructDto
         public int $id,
         public ?string $email,
         #[WritingStyle(WritingStyle::STYLE_SNAKE_CASE)]
-        public ?string $address,
+        public ?string $addressTest,
         public float $balance,
         public ColorEnum $color
     ) {
