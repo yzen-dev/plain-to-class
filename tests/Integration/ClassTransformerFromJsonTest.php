@@ -35,7 +35,7 @@ class ClassTransformerFromJsonTest extends TestCase
     {
         $data = $this->getBaseArrayData();
 
-        $userDTO = (new Hydrator())->create(UserDTO::class, json_encode($data));
+        $userDTO = (new Hydrator())->createFromJson(UserDTO::class, json_encode($data));
 
         self::assertInstanceOf(UserDTO::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);
@@ -58,7 +58,7 @@ class ClassTransformerFromJsonTest extends TestCase
             'address_test' => 'example address',
             'color' => 'White'
         ];
-        $userDTO = (new Hydrator())->create(ConstructDto::class, json_encode($data));
+        $userDTO = (new Hydrator())->createFromJson(ConstructDto::class, json_encode($data));
         self::assertInstanceOf(ConstructDto::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);
         self::assertEquals($data['email'], $userDTO->email);
@@ -76,7 +76,7 @@ class ClassTransformerFromJsonTest extends TestCase
     public function testEmptyClass(): void
     {
         $data = $this->getBaseArrayData();
-        $instance = (new Hydrator())->create(EmptyClassDto::class, json_encode($data));
+        $instance = (new Hydrator())->createFromJson(EmptyClassDto::class, json_encode($data));
         self::assertInstanceOf(EmptyClassDto::class, $instance);
     }
 
@@ -89,7 +89,7 @@ class ClassTransformerFromJsonTest extends TestCase
             'stringList' => [100, 200, 300],
             'intList' => [400, 500, 600]
         ];
-        $dto = (new Hydrator())->create(ArrayScalarDTO::class, json_encode($data));
+        $dto = (new Hydrator())->createFromJson(ArrayScalarDTO::class, json_encode($data));
         self::assertInstanceOf(ArrayScalarDTO::class, $dto);
         self::assertIsString($dto->stringList[0]);
         self::assertEquals($dto->stringList[0], '100');
@@ -107,7 +107,7 @@ class ClassTransformerFromJsonTest extends TestCase
             'products' => null
         ];
 
-        $userDTO = (new Hydrator())->create(ArrayScalarDTO::class, json_encode($data));
+        $userDTO = (new Hydrator())->createFromJson(ArrayScalarDTO::class, json_encode($data));
 
         self::assertInstanceOf(ArrayScalarDTO::class, $userDTO);
     }
@@ -164,7 +164,7 @@ class ClassTransformerFromJsonTest extends TestCase
     public function testRecursiveArray(): void
     {
         $data = $this->getRecursiveArrayData();
-        $purchaseDTO = (new Hydrator())->create(PurchaseDTO::class, json_encode($data));
+        $purchaseDTO = (new Hydrator())->createFromJson(PurchaseDTO::class, json_encode($data));
 
         self::assertInstanceOf(PurchaseDTO::class, $purchaseDTO);
         self::assertInstanceOf(UserDTO::class, $purchaseDTO->user);
@@ -193,7 +193,7 @@ class ClassTransformerFromJsonTest extends TestCase
     {
         $data = $this->getTripleRecursiveArray();
 
-        $basketDTO = (new Hydrator())->create(BasketDTO::class, json_encode($data));
+        $basketDTO = (new Hydrator())->createFromJson(BasketDTO::class, json_encode($data));
 
         foreach ($basketDTO->orders as $key => $purchase) {
             self::assertInstanceOf(PurchaseDTO::class, $purchase);
@@ -223,7 +223,7 @@ class ClassTransformerFromJsonTest extends TestCase
     {
         $data = $this->getBaseArrayData();
 
-        $userDTO = (new Hydrator())->create(UserEmptyTypeDTO::class, json_encode($data));
+        $userDTO = (new Hydrator())->createFromJson(UserEmptyTypeDTO::class, json_encode($data));
 
         self::assertInstanceOf(UserEmptyTypeDTO::class, $userDTO);
         self::assertEquals($data['id'], $userDTO->id);

@@ -26,7 +26,7 @@ final class InstanceFactory
 
     /**
      * @param class-string<T> $class
-     * @param iterable<mixed>|object|string ...$args
+     * @param iterable<mixed>|object ...$args
      *
      * @return mixed
      * @throws ClassNotFoundException|InstantiableClassException|ReflectionException|InvalidArgumentException

@@ -25,19 +25,15 @@ final class ArgumentsRepository
 
     /**
      *
-     * @param iterable<mixed>|object|string ...$args
+     * @param iterable<mixed>|object ...$args
      */
     public function __construct(...$args)
     {
         // Unpacking named arguments
         $input = sizeof(func_get_args()) === 1 ? $args[0] : $args;
-
+        
         if (!is_array($input)) {
-            if (is_string($input)) {
-                $input = json_decode($input, true);
-            } else {
-                $input = (array)$input;
-            }
+            $input = (array)$input;
         }
 
         $this->args = $input;

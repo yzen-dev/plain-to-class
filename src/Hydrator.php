@@ -31,7 +31,7 @@ final class Hydrator
      * Create instance T class
      *
      * @param class-string<T> $class
-     * @param iterable<mixed>|object|string ...$args
+     * @param iterable<mixed>|object ...$args
      *
      * @return null|T
      * @throws ClassNotFoundException|InstantiableClassException|ReflectionException|InvalidArgumentException
@@ -77,5 +77,23 @@ final class Hydrator
             $result [] = $this->create($class, $args[$key]);
         }
         return $result;
+    }
+
+    /**
+     * Create instance T class
+     *
+     * @param class-string<T> $class
+     * @param string $json
+     *
+     * @return null|T
+     * @throws ClassNotFoundException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public function createFromJson(string $class, string $json): mixed
+    {
+        $data = json_decode($json, true);
+        
+        return $this->create($class, $data);
     }
 }
