@@ -18,6 +18,7 @@ use Tests\Integration\DTO\ArrayScalarDTO;
 use Tests\Integration\DTO\UserEmptyTypeDTO;
 use ClassTransformer\Exceptions\ClassNotFoundException;
 
+use Tests\Integration\DTO\UserNullableArrayDTO;
 use function count;
 
 /**
@@ -220,5 +221,29 @@ class ClassTransformerFromArrayTest extends TestCase
         self::assertEquals($data['id'], $userDTO->id);
         self::assertEquals($data['email'], $userDTO->email);
         self::assertEquals($data['balance'], $userDTO->balance);
+    }
+
+    public function testNullableTransformableProperty(): void
+    {
+        $data = [
+            'user' => null,
+        ];
+
+        $userNullableDTO = Hydrator::init()->create(UserNullableArrayDTO::class, $data);
+
+        self::assertInstanceOf(UserNullableArrayDTO::class, $userNullableDTO);
+        self::assertNull($userNullableDTO->user);
+    }
+
+    public function testNotNullableTransformableProperty(): void
+    {
+        $data = [
+            'user' => $this->getBaseArrayData(),
+        ];
+
+        $userNullableDTO = Hydrator::init()->create(UserNullableArrayDTO::class, $data);
+
+        self::assertInstanceOf(UserNullableArrayDTO::class, $userNullableDTO);
+        self::assertInstanceOf(UserDTO::class, $userNullableDTO->user);
     }
 }

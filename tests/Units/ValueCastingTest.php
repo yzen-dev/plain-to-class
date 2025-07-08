@@ -79,6 +79,10 @@ class ValueCastingTest extends TestCase
         $value = $caster->castAttribute(null);
         $this->assertNull($value);
         
+        $caster = new ValueCasting(new RuntimeReflectionProperty(new \ReflectionProperty(TypesDto::class, 'nullableObject')));
+        $value = $caster->castAttribute(null);
+        $this->assertNull($value);
+        
     }
 
     public function testCreateArrayProperty(): void

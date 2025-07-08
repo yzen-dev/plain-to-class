@@ -16,5 +16,5 @@ class TypesDto
     public ?string $emptyString;
     public ?float $nullableFloat;
     public ?bool $nullableBool;
-
+    public ?UserDTO $nullableObject;
 }

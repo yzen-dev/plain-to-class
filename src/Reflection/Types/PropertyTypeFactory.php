@@ -88,7 +88,7 @@ class PropertyTypeFactory
 
         return new TransformableType(
             $type,
-            $isScalar,
+            $isNullable,
         );
     }
 }
