@@ -33,7 +33,7 @@ final class ValueCasting
      * @param ReflectionProperty $property
      * @param HydratorConfig|null $config
      */
-    public function __construct(ReflectionProperty $property, HydratorConfig $config = null)
+    public function __construct(ReflectionProperty $property, ?HydratorConfig $config = null)
     {
         $this->property = $property;
         $this->config = $config ?? new HydratorConfig();

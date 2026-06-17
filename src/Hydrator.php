@@ -32,7 +32,7 @@ final class Hydrator
 
     /**
      */
-    public function __construct(HydratorConfig $config = null)
+    public function __construct(?HydratorConfig $config = null)
     {
         $this->config = $config ?? new HydratorConfig();
     }
@@ -42,7 +42,7 @@ final class Hydrator
      *
      * @return Hydrator
      */
-    public static function init(HydratorConfig $config = null): self
+    public static function init(?HydratorConfig $config = null): self
     {
         return new self($config);
     }

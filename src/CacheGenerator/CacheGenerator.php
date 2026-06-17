@@ -46,7 +46,7 @@ final class CacheGenerator
     /**
      * @param class-string<TClass> $class
      */
-    public function __construct(string $class, HydratorConfig $config = null)
+    public function __construct(string $class, ?HydratorConfig $config = null)
     {
         $this->config = $config ?? new HydratorConfig();
         $this->class = $class;
@@ -59,7 +59,7 @@ final class CacheGenerator
      *
      * @param class-string<T> $class
      */
-    public static function create(string $class, HydratorConfig $config = null): CacheGenerator
+    public static function create(string $class, ?HydratorConfig $config = null): CacheGenerator
     {
         return new self($class, $config);
     }

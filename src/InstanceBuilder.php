@@ -28,7 +28,7 @@ final class InstanceBuilder
      * @param ClassRepository $class
      * @param ArgumentsRepository $argumentsRepository
      */
-    public function __construct(ClassRepository $class, ArgumentsRepository $argumentsRepository, HydratorConfig $config = null)
+    public function __construct(ClassRepository $class, ArgumentsRepository $argumentsRepository, ?HydratorConfig $config = null)
     {
         $this->class = $class;
         $this->config = $config ?? new HydratorConfig();
